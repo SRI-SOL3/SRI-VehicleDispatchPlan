@@ -1,0 +1,85 @@
+﻿@model PagedList.IPagedList<VehicleDispatchPlan.Models.V_TraineeRef>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "教習生管理";
+}
+
+<h2>教習生管理</h2>
+
+@using (Html.BeginForm())
+{
+    <p>
+        入校予定日: @Html.TextBox("PlanDateFrom", String.Format("{0:d}", (DateTime?)ViewBag.PlanDateFrom), new { @class = "datefield", type = "date" })
+        ～ @Html.TextBox("PlanDateTo", String.Format("{0:d}", (DateTime?)ViewBag.PlanDateTo), new { @class = "datefield", type = "date" })
+        <input type="submit" value="検索" />
+    </p>
+}
+
+<p>
+    @Html.ActionLink("新規登録", "Regist", new { id = 0 })
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().TraineeId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().TraineeName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().AttendTypeName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().TrainingCourseName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().EntrancePlanDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().TmpLicencePlanDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().GraduatePlanDate)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TraineeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TraineeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AttendTypeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrainingCourseName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EntrancePlanDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TmpLicencePlanDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GraduatePlanDate)
+            </td>
+            <td>
+                @Html.ActionLink("編集", "Edit", new { id = item.TraineeId }) |
+                @Html.ActionLink("詳細", "Details", new { id = item.TraineeId }) |
+                @Html.ActionLink("削除", "Delete", new { id = item.TraineeId })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("List", new { page, planDateFrom = ViewBag.PlanDateFrom, planDateTo = ViewBag.PlanDateTo }))

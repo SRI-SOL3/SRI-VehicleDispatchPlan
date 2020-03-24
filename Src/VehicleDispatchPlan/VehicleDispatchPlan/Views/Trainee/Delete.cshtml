@@ -1,0 +1,80 @@
+﻿@model VehicleDispatchPlan.Models.V_TraineeRef
+
+@{
+    ViewBag.Title = "教習生削除";
+}
+
+<h2>教習生削除</h2>
+
+<h3>この情報を削除してよろしいでしょうか？</h3>
+<div>
+    <h4>詳細情報</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TraineeId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TraineeId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TraineeName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TraineeName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AttendTypeName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AttendTypeName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TrainingCourseName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TrainingCourseName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EntrancePlanDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EntrancePlanDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GraduatePlanDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.GraduatePlanDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LodgingName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LodgingName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AgentName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AgentName)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="削除" class="btn btn-default" /> |
+            @Html.ActionLink("一覧", "List")
+        </div>
+    }
+</div>
