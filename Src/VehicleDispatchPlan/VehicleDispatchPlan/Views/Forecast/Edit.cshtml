@@ -1,0 +1,330 @@
+﻿@model VehicleDispatchPlan.Models.V_Forecast
+@using VehicleDispatchPlan.Models;
+
+@{
+    ViewBag.Title = "受入予測管理";
+}
+
+<h2>受入予測</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+
+        <div class="form-inline">
+            @* 年 *@
+            <div class="form-group" style="margin-left:30px;">
+                @Html.DropDownListFor(model => model.Forecast.Year, (IEnumerable<SelectListItem>)ViewBag.SelectYear, "対象年", new { htmlAttributes = new { @class = "form-control" }, onchange = "disableUpdate()" })
+                @Html.ValidationMessageFor(model => model.Forecast.Year, "", new { @class = "text-danger" })
+            </div>
+            @* 月 *@
+            <div class="form-group" style="margin-left:30px;">
+                @Html.DropDownListFor(model => model.Forecast.Month, new SelectListItem[]{
+                        new SelectListItem() { Value="1", Text="1月" },
+                        new SelectListItem() { Value="2", Text="2月" },
+                        new SelectListItem() { Value="3", Text="3月" },
+                        new SelectListItem() { Value="4", Text="4月" },
+                        new SelectListItem() { Value="5", Text="5月" },
+                        new SelectListItem() { Value="6", Text="6月" },
+                        new SelectListItem() { Value="7", Text="7月" },
+                        new SelectListItem() { Value="8", Text="8月" },
+                        new SelectListItem() { Value="9", Text="9月" },
+                        new SelectListItem() { Value="10", Text="10月" },
+                        new SelectListItem() { Value="11", Text="11月" },
+                        new SelectListItem() { Value="12", Text="12月" }
+                    }, "対象月", new { htmlAttributes = new { @class = "form-control" }, onchange = "disableUpdate()" })
+                @Html.ValidationMessageFor(model => model.Forecast.Month, "", new { @class = "text-danger" })
+            </div>
+
+            @* 検索ボタン *@
+            <div class="form-group" style="margin-left:30px;">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" name="cmd" value="検索" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
+        <font size="4">
+            @Html.Label((string.IsNullOrEmpty(Model.Forecast.Year) ? " - " : Model.Forecast.Year) + "年"
+               + (string.IsNullOrEmpty(Model.Forecast.Month) ? " - " : Model.Forecast.Month) + "月"
+               + (string.IsNullOrEmpty(Model.Forecast.Month) ? " - " : Model.Forecast.Month) + "月"
+               , htmlAttributes: new { @style = "" })
+        </font>
+
+        @* 学科総時限数/月 *@
+        <div class="form-group">
+            @Html.LabelFor(model => model.Forecast.LectureClassQty, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Forecast.LectureClassQty, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Forecast.LectureClassQty, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @* 合宿比率 *@
+        <div class="form-group">
+            @Html.LabelFor(model => model.Forecast.LodgingRatio, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Forecast.LodgingRatio, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Forecast.LodgingRatio, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @* MT比率 *@
+        <div class="form-group">
+            @Html.LabelFor(model => model.Forecast.MtRatio, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Forecast.MtRatio, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Forecast.MtRatio, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @* 勤務属性別 *@
+        @{
+            if (Model.WorkType != null)
+            {
+                for (int i = 0; i < Model.ForecastByWork.Count(); i++)
+                {
+                    <hr />
+
+                    @* 年(hidden) *@
+                    @Html.HiddenFor(modelItem => Model.ForecastByWork[i].Year)
+                    @* 月(hidden) *@
+                    @Html.HiddenFor(modelItem => Model.ForecastByWork[i].Month)
+                    @* 勤務属性コード(hidden) *@
+                    @Html.HiddenFor(modelItem => Model.ForecastByWork[i].WorkTypeCd)
+
+                    for (int j = 0; j < Model.WorkType.Count(); j++)
+                    {
+                        if (Model.ForecastByWork[i].WorkTypeCd.Equals(Model.WorkType[j].WorkTypeCd))
+                        {
+                            @* 勤務属性コード(hidden) *@
+                            @Html.HiddenFor(modelItem => Model.WorkType[j].WorkTypeCd)
+                            @* 勤務属性名(hidden) *@
+                            @Html.HiddenFor(modelItem => Model.WorkType[j].WorkTypeName)
+                            @* 勤務属性名 *@
+                            <font size="3">
+                                @Html.Label(Model.WorkType[j].WorkTypeName, htmlAttributes: new { @style = "" })
+                            </font>
+                        }
+                    }
+
+                    @* 時限数/日 *@
+                    <div class="form-group">
+                        @Html.LabelFor(modelItem => Model.ForecastByWork[i].ClassQty, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(modelItem => Model.ForecastByWork[i].ClassQty, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    @* 指導員数/日 *@
+                    <div class="form-group">
+                        @Html.LabelFor(modelItem => Model.ForecastByWork[i].InstructorAmt, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(modelItem => Model.ForecastByWork[i].InstructorAmt, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    @* 出勤日数/月 *@
+                    <div class="form-group">
+                        @Html.LabelFor(modelItem => Model.ForecastByWork[i].WorkDays, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(modelItem => Model.ForecastByWork[i].WorkDays, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    @* 教習外業務比率 *@
+                    <div class="form-group">
+                        @Html.LabelFor(modelItem => Model.ForecastByWork[i].NotDrivingRatio, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(modelItem => Model.ForecastByWork[i].NotDrivingRatio, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                }
+            }
+        }
+
+        @* 更新ボタン *@
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                @{
+                    if (Model.DisableUpdate == true)
+                    {
+                        // 年と月がどちらも設定されている場合、活性化
+                        <input type="submit" id="update" name="cmd" value="更新" class="btn btn-default" disabled="disabled" />
+                    }
+                    else
+                    {
+                        // 年と月がどちらかが空の場合、非活性化
+                        <input type="submit" id="update" name="cmd" value="更新" class="btn btn-default" />
+                    }
+                }
+            </div>
+        </div>
+
+        @{
+            if (Model.ChartData != null)
+            {
+                @* 表 *@
+                <div class="row" style="overflow: auto; margin-top: 30px;">
+                    <table border="1" style="table-layout: fixed; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th width="150" colspan="3" style="text-align: center;">日付</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <th width="40" style="text-align: center;">@item.Date.ToString("M/d")</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th rowspan="3" style="text-align: center;">受入残</th>
+                                <th colspan="2" style="text-align: center;">総数</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.AcceptTotalRemAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th colspan="2" style="text-align: center;">合宿</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.AcceptLodgingRemAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th colspan="2" style="text-align: center;">通学</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.AcceptCommutingRemAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th rowspan="7" style="text-align: center;">在籍</th>
+                                <th colspan="2" style="text-align: center;">総数</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.TotalRegAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th rowspan="4" style="text-align: center;">合宿</th>
+                                <th style="text-align: center;">MT-1</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.LodgingMtFstRegAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th style="text-align: center;">MT-2</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.LodgingMtSndRegAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th style="text-align: center;">AT-1</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.LodgingAtFstRegAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th style="text-align: center;">AT-2</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.LodgingAtSndRegAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th rowspan="2" style="text-align: center;">通学</th>
+                                <th style="text-align: center;">MT</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.CommutingMtRegAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th style="text-align: center;">AT</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.CommutingAtRegAmt</td>
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row" style="margin-top:30px; display: flex;">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ChartTotalRem, htmlAttributes: new { @class = "control-label col-md-2", @style = "width:120px;" })
+                        <div class="col-md-10" ">
+                            @Html.CheckBoxFor(model => model.ChartTotalRem, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ChartLodgingRem, htmlAttributes: new { @class = "control-label col-md-2", @style = "width:120px;" })
+                        <div class="col-md-10" ">
+                            @Html.CheckBoxFor(model => model.ChartLodgingRem, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ChartCommutingRem, htmlAttributes: new { @class = "control-label col-md-2", @style = "width:120px;" })
+                        <div class="col-md-10" ">
+                            @Html.CheckBoxFor(model => model.ChartCommutingRem, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ChartTotalReg, htmlAttributes: new { @class = "control-label col-md-2", @style = "width:120px;" })
+                        <div class="col-md-10" ">
+                            @Html.CheckBoxFor(model => model.ChartTotalReg, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ChartLodgingReg, htmlAttributes: new { @class = "control-label col-md-2", @style = "width:120px;" })
+                        <div class="col-md-10">
+                            @Html.CheckBoxFor(model => model.ChartLodgingReg, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ChartCommutingReg, htmlAttributes: new { @class = "control-label col-md-2", @style = "width:120px;" })
+                        <div class="col-md-10">
+                            @Html.CheckBoxFor(model => model.ChartCommutingReg, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="scroll" name="scroll_top" value="">
+                    <input type="submit" id="chart" name="cmd" value="再表示" class="btn btn-default" style="margin-left:30px;" />
+                </div>
+
+                @* グラフ *@
+                <div class="row" style="overflow: auto;">
+                    <img src="@ViewBag.ChartPath" />
+                </div>
+            }
+        }
+
+    </div>
+}
+
+<script>
+    @* 更新ボタンを非活性化 *@
+    function disableUpdate() {
+        document.getElementById("update").disabled = true;
+    }
+
+    //function selectPosition() {
+    //    var iSelectPosition = document.getElementById('scroll').value;
+    //    document.getElementById('chart').scrollTop = iSelectPosition;
+    //}
+  
+
+    //function ClickSubmitBtn() {  
+    //    document.getElementById('scroll').value = document.getElementById('chart').scrollTop;  
+    //}
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
