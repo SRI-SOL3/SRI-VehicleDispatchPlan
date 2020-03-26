@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
+using System.Web.Mvc;
 
 /**
  * 入卒カレンダーマスタ
@@ -25,28 +23,41 @@ namespace VehicleDispatchPlan.Models
     {
         /// <summary>教習コース<summary>
         [Key]
+        [Required]
         [Column(Order = 1)]
         [DisplayName("教習コース")]
         public string TrainingCourseCd { get; set; }
 
-        /// <summary>入学予定日</summary>
+        /// <summary>[非DB項目]教習コース名<summary>
+        [NotMapped]
+        [DisplayName("教習コース")]
+        public string TrainingCourseName { get; set; }
+
+        /// <summary>[非DB項目]教習コース選択肢<summary>
+        [NotMapped]
+        public SelectList SelectTrainingCourse { get; set; }
+
+        /// <summary>入校予定日</summary>
         [Key]
+        [Required]
         [Column(Order = 2)]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        [DisplayName("入学予定日")]
-        public DateTime EntrancePlanDate { get; set; }
+        [DisplayName("入校予定日")]
+        public DateTime? EntrancePlanDate { get; set; }
 
         /// <summary>仮免予定日</summary>
+        [Required]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DisplayName("仮免予定日")]
-        public DateTime TmpLicencePlanDate { get; set; }
+        public DateTime? TmpLicencePlanDate { get; set; }
 
         /// <summary>卒業予定日</summary>
+        [Required]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DisplayName("卒業予定日")]
-        public DateTime GraduatePlanDate { get; set; }
+        public DateTime? GraduatePlanDate { get; set; }
     }
 }

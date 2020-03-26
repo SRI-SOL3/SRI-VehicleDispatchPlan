@@ -33,7 +33,7 @@ namespace VehicleDispatchPlan.Constants
         /// <summary>系統_通学受入残数</summary>
         public const string SERIES_COMMUTING_REM_AMT = "通学受入残数";
         /// <summary>系統_総在籍数</summary>
-        public const string SERIES_TOTAL_REG_AMT = "在籍数";
+        public const string SERIES_TOTAL_REG_AMT = "総在籍数";
         /// <summary>系統_合宿在籍数</summary>
         public const string SERIES_LODGING_REG_AMT = "合宿在籍数";
         /// <summary>系統_通学在籍数</summary>

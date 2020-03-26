@@ -20,11 +20,13 @@ namespace VehicleDispatchPlan.Models
     {
         /// <summary>区分</summary>
         [Key]
+        [Required]
         [Column(Order = 1)]
         public string Div { get; set; }
 
         /// <summary>コード</summary>
         [Key]
+        [Required]
         [Column(Order = 2)]
         public string Cd { get; set; }
 

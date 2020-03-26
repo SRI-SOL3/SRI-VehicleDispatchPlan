@@ -20,16 +20,19 @@ namespace VehicleDispatchPlan.Models
     {
         /// <summary>年</summary>
         [Key]
+        [Required]
         [Column(Order = 1)]
         public string Year { get; set; }
 
         /// <summary>月</summary>
         [Key]
+        [Required]
         [Column(Order = 2)]
         public string Month { get; set; }
 
         /// <summary>勤務属性コード</summary>
         [Key]
+        [Required]
         [Column(Order = 3)]
         [DisplayName("勤務属性")]
         public string WorkTypeCd { get; set; }
@@ -48,7 +51,7 @@ namespace VehicleDispatchPlan.Models
 
         /// <summary>教習外業務比率</summary>
         [Range(0, 100)]
-        [DisplayName("教習外業務比率")]
+        [DisplayName("教習外業務比率[%]")]
         public int NotDrivingRatio { get; set; }
     }
 }

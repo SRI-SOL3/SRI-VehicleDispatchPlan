@@ -20,11 +20,13 @@ namespace VehicleDispatchPlan.Models
     {
         /// <summary>年</summary>
         [Key]
+        [Required]
         [Column(Order = 1)]
         public string Year { get; set; }
 
         /// <summary>月</summary>
         [Key]
+        [Required]
         [Column(Order = 2)]
         public string Month { get; set; }
 

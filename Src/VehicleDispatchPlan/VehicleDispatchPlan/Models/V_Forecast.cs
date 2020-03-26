@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using VehicleDispatchPlan.Constants;
 
 /**
  * 受入予測表示
@@ -33,27 +34,27 @@ namespace VehicleDispatchPlan.Models
         public bool DisableUpdate { get; set; }
 
         /// <summary>グラフ表示_総受入残数</summary>
-        [DisplayName("総受入残数")]
+        [DisplayName(AppConstant.SERIES_TOTAL_REM_AMT)]
         public bool ChartTotalRem { get; set; }
 
         /// <summary>グラフ表示_合宿受入残数</summary>
-        [DisplayName("合宿受入残数")]
+        [DisplayName(AppConstant.SERIES_LODGING_REM_AMT)]
         public bool ChartLodgingRem { get; set; }
 
         /// <summary>グラフ表示_通学受入残数</summary>
-        [DisplayName("通学受入残数")]
+        [DisplayName(AppConstant.SERIES_COMMUTING_REM_AMT)]
         public bool ChartCommutingRem { get; set; }
 
         /// <summary>グラフ表示_総在籍数</summary>
-        [DisplayName("総在籍数")]
+        [DisplayName(AppConstant.SERIES_TOTAL_REG_AMT)]
         public bool ChartTotalReg { get; set; }
 
         /// <summary>グラフ表示_合宿在籍数</summary>
-        [DisplayName("合宿在籍数")]
+        [DisplayName(AppConstant.SERIES_LODGING_REG_AMT)]
         public bool ChartLodgingReg { get; set; }
 
         /// <summary>グラフ表示_通学在籍数</summary>
-        [DisplayName("通学在籍数")]
+        [DisplayName(AppConstant.SERIES_COMMUTING_REG_AMT)]
         public bool ChartCommutingReg { get; set; }
     }
 }

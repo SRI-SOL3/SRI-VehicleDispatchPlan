@@ -1,0 +1,122 @@
+﻿@model List<VehicleDispatchPlan.Models.M_EntGrdCalendar>
+
+@{
+    ViewBag.Title = "入卒カレンダー設定";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p style="font-size:16px;">
+    @Html.ActionLink("CSVからインポート", "Import")
+</p>
+
+@using (Html.BeginForm(null, null, FormMethod.Get))
+{
+    <div class="form-inline">
+        入校年月:
+        @* 年 *@
+        <div class="form-group" style="margin-left:10px;">
+            @Html.DropDownList("SelectYear", (IEnumerable<SelectListItem>)ViewBag.SelectYear, "対象年", new { htmlAttributes = new { @class = "form-control" }, onchange = "disableUpdate()" })
+        </div>
+        @* 月 *@
+        <div class="form-group" style="margin-left:10px;">
+            @Html.DropDownList("SelectMonth", new SelectListItem[]{
+                    new SelectListItem() { Value="1", Text="1月" },
+                    new SelectListItem() { Value="2", Text="2月" },
+                    new SelectListItem() { Value="3", Text="3月" },
+                    new SelectListItem() { Value="4", Text="4月" },
+                    new SelectListItem() { Value="5", Text="5月" },
+                    new SelectListItem() { Value="6", Text="6月" },
+                    new SelectListItem() { Value="7", Text="7月" },
+                    new SelectListItem() { Value="8", Text="8月" },
+                    new SelectListItem() { Value="9", Text="9月" },
+                    new SelectListItem() { Value="10", Text="10月" },
+                    new SelectListItem() { Value="11", Text="11月" },
+                    new SelectListItem() { Value="12", Text="12月" }
+                }, "対象月", new { htmlAttributes = new { @class = "form-control" }, onchange = "disableUpdate()" })
+        </div>
+
+        @* 検索ボタン *@
+        <div class="form-group" style="margin-left:30px;">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" name="cmd" value="検索" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<hr />
+
+@using (Html.BeginForm(null, null, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    Html.EnableClientValidation(false);
+
+    @*<div style="margin-left:5px; height:50px; align-content:center">
+        @{
+            if (Model.Count() == 0)
+            {
+                <input type="submit" name="cmd" value="更新" class="btn btn-default" disabled="disabled" />
+            }
+            else
+            {
+                <input type="submit" name="cmd" value="更新" class="btn btn-default" />
+            }
+        }
+    </div>*@
+
+    @* エラーメッセージ *@
+    @*<div style="color: Red">@Html.Encode(TempData["errorMessage"])</div>*@
+
+    <div style="overflow-y: auto; width:620px; height:500px;">
+        <table class="table" style="width:600px;">
+            <tr>
+                @* 教習コース *@
+                <th>
+                    @Html.DisplayNameFor(model => Model.FirstOrDefault().TrainingCourseCd)
+                </th>
+                @* 入校予定日 *@
+                <th>
+                    @Html.DisplayNameFor(model => Model.FirstOrDefault().EntrancePlanDate)
+                </th>
+                @* 仮免予定日 *@
+                <th>
+                    @Html.DisplayNameFor(model => Model.FirstOrDefault().TmpLicencePlanDate)
+                </th>
+                @* 卒業予定日 *@
+                <th>
+                    @Html.DisplayNameFor(model => Model.FirstOrDefault().GraduatePlanDate)
+                </th>
+            </tr>
+
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                <tr>
+                    @* 教習コース *@
+                    <td>
+                        @*@Html.DropDownListFor(modelitem => Model[i].TrainingCourseCd, Model[i].SelectTrainingCourse, new { htmlAttributes = new { @class = "form-control" } })*@
+                        @Html.DisplayFor(modelitem => Model[i].SelectTrainingCourse.Where(x => x.Value.Equals(Model[i].TrainingCourseCd)).FirstOrDefault().Text)
+                    </td>
+                    @* 入校予定日 *@
+                    <td>
+                        @*@Html.EditorFor(modelitem => Model[i].EntrancePlanDate, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })*@
+                        @Html.DisplayFor(modelItem => Model[i].EntrancePlanDate)
+                    </td>
+                    @* 仮免予定日 *@
+                    <td>
+                        @*@Html.EditorFor(modelitem => Model[i].TmpLicencePlanDate, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })*@
+                        @Html.DisplayFor(modelItem => Model[i].TmpLicencePlanDate)
+                    </td>
+                    @* 卒業予定日 *@
+                    <td>
+                        @*@Html.EditorFor(modelitem => Model[i].GraduatePlanDate, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })*@
+                        @Html.DisplayFor(modelItem => Model[i].GraduatePlanDate)
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+}
