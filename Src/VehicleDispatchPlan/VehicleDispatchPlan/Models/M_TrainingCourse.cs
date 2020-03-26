@@ -20,6 +20,7 @@ namespace VehicleDispatchPlan.Models
     {
         /// <summary>教習コースコード</summary>
         [Key]
+        [Required]
         public string TrainingCourseCd { get; set; }
 
         /// <summary>教習コース名</summary>

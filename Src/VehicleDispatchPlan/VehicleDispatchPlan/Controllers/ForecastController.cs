@@ -170,6 +170,7 @@ namespace VehicleDispatchPlan.Controllers
                         try
                         {
                             // 受入予測の登録／更新
+                            // 存在チェック
                             if (db.Forecast.Where(x => x.Year.Equals(year) && x.Month.Equals(month)).Count() == 0)
                             {
                                 // 登録処理
@@ -186,6 +187,7 @@ namespace VehicleDispatchPlan.Controllers
                             // 勤務属性別受入予測の登録／更新
                             foreach (T_ForecastByWork forecastByWork in vForecast.ForecastByWork)
                             {
+                                // 存在チェック
                                 if (db.ForecastByWork.Where(x => x.Year.Equals(year) && x.Month.Equals(month)
                                     && x.WorkTypeCd.Equals(forecastByWork.WorkTypeCd)).Count() == 0)
                                 {
@@ -250,11 +252,17 @@ namespace VehicleDispatchPlan.Controllers
             int nowYear = DateTime.Now.Year;
             List<SelectListItem> selectYear = new List<SelectListItem>()
             {
-                new SelectListItem() { Text = (nowYear - 2).ToString(), Value=(nowYear - 2).ToString() }
+                new SelectListItem() { Text = (nowYear - 5).ToString(), Value=(nowYear - 2).ToString() }
+                , new SelectListItem() { Text = (nowYear - 4).ToString(), Value=(nowYear - 2).ToString() }
+                , new SelectListItem() { Text = (nowYear - 3).ToString(), Value=(nowYear - 2).ToString() }
+                , new SelectListItem() { Text = (nowYear - 2).ToString(), Value=(nowYear - 2).ToString() }
                 , new SelectListItem() { Text = (nowYear - 1).ToString(), Value=(nowYear - 1).ToString() }
                 , new SelectListItem() { Text = nowYear.ToString(), Value=nowYear.ToString() }
                 , new SelectListItem() { Text = (nowYear + 1).ToString(), Value=(nowYear + 1).ToString() }
                 , new SelectListItem() { Text = (nowYear + 2).ToString(), Value=(nowYear + 2).ToString() }
+                , new SelectListItem() { Text = (nowYear + 3).ToString(), Value=(nowYear + 2).ToString() }
+                , new SelectListItem() { Text = (nowYear + 4).ToString(), Value=(nowYear + 2).ToString() }
+                , new SelectListItem() { Text = (nowYear + 5).ToString(), Value=(nowYear + 2).ToString() }
             };
             ViewBag.SelectYear = selectYear;
         }

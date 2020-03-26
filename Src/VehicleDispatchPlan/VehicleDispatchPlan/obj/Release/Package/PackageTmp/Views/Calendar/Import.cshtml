@@ -1,0 +1,43 @@
+﻿@model List<VehicleDispatchPlan.Models.M_EntGrdCalendar>
+@using VehicleDispatchPlan.Models;
+
+@{
+    ViewBag.Title = "入卒カレンダー取込";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="row">
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <input class="form-control" type="file" name="postedFile" />
+        <input class="btn btn-info" type="submit" value="Import" />
+    }
+</div>
+<div class="row">
+    @if (Model.Count() > 0)
+    {
+        <table class="table table-hover">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().TrainingCourseCd)</th>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().EntrancePlanDate)</th>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().TmpLicencePlanDate)</th>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().GraduatePlanDate)</th>
+            </tr>
+            @foreach (M_EntGrdCalendar calendar in Model)
+            {
+                <tr>
+                    <td>@calendar.TrainingCourseCd</td>
+                    <td>@calendar.EntrancePlanDate</td>
+                    <td>@calendar.TmpLicencePlanDate</td>
+                    <td>@calendar.GraduatePlanDate</td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

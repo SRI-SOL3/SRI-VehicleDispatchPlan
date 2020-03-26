@@ -53,6 +53,7 @@ namespace VehicleDispatchPlan.Models
 
         /// <summary>教習生ID<summary>
         [Key]
+        [Required]
         [DisplayName("教習生ID")]
         public int TraineeId { get; set; }
 
@@ -99,21 +100,21 @@ namespace VehicleDispatchPlan.Models
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DisplayName("入校予定日")]
-        public DateTime EntrancePlanDate { get; set; }
+        public DateTime? EntrancePlanDate { get; set; }
 
         /// <summary>仮免予定日<summary>
         [Required]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DisplayName("仮免予定日")]
-        public DateTime TmpLicencePlanDate { get; set; }
+        public DateTime? TmpLicencePlanDate { get; set; }
 
         /// <summary>卒業予定日<summary>
         [Required]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DisplayName("卒業予定日")]
-        public DateTime GraduatePlanDate { get; set; }
+        public DateTime? GraduatePlanDate { get; set; }
 
         /// <summary>宿泊施設<summary>
         [DisplayName("宿泊施設")]

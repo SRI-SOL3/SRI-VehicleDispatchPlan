@@ -18,9 +18,11 @@ namespace VehicleDispatchPlan.Models
     {
         /// <summary>勤務属性コード</summary>
         [Key]
+        [Required]
         public string WorkTypeCd { get; set; }
 
         /// <summary>勤務属性名</summary>
+        [Required]
         public string WorkTypeName { get; set; }
     }
 }

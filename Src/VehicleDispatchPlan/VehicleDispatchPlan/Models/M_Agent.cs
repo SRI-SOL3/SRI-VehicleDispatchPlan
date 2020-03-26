@@ -20,6 +20,7 @@ namespace VehicleDispatchPlan.Models
     {
         /// <summary>エージェントコード</summary>
         [Key]
+        [Required]
         public string AgentCd { get; set; }
 
         /// <summary>名前</summary>

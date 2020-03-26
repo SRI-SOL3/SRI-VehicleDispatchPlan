@@ -17,8 +17,14 @@
         <h4>教習生情報</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @{
+            Html.EnableClientValidation(false);
+        }
         @Html.HiddenFor(model => model.Trainee.TraineeId)
         @Html.HiddenFor(model => model.Trainee.GroupId)
+
+        @* エラーメッセージ *@
+        <div style="color: Red">@Html.Encode(TempData["errorMessage"])</div>
 
         @* 教習者名 *@
         <div class="form-group">
@@ -35,7 +41,6 @@
                         @Html.EditorFor(model => model.Trainee.TraineeName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                     }
                 }
-                @Html.ValidationMessageFor(model => model.Trainee.TraineeName, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -55,7 +60,6 @@
                         @Html.HiddenFor(model => model.Trainee.AttendTypeCd)
                     }
                 }
-                @Html.ValidationMessageFor(model => model.Trainee.AttendTypeCd, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -75,7 +79,6 @@
                         @Html.HiddenFor(model => model.Trainee.TrainingCourseCd)
                     }
                 }
-                @Html.ValidationMessageFor(model => model.Trainee.TrainingCourseCd, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -100,7 +103,6 @@
                         }
                     }
                 </div>
-                @Html.ValidationMessageFor(model => model.Trainee.EntrancePlanDate, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -119,7 +121,6 @@
                         @Html.EditorFor(model => model.Trainee.TmpLicencePlanDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                     }
                 }
-                @Html.ValidationMessageFor(model => model.Trainee.TmpLicencePlanDate, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -138,7 +139,6 @@
                         @Html.EditorFor(model => model.Trainee.GraduatePlanDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                     }
                 }
-                @Html.ValidationMessageFor(model => model.Trainee.GraduatePlanDate, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -150,7 +150,7 @@
                     @* 編集モードにより未選択の有無を設定 *@
                     if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
                     {
-                        @Html.DropDownListFor(model => model.Trainee.LodgingCd, Model.Trainee.SelectTrainingCourse, "選択してください", new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.DropDownListFor(model => model.Trainee.LodgingCd, Model.Trainee.SelectLodging, "選択してください", new { htmlAttributes = new { @class = "form-control" } })
                     }
                     else
                     {
@@ -158,7 +158,6 @@
                         @Html.HiddenFor(model => model.Trainee.LodgingCd)
                     }
                 }
-                @Html.ValidationMessageFor(model => model.Trainee.LodgingCd, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -177,7 +176,6 @@
                         @Html.EditorFor(model => model.Trainee.AgentName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                     }
                 }
-                @Html.ValidationMessageFor(model => model.Trainee.AgentName, "", new { @class = "text-danger" })
             </div>
         </div>
 

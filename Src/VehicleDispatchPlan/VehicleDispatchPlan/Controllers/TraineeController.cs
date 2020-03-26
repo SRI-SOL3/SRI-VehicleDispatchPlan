@@ -115,17 +115,17 @@ namespace VehicleDispatchPlan.Controllers
                     foreach (T_Trainee trainee in traineeReg.TraineeList)
                     {
                         // 入校予定日、仮免予定日の比較
-                        if (trainee.EntrancePlanDate.CompareTo(trainee.TmpLicencePlanDate) >= 0)
+                        if (trainee.EntrancePlanDate >= trainee.TmpLicencePlanDate)
                         {
-                            TempData["registErr"] = "仮免予定日は入校予定日より後に設定してください。";
+                            TempData["errorMessage"] = "仮免予定日は入校予定日より後に設定してください。";
                             validation = false;
                             break;
                         }
 
                         // 仮免予定日、卒業予定日の比較
-                        if (trainee.TmpLicencePlanDate.CompareTo(trainee.GraduatePlanDate) >= 0)
+                        if (trainee.TmpLicencePlanDate >= trainee.GraduatePlanDate)
                         {
-                            TempData["registErr"] = "卒業予定日は仮免予定日より後に設定してください。";
+                            TempData["errorMessage"] = "卒業予定日は仮免予定日より後に設定してください。";
                             validation = false;
                             break;
                         }
@@ -133,7 +133,7 @@ namespace VehicleDispatchPlan.Controllers
                 }
                 else
                 {
-                    TempData["registErr"] = "必須項目（教習者名、通学種別、教習コース、入校予定日、仮免予定日、卒業予定日）を設定してください。";
+                    TempData["errorMessage"] = "必須項目（教習者名、通学種別、教習コース、入校予定日、仮免予定日、卒業予定日）を設定してください。";
                     validation = false;
                 }
 
@@ -141,8 +141,8 @@ namespace VehicleDispatchPlan.Controllers
                 {
                     // 確認モードに変更
                     traineeReg.EditMode = AppConstant.EditMode.Confirm;
-                    DateTime dateFrom = traineeReg.TraineeList.Select(x => x.EntrancePlanDate).Min();
-                    DateTime dateTo = traineeReg.TraineeList.Select(x => x.GraduatePlanDate).Max();
+                    DateTime dateFrom = (DateTime)traineeReg.TraineeList.Select(x => x.EntrancePlanDate).Min();
+                    DateTime dateTo = (DateTime)traineeReg.TraineeList.Select(x => x.GraduatePlanDate).Max();
                     // 表データを作成
                     Utility utility = new Utility();
                     traineeReg.ChartData = utility.getChartData(db, dateFrom, dateTo, null, null, traineeReg.TraineeList);
@@ -213,7 +213,7 @@ namespace VehicleDispatchPlan.Controllers
                     {
                         // カレンダーテーブルから取得
                        M_EntGrdCalendar calendar = db.EntGrdCalendar.Where(
-                           x => x.TrainingCourseCd.Equals(trainee.TrainingCourseCd) && x.EntrancePlanDate.Equals(trainee.EntrancePlanDate)).FirstOrDefault();
+                           x => x.TrainingCourseCd.Equals(trainee.TrainingCourseCd) && ((DateTime)x.EntrancePlanDate).Equals((DateTime)trainee.EntrancePlanDate)).FirstOrDefault();
                         if (calendar != null)
                         {
                             // 仮免予定日
@@ -224,20 +224,20 @@ namespace VehicleDispatchPlan.Controllers
                         else
                         {
                             // エラー
-                            TempData["registErr"] = "入校予定日:" + trainee.EntrancePlanDate.ToString("yyyy/MM/dd") + " のデータが入卒カレンダーに登録されていません。";
+                            TempData["errorMessage"] = "入校予定日:" + ((DateTime)trainee.EntrancePlanDate).ToString("yyyy/MM/dd") + " のデータが入卒カレンダーに登録されていません。";
                         }
                     }
                     else
                     {
                         // エラー
-                        TempData["registErr"] = "教習コース、入校予定日を設定してください。";
+                        TempData["errorMessage"] = "教習コース、入校予定日を設定してください。";
                     }
                 }
                 // 合宿以外(通学)の場合
                 else
                 {
                     // エラー
-                    TempData["registErr"] = "通学種別が合宿ではない場合は入卒カレンダーからの設定はできません。";
+                    TempData["errorMessage"] = "通学種別が合宿ではない場合は入卒カレンダーからの設定はできません。";
                 }
             }
 
@@ -309,14 +309,42 @@ namespace VehicleDispatchPlan.Controllers
             // 確認ボタンが押下された場合
             if ("確認".Equals(cmd))
             {
+                // 入力チェック
+                bool validation = true;
                 if (ModelState.IsValid)
+                {
+                    // 入校予定日、仮免予定日の比較
+                    if (traineeEdt.Trainee.EntrancePlanDate >= traineeEdt.Trainee.TmpLicencePlanDate)
+                    {
+                        TempData["errorMessage"] = "仮免予定日は入校予定日より後に設定してください。";
+                        validation = false;
+                    }
+
+                    // 仮免予定日、卒業予定日の比較
+                    if (traineeEdt.Trainee.TmpLicencePlanDate >= traineeEdt.Trainee.GraduatePlanDate)
+                    {
+                        TempData["errorMessage"] = "卒業予定日は仮免予定日より後に設定してください。";
+                        validation = false;
+                    }
+                }
+                else
+                {
+                    TempData["errorMessage"] = "必須項目（教習者名、通学種別、教習コース、入校予定日、仮免予定日、卒業予定日）を設定してください。";
+                    validation = false;
+                }
+
+                if (validation == true)
                 {
                     // 確認モードに設定
                     traineeEdt.EditMode = AppConstant.EditMode.Confirm;
-
                     // 表データを作成
                     Utility utility = new Utility();
-                    traineeEdt.ChartData = utility.getChartData(db, traineeEdt.Trainee.EntrancePlanDate, traineeEdt.Trainee.GraduatePlanDate, null, null, new List<T_Trainee> { traineeEdt.Trainee });
+                    traineeEdt.ChartData = utility.getChartData(db, (DateTime)traineeEdt.Trainee.EntrancePlanDate, (DateTime)traineeEdt.Trainee.GraduatePlanDate, null, null, new List<T_Trainee> { traineeEdt.Trainee });
+                }
+                else
+                {
+                    // 編集モードに変更
+                    traineeEdt.EditMode = AppConstant.EditMode.Edit;
                 }
             }
 
@@ -353,7 +381,7 @@ namespace VehicleDispatchPlan.Controllers
                     {
                         // カレンダーテーブルから取得
                         M_EntGrdCalendar calendar = db.EntGrdCalendar.Where(
-                            x => x.TrainingCourseCd.Equals(traineeEdt.Trainee.TrainingCourseCd) && x.EntrancePlanDate.Equals(traineeEdt.Trainee.EntrancePlanDate)).FirstOrDefault();
+                            x => x.TrainingCourseCd.Equals(traineeEdt.Trainee.TrainingCourseCd) && ((DateTime)x.EntrancePlanDate).Equals((DateTime)traineeEdt.Trainee.EntrancePlanDate)).FirstOrDefault();
                         if (calendar != null)
                         {
                             // 仮免予定日
@@ -364,20 +392,20 @@ namespace VehicleDispatchPlan.Controllers
                         else
                         {
                             // エラー
-                            TempData["registErr"] = "入校予定日：のデータが入卒カレンダーに登録されていません。";
+                            TempData["errorMessage"] = "入校予定日：のデータが入卒カレンダーに登録されていません。";
                         }
                     }
                     else
                     {
                         // エラー
-                        TempData["registErr"] = "教習コース、入校予定日を設定してください。";
+                        TempData["errorMessage"] = "教習コース、入校予定日を設定してください。";
                     }
                 }
                 // 合宿以外(通学)の場合
                 else
                 {
                     // エラー
-                    TempData["registErr"] = "通学の場合は入卒カレンダーからの設定はできません。";
+                    TempData["errorMessage"] = "通学の場合は入卒カレンダーからの設定はできません。";
                 }
             }
 
@@ -522,7 +550,7 @@ namespace VehicleDispatchPlan.Controllers
         private void SetSelectItem(V_TraineeEdt traineeEdt)
         {
             // 通学種別を取得
-            List<M_CodeMaster> attendType = db.CodeMaster.Where(x => "01".Equals(x.Div)).ToList();
+            List<M_CodeMaster> attendType = db.CodeMaster.Where(x => AppConstant.DIV_ATTEND_TYPE.Equals(x.Div)).ToList();
             // 教習コースマスタ取得
             List<M_TrainingCourse> trainingCourse = db.TrainingCourse.ToList();
             // 宿泊施設マスタ取得
@@ -556,7 +584,7 @@ namespace VehicleDispatchPlan.Controllers
         private void SetSelectItem(V_TraineeReg traineeReg)
         {
             // 通学種別を取得
-            List<M_CodeMaster> attendType = db.CodeMaster.Where(x => "01".Equals(x.Div)).ToList();
+            List<M_CodeMaster> attendType = db.CodeMaster.Where(x => AppConstant.DIV_ATTEND_TYPE.Equals(x.Div)).ToList();
             // 教習コースマスタ取得
             List<M_TrainingCourse> trainingCourse = db.TrainingCourse.ToList();
             // 宿泊施設マスタ取得

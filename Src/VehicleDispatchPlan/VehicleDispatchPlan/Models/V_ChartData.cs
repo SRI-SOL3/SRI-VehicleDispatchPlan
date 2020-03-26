@@ -38,13 +38,13 @@ namespace VehicleDispatchPlan.Models
         public int AcceptCommutingSumAmt { get; set; }
 
         /// <summary>当月受入可能残数</summary>
-        public double AcceptTotalRemAmt { get { return this.AcceptTotalMaxAmt - this.AcceptTotalSumAmt; } }
+        public double AcceptTotalRemAmt { get { return Math.Round(this.AcceptTotalMaxAmt - this.AcceptTotalSumAmt, 1); } }
 
         /// <summary>当月合宿受入可能残数</summary>
-        public double AcceptLodgingRemAmt { get { return this.AcceptLodgingMaxAmt - this.AcceptLodgingSumAmt; } }
+        public double AcceptLodgingRemAmt { get { return Math.Round(this.AcceptLodgingMaxAmt - this.AcceptLodgingSumAmt, 1); } }
 
         /// <summary>当月合宿受入可能残数</summary>
-        public double AcceptCommutingRemAmt { get { return this.AcceptCommutingMaxAmt - this.AcceptCommutingSumAmt; } }
+        public double AcceptCommutingRemAmt { get { return Math.Round(this.AcceptCommutingMaxAmt - this.AcceptCommutingSumAmt, 1); } }
 
         /// <summary>総在籍数</summary>
         public int TotalRegAmt { get { return this.LodgingMtFstRegAmt + this.LodgingMtSndRegAmt 

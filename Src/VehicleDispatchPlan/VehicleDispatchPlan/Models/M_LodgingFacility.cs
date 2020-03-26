@@ -20,6 +20,7 @@ namespace VehicleDispatchPlan.Models
     {
         /// <summary>宿泊施設コード</summary>
         [Key]
+        [Required]
         public string LodgingCd { get; set; }
 
         /// <summary>宿泊施設名</summary>

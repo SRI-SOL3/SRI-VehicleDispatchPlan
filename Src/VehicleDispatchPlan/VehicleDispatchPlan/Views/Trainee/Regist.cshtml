@@ -8,7 +8,7 @@
 
 <h2>@ViewBag.Title</h2>
 
-@using (Html.BeginForm(Html.BeginForm(null, null, FormMethod.Post, new { name = "form1", id = "form1" })))
+@using (Html.BeginForm(null, null, FormMethod.Post, new { name = "form1", id = "form1" }))
 {
     @Html.AntiForgeryToken()
 
@@ -37,7 +37,7 @@
         </div>
 
         @* エラーメッセージ *@
-        <div style="color: Red">@Html.Encode(TempData["registErr"])</div>
+        <div style="color: Red">@Html.Encode(TempData["errorMessage"])</div>
 
         @* 一覧のsubmitにてインデックスを設定 *@
         <input type="hidden" name="index" value="" />
@@ -81,11 +81,11 @@
                             @* 編集モードによりreadonlyの有無を設定 *@
                             if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
                             {
-                                @Html.EditorFor(modelitem => Model.TraineeList[i].TraineeName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.EditorFor(modelitem => Model.TraineeList[i].TraineeName, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;" } })
                             }
                             else
                             {
-                                @Html.EditorFor(modelitem => Model.TraineeList[i].TraineeName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                @Html.EditorFor(modelitem => Model.TraineeList[i].TraineeName, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;", @readonly = "readonly" } })
                             }
                         }
                     </td>
@@ -192,11 +192,11 @@
                             @* 編集モードによりreadonlyの有無を設定 *@
                             if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
                             {
-                                @Html.EditorFor(modelitem => Model.TraineeList[i].AgentName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.EditorFor(modelitem => Model.TraineeList[i].AgentName, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;" } })
                             }
                             else
                             {
-                                @Html.EditorFor(modelitem => Model.TraineeList[i].AgentName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                @Html.EditorFor(modelitem => Model.TraineeList[i].AgentName, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;", @readonly = "readonly" } })
                             }
                         }
                     </td>

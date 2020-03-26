@@ -5,7 +5,7 @@
     ViewBag.Title = "受入予測管理";
 }
 
-<h2>受入予測</h2>
+<h2>@ViewBag.Title</h2>
 
 @using (Html.BeginForm())
 {
@@ -256,6 +256,7 @@
                     </table>
                 </div>
 
+                @* チェックボックス *@
                 <div class="row" style="margin-top:30px; display: flex;">
                     <div class="form-group">
                         @Html.LabelFor(model => model.ChartTotalRem, htmlAttributes: new { @class = "control-label col-md-2", @style = "width:120px;" })
@@ -318,10 +319,10 @@
     //    var iSelectPosition = document.getElementById('scroll').value;
     //    document.getElementById('chart').scrollTop = iSelectPosition;
     //}
-  
 
-    //function ClickSubmitBtn() {  
-    //    document.getElementById('scroll').value = document.getElementById('chart').scrollTop;  
+
+    //function ClickSubmitBtn() {
+    //    document.getElementById('scroll').value = document.getElementById('chart').scrollTop;
     //}
 </script>
 
