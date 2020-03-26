@@ -7,142 +7,193 @@
 
 <h2>@ViewBag.Title</h2>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm(null, null, FormMethod.Get))
 {
     @Html.AntiForgeryToken()
 
+    <div class="form-inline">
+        対象年月:
+        @* 年From *@
+        <div class="form-group" style="margin-left:10px;">
+            @Html.DropDownList("YearFrom", (IEnumerable<SelectListItem>)ViewBag.SelectYear, "年", new { htmlAttributes = new { @class = "form-control" }, onchange = "disableUpdate()" })
+        </div>
+        @* 月From *@
+        <div class="form-group" style="margin-left:20px;">
+            @Html.DropDownList("MonthFrom", new SelectListItem[]{
+                    new SelectListItem() { Value="1", Text="1" },
+                    new SelectListItem() { Value="2", Text="2" },
+                    new SelectListItem() { Value="3", Text="3" },
+                    new SelectListItem() { Value="4", Text="4" },
+                    new SelectListItem() { Value="5", Text="5" },
+                    new SelectListItem() { Value="6", Text="6" },
+                    new SelectListItem() { Value="7", Text="7" },
+                    new SelectListItem() { Value="8", Text="8" },
+                    new SelectListItem() { Value="9", Text="9" },
+                    new SelectListItem() { Value="10", Text="10" },
+                    new SelectListItem() { Value="11", Text="11" },
+                    new SelectListItem() { Value="12", Text="12" }
+                }, "月", new { htmlAttributes = new { @class = "form-control" }, onchange = "disableUpdate()" })
+        </div>
+        <div class="form-group" style="margin-left:20px;">～</div>
+        @* 年To *@
+        <div class="form-group" style="margin-left:20px;">
+            @Html.DropDownList("YearTo", (IEnumerable<SelectListItem>)ViewBag.SelectYear, "年", new { htmlAttributes = new { @class = "form-control" }, onchange = "disableUpdate()" })
+        </div>
+        @* 月To *@
+        <div class="form-group" style="margin-left:20px;">
+            @Html.DropDownList("MonthTo", new SelectListItem[]{
+                    new SelectListItem() { Value="1", Text="1" },
+                    new SelectListItem() { Value="2", Text="2" },
+                    new SelectListItem() { Value="3", Text="3" },
+                    new SelectListItem() { Value="4", Text="4" },
+                    new SelectListItem() { Value="5", Text="5" },
+                    new SelectListItem() { Value="6", Text="6" },
+                    new SelectListItem() { Value="7", Text="7" },
+                    new SelectListItem() { Value="8", Text="8" },
+                    new SelectListItem() { Value="9", Text="9" },
+                    new SelectListItem() { Value="10", Text="10" },
+                    new SelectListItem() { Value="11", Text="11" },
+                    new SelectListItem() { Value="12", Text="12" }
+                }, "月", new { htmlAttributes = new { @class = "form-control" }, onchange = "disableUpdate()" })
+        </div>
+
+        @* 検索ボタン *@
+        <div class="form-group" style="margin-left:30px;">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" name="cmd" value="検索" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<hr />
+@using (Html.BeginForm(null, null, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
     <div class="form-horizontal">
-
-        <div class="form-inline">
-            @* 年 *@
-            <div class="form-group" style="margin-left:30px;">
-                @Html.DropDownListFor(model => model.Forecast.Year, (IEnumerable<SelectListItem>)ViewBag.SelectYear, "対象年", new { htmlAttributes = new { @class = "form-control" }, onchange = "disableUpdate()" })
-                @Html.ValidationMessageFor(model => model.Forecast.Year, "", new { @class = "text-danger" })
-            </div>
-            @* 月 *@
-            <div class="form-group" style="margin-left:30px;">
-                @Html.DropDownListFor(model => model.Forecast.Month, new SelectListItem[]{
-                        new SelectListItem() { Value="1", Text="1月" },
-                        new SelectListItem() { Value="2", Text="2月" },
-                        new SelectListItem() { Value="3", Text="3月" },
-                        new SelectListItem() { Value="4", Text="4月" },
-                        new SelectListItem() { Value="5", Text="5月" },
-                        new SelectListItem() { Value="6", Text="6月" },
-                        new SelectListItem() { Value="7", Text="7月" },
-                        new SelectListItem() { Value="8", Text="8月" },
-                        new SelectListItem() { Value="9", Text="9月" },
-                        new SelectListItem() { Value="10", Text="10月" },
-                        new SelectListItem() { Value="11", Text="11月" },
-                        new SelectListItem() { Value="12", Text="12月" }
-                    }, "対象月", new { htmlAttributes = new { @class = "form-control" }, onchange = "disableUpdate()" })
-                @Html.ValidationMessageFor(model => model.Forecast.Month, "", new { @class = "text-danger" })
-            </div>
-
-            @* 検索ボタン *@
-            <div class="form-group" style="margin-left:30px;">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" name="cmd" value="検索" class="btn btn-default" />
-                </div>
-            </div>
-        </div>
-
-        <hr />
-
-        <font size="4">
-            @Html.Label((string.IsNullOrEmpty(Model.Forecast.Year) ? " - " : Model.Forecast.Year) + "年"
-               + (string.IsNullOrEmpty(Model.Forecast.Month) ? " - " : Model.Forecast.Month) + "月"
-               + (string.IsNullOrEmpty(Model.Forecast.Month) ? " - " : Model.Forecast.Month) + "月"
-               , htmlAttributes: new { @style = "" })
-        </font>
-
-        @* 学科総時限数/月 *@
-        <div class="form-group">
-            @Html.LabelFor(model => model.Forecast.LectureClassQty, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Forecast.LectureClassQty, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Forecast.LectureClassQty, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        @* 合宿比率 *@
-        <div class="form-group">
-            @Html.LabelFor(model => model.Forecast.LodgingRatio, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Forecast.LodgingRatio, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Forecast.LodgingRatio, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        @* MT比率 *@
-        <div class="form-group">
-            @Html.LabelFor(model => model.Forecast.MtRatio, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Forecast.MtRatio, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Forecast.MtRatio, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        @* 勤務属性別 *@
-        @{
-            if (Model.WorkType != null)
-            {
-                for (int i = 0; i < Model.ForecastByWork.Count(); i++)
+        <div style="display: flex;">
+            @{
+                for (int i = 0; i < Model.Forecast.Count(); i++)
                 {
-                    <hr />
+                    <div style="min-width:300px;">
+                        @{
+                                <font size="4">
+                                    @Html.Label((string.IsNullOrEmpty(Model.Forecast[i].Year) ? " - " : Model.Forecast[i].Year) + "年"
+                                       + (string.IsNullOrEmpty(Model.Forecast[i].Month) ? " - " : Model.Forecast[i].Month) + "月"
+                                       , htmlAttributes: new { @style = "" })
+                                </font>
 
-                    @* 年(hidden) *@
-                    @Html.HiddenFor(modelItem => Model.ForecastByWork[i].Year)
-                    @* 月(hidden) *@
-                    @Html.HiddenFor(modelItem => Model.ForecastByWork[i].Month)
-                    @* 勤務属性コード(hidden) *@
-                    @Html.HiddenFor(modelItem => Model.ForecastByWork[i].WorkTypeCd)
+                            @* 学科総時限数/月 *@
+                            <div class="form-group" style="display: flex;">
+                                @{
+                                    if (i == 0)
+                                    {
+                                        @Html.LabelFor(model => model.Forecast[i].LectureClassQty, htmlAttributes: new { @class = "control-label col-md-2", @style="width:200px;" })
+                                    }
+                                }
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.Forecast[i].LectureClassQty, new { htmlAttributes = new { @class = "form-control", @style="width:100px;" } })
+                                    @Html.ValidationMessageFor(model => model.Forecast[i].LectureClassQty, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
 
-                    for (int j = 0; j < Model.WorkType.Count(); j++)
-                    {
-                        if (Model.ForecastByWork[i].WorkTypeCd.Equals(Model.WorkType[j].WorkTypeCd))
-                        {
-                            @* 勤務属性コード(hidden) *@
-                            @Html.HiddenFor(modelItem => Model.WorkType[j].WorkTypeCd)
-                            @* 勤務属性名(hidden) *@
-                            @Html.HiddenFor(modelItem => Model.WorkType[j].WorkTypeName)
-                            @* 勤務属性名 *@
-                            <font size="3">
-                                @Html.Label(Model.WorkType[j].WorkTypeName, htmlAttributes: new { @style = "" })
-                            </font>
+                            @* 合宿比率 *@
+                            <div class="form-group" style="display: flex;">
+                                @{
+                                    if (i == 0)
+                                    {
+                                        @Html.LabelFor(model => model.Forecast[i].LodgingRatio, htmlAttributes: new { @class = "control-label col-md-2", @style="width:200px;" })
+                                    }
+                                }
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.Forecast[i].LodgingRatio, new { htmlAttributes = new { @class = "form-control", @style="width:100px;" } })
+                                    @Html.ValidationMessageFor(model => model.Forecast[i].LodgingRatio, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            @* MT比率 *@
+                            <div class="form-group" style="display: flex;">
+                                @{
+                                    if (i == 0)
+                                    {
+                                        @Html.LabelFor(model => model.Forecast[i].MtRatio, htmlAttributes: new { @class = "control-label col-md-2", @style="width:200px;" })
+                                    }
+                                }
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.Forecast[i].MtRatio, new { htmlAttributes = new { @class = "form-control", @style="width:100px;" } })
+                                    @Html.ValidationMessageFor(model => model.Forecast[i].MtRatio, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            @* 勤務属性別 *@
+                            if (Model.WorkType != null)
+                            {
+                                for (int j = 0; j < Model.ForecastByWork.Count(); j++)
+                                {
+                                    <hr />
+
+                                    if (Model.Forecast[i].Year.Equals(Model.ForecastByWork[j].Year) && Model.Forecast[i].Month.Equals(Model.ForecastByWork[j].Month))
+                                    {
+                                        @* 年(hidden) *@
+                                        @Html.HiddenFor(modelItem => Model.ForecastByWork[j].Year)
+                                        @* 月(hidden) *@
+                                        @Html.HiddenFor(modelItem => Model.ForecastByWork[j].Month)
+                                        @* 勤務属性コード(hidden) *@
+                                        @Html.HiddenFor(modelItem => Model.ForecastByWork[j].WorkTypeCd)
+
+                                        for (int k = 0; k < Model.WorkType.Count(); k++)
+                                        {
+                                            if (Model.ForecastByWork[j].WorkTypeCd.Equals(Model.WorkType[k].WorkTypeCd))
+                                            {
+                                                @* 勤務属性コード(hidden) *@
+                                                @Html.HiddenFor(modelItem => Model.WorkType[k].WorkTypeCd)
+                                                @* 勤務属性名(hidden) *@
+                                                @Html.HiddenFor(modelItem => Model.WorkType[k].WorkTypeName)
+                                                @* 勤務属性名 *@
+                                                <font size="3">
+                                                    @Html.Label(Model.WorkType[k].WorkTypeName, htmlAttributes: new { @style = "" })
+                                                </font>
+                                            }
+                                        }
+
+                                        @* 時限数/日 *@
+                                        <div class="form-group">
+                                            @Html.LabelFor(modelItem => Model.ForecastByWork[j].ClassQty, htmlAttributes: new { @class = "control-label col-md-2" })
+                                            <div class="col-md-10">
+                                                @Html.EditorFor(modelItem => Model.ForecastByWork[j].ClassQty, new { htmlAttributes = new { @class = "form-control" } })
+                                            </div>
+                                        </div>
+                                        @* 指導員数/日 *@
+                                        <div class="form-group">
+                                            @Html.LabelFor(modelItem => Model.ForecastByWork[j].InstructorAmt, htmlAttributes: new { @class = "control-label col-md-2" })
+                                            <div class="col-md-10">
+                                                @Html.EditorFor(modelItem => Model.ForecastByWork[j].InstructorAmt, new { htmlAttributes = new { @class = "form-control" } })
+                                            </div>
+                                        </div>
+                                        @* 出勤日数/月 *@
+                                        <div class="form-group">
+                                            @Html.LabelFor(modelItem => Model.ForecastByWork[j].WorkDays, htmlAttributes: new { @class = "control-label col-md-2" })
+                                            <div class="col-md-10">
+                                                @Html.EditorFor(modelItem => Model.ForecastByWork[j].WorkDays, new { htmlAttributes = new { @class = "form-control" } })
+                                            </div>
+                                        </div>
+                                        @* 教習外業務比率 *@
+                                        <div class="form-group">
+                                            @Html.LabelFor(modelItem => Model.ForecastByWork[j].NotDrivingRatio, htmlAttributes: new { @class = "control-label col-md-2" })
+                                            <div class="col-md-10">
+                                                @Html.EditorFor(modelItem => Model.ForecastByWork[j].NotDrivingRatio, new { htmlAttributes = new { @class = "form-control" } })
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            }
                         }
-                    }
-
-                    @* 時限数/日 *@
-                    <div class="form-group">
-                        @Html.LabelFor(modelItem => Model.ForecastByWork[i].ClassQty, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(modelItem => Model.ForecastByWork[i].ClassQty, new { htmlAttributes = new { @class = "form-control" } })
-                        </div>
-                    </div>
-                    @* 指導員数/日 *@
-                    <div class="form-group">
-                        @Html.LabelFor(modelItem => Model.ForecastByWork[i].InstructorAmt, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(modelItem => Model.ForecastByWork[i].InstructorAmt, new { htmlAttributes = new { @class = "form-control" } })
-                        </div>
-                    </div>
-                    @* 出勤日数/月 *@
-                    <div class="form-group">
-                        @Html.LabelFor(modelItem => Model.ForecastByWork[i].WorkDays, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(modelItem => Model.ForecastByWork[i].WorkDays, new { htmlAttributes = new { @class = "form-control" } })
-                        </div>
-                    </div>
-                    @* 教習外業務比率 *@
-                    <div class="form-group">
-                        @Html.LabelFor(modelItem => Model.ForecastByWork[i].NotDrivingRatio, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(modelItem => Model.ForecastByWork[i].NotDrivingRatio, new { htmlAttributes = new { @class = "form-control" } })
-                        </div>
                     </div>
                 }
             }
-        }
+        </div>
 
         @* 更新ボタン *@
         <div class="form-group">

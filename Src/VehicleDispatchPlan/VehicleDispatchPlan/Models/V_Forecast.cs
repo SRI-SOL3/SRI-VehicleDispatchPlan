@@ -19,7 +19,7 @@ namespace VehicleDispatchPlan.Models
     public class V_Forecast
     {
         /// <summary>受入予測</summary>
-        public T_Forecast Forecast { get; set; }
+        public List<T_Forecast> Forecast { get; set; }
 
         /// <summary>勤務属性別受入予測</summary>
         public List<T_ForecastByWork> ForecastByWork { get; set; }

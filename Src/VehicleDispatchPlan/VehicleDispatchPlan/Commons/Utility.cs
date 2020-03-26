@@ -48,15 +48,15 @@ namespace VehicleDispatchPlan.Commons
             if (forecastList == null)
             {
                 forecastList = new List<T_Forecast>();
-                for (int year = dateFrom.Year; year.CompareTo(dateTo.Year) <= 0; year++)
+                for (DateTime day = dateFrom; day.CompareTo(dateTo) < 0; day = day.AddMonths(1))
                 {
-                    for (int month = dateFrom.Month; month.CompareTo(dateTo.Month) <= 0; month++)
+                    string year = day.Year.ToString();
+                    string month = day.Month.ToString();
+
+                    T_Forecast forecastDb = db.Forecast.Where(x => x.Year.Equals(year) && x.Month.Equals(month)).FirstOrDefault();
+                    if (forecastDb != null)
                     {
-                        T_Forecast forecastDb = db.Forecast.Where(x => x.Year.Equals(year.ToString()) && x.Month.Equals(month.ToString())).FirstOrDefault();
-                        if (forecastDb != null)
-                        {
-                            forecastList.Add(forecastDb);
-                        }
+                        forecastList.Add(forecastDb);
                     }
                 }
             }
@@ -65,15 +65,15 @@ namespace VehicleDispatchPlan.Commons
             if (forecastByWorkList == null)
             {
                 forecastByWorkList = new List<T_ForecastByWork>();
-                for (int year = dateFrom.Year; year.CompareTo(dateTo.Year) <= 0; year++)
+                for (DateTime day = dateFrom; day.CompareTo(dateTo) < 0; day = day.AddMonths(1))
                 {
-                    for (int month = dateFrom.Month; month.CompareTo(dateTo.Month) <= 0; month++)
+                    string year = day.Year.ToString();
+                    string month = day.Month.ToString();
+
+                    List<T_ForecastByWork> forecastByWorkListDb = db.ForecastByWork.Where(x => x.Year.Equals(year) && x.Month.Equals(month)).ToList();
+                    if (forecastByWorkListDb.Count() != 0)
                     {
-                        List<T_ForecastByWork> forecastByWorkListDb = db.ForecastByWork.Where(x => x.Year.Equals(year.ToString()) && x.Month.Equals(month.ToString())).ToList();
-                        if (forecastByWorkListDb.Count() != 0)
-                        {
-                            forecastByWorkList.AddRange(forecastByWorkListDb);
-                        }
+                        forecastByWorkList.AddRange(forecastByWorkListDb);
                     }
                 }
             }
@@ -83,9 +83,6 @@ namespace VehicleDispatchPlan.Commons
             if (targetTrainee == null)
             {
                 // 対象期間の全データを取得
-                //traineeList = db.Trainee.Where(
-                //    x => Math.Abs(x.EntrancePlanDate.CompareTo(dateFrom) + x.EntrancePlanDate.CompareTo(dateTo)) < 2
-                //    || Math.Abs(x.GraduatePlanDate.CompareTo(dateFrom) + x.GraduatePlanDate.CompareTo(dateTo)) < 2).ToList();
                 traineeList = db.Trainee.Where(
                     x => x.EntrancePlanDate >= dateFrom && x.EntrancePlanDate <= dateTo
                     || x.GraduatePlanDate >= dateFrom && x.GraduatePlanDate <= dateTo).ToList();
@@ -96,10 +93,6 @@ namespace VehicleDispatchPlan.Commons
                 // 0以外の教習生IDを取得
                 List<int> traineeIdList = targetTrainee.Where(x => !x.TraineeId.Equals(0)).Select(x => x.TraineeId).ToList();
                 // 対象教習生ID以外を取得
-                //traineeList = db.Trainee.Where(
-                //    x => !traineeIdList.Contains(x.TraineeId)
-                //    && (Math.Abs(x.EntrancePlanDate.CompareTo(dateFrom) + x.EntrancePlanDate.CompareTo(dateTo)) < 2
-                //    || Math.Abs(x.GraduatePlanDate.CompareTo(dateFrom) + x.GraduatePlanDate.CompareTo(dateTo)) < 2)).ToList();
                 traineeList = db.Trainee.Where(
                     x => !traineeIdList.Contains(x.TraineeId)
                     && (x.EntrancePlanDate >= dateFrom && x.EntrancePlanDate <= dateTo
@@ -120,32 +113,32 @@ namespace VehicleDispatchPlan.Commons
             int mtClassQty = trainingCourse.Where(x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)).Select(x => x.PracticeClassQty).FirstOrDefault();
             int atClassQty = trainingCourse.Where(x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)).Select(x => x.PracticeClassQty).FirstOrDefault();
 
-            for (int year = dateFrom.Year; year.CompareTo(dateTo.Year) <= 0; year++)
+            for (DateTime day = dateFrom; day.CompareTo(dateTo) < 0; day = day.AddMonths(1))
             {
-                for (int month = dateFrom.Month; month.CompareTo(dateTo.Month) <= 0; month++)
-                {
-                    // 対象年月の受入予測情報を取得
-                    T_Forecast forecast = forecastList.Where(x => x.Year.Equals(year.ToString()) && x.Month.Equals(month.ToString())).FirstOrDefault();
-                    // 対象年月の勤務属性別受入予測情報を取得
-                    List<T_ForecastByWork> forecastByWork = forecastByWorkList.Where(x => x.Year.Equals(year.ToString()) && x.Month.Equals(month.ToString())).ToList();
+                string year = day.Year.ToString();
+                string month = day.Month.ToString();
 
-                    if (forecast != null && forecastByWork.Count() != 0)
-                    {
-                        // 1.実車総コマ数/月（時限数/日 * 指導員数/日 * 出勤日数/月 * (100 - 教習外業務比率) / 100）
-                        double totalClassQty = forecastByWork.Select(x => x.ClassQty * x.InstructorAmt * x.WorkDays * (100 - x.NotDrivingRatio) / 100).Sum();
-                        // 2.教習生一人当たりの実車コマ数
-                        double traineeClassQty = mtClassQty * forecast.MtRatio / 100 + atClassQty * (100 - forecast.MtRatio) / 100;
-                        // 3.月別受入最大数/月（合計・合宿・通学）を設定
-                        acceptTotalMaxAmt.Add(year + "-" + month, totalClassQty / traineeClassQty);
-                        acceptLodgingMaxAmt.Add(year + "-" + month, (totalClassQty / traineeClassQty) * forecast.LodgingRatio / 100);
-                        acceptCommutingMaxAmt.Add(year + "-" + month, (totalClassQty / traineeClassQty) * (100 - forecast.LodgingRatio) / 100);
-                    }
-                    else
-                    {
-                        acceptTotalMaxAmt.Add(year + "-" + month, 0);
-                        acceptLodgingMaxAmt.Add(year + "-" + month, 0);
-                        acceptCommutingMaxAmt.Add(year + "-" + month, 0);
-                    }
+                // 対象年月の受入予測情報を取得
+                T_Forecast forecast = forecastList.Where(x => x.Year.Equals(year) && x.Month.Equals(month)).FirstOrDefault();
+                // 対象年月の勤務属性別受入予測情報を取得
+                List<T_ForecastByWork> forecastByWork = forecastByWorkList.Where(x => x.Year.Equals(year) && x.Month.Equals(month)).ToList();
+
+                if (forecast != null && forecastByWork.Count() != 0)
+                {
+                    // 1.実車総コマ数/月（時限数/日 * 指導員数/日 * 出勤日数/月 * (100 - 教習外業務比率) / 100）
+                    double totalClassQty = forecastByWork.Select(x => x.ClassQty * x.InstructorAmt * x.WorkDays * (100 - x.NotDrivingRatio) / 100).Sum();
+                    // 2.教習生一人当たりの実車コマ数
+                    double traineeClassQty = mtClassQty * forecast.MtRatio / 100 + atClassQty * (100 - forecast.MtRatio) / 100;
+                    // 3.月別受入最大数/月（合計・合宿・通学）を設定
+                    acceptTotalMaxAmt.Add(year + "-" + month, totalClassQty / traineeClassQty);
+                    acceptLodgingMaxAmt.Add(year + "-" + month, (totalClassQty / traineeClassQty) * forecast.LodgingRatio / 100);
+                    acceptCommutingMaxAmt.Add(year + "-" + month, (totalClassQty / traineeClassQty) * (100 - forecast.LodgingRatio) / 100);
+                }
+                else
+                {
+                    acceptTotalMaxAmt.Add(year + "-" + month, 0);
+                    acceptLodgingMaxAmt.Add(year + "-" + month, 0);
+                    acceptCommutingMaxAmt.Add(year + "-" + month, 0);
                 }
             }
 
@@ -191,49 +184,31 @@ namespace VehicleDispatchPlan.Commons
                 data.AcceptCommutingSumAmt = acceptCommutingSumAmt;
 
                 // 合宿在籍数(MT-一段階)（合宿かつ、MTかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
-                //data.LodgingMtFstRegAmt = traineeList.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
-                //    && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                //    && x.EntrancePlanDate.CompareTo(data.Date) <= 0 && x.TmpLicencePlanDate.CompareTo(data.Date) > 0).Count();
                 data.LodgingMtFstRegAmt = traineeList.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
                     && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                     && x.EntrancePlanDate <= data.Date && x.TmpLicencePlanDate > data.Date).Count();
 
                 // 合宿在籍数(MT-二段階)（合宿かつ、MTかつ、仮免予定日が対象日以上かつ、卒業予定日予定日が対象日以下）
-                //data.LodgingMtSndRegAmt = traineeList.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
-                //    && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                //    && x.TmpLicencePlanDate.CompareTo(data.Date) <= 0 && x.GraduatePlanDate.CompareTo(data.Date) >= 0).Count();
                 data.LodgingMtSndRegAmt = traineeList.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
                     && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                     && x.TmpLicencePlanDate <= data.Date && x.GraduatePlanDate >= data.Date).Count();
 
                 // 合宿在籍数(AT-一段階)（合宿かつ、ATかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
-                //data.LodgingAtFstRegAmt = traineeList.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
-                //    && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                //    && x.EntrancePlanDate.CompareTo(data.Date) <= 0 && x.TmpLicencePlanDate.CompareTo(data.Date) > 0).Count();
                 data.LodgingAtFstRegAmt = traineeList.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
                     && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                     && x.EntrancePlanDate <= data.Date && x.TmpLicencePlanDate > data.Date).Count();
 
                 // 合宿在籍数(AT-二段階)（合宿かつ、ATかつ、仮免予定日が対象日以上かつ、卒業予定日予定日が対象日以下）
-                //data.LodgingAtSndRegAmt = traineeList.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
-                //    && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                //    && x.TmpLicencePlanDate.CompareTo(data.Date) <= 0 && x.GraduatePlanDate.CompareTo(data.Date) >= 0).Count();
                 data.LodgingAtSndRegAmt = traineeList.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
                     && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                     && x.TmpLicencePlanDate <= data.Date && x.GraduatePlanDate >= data.Date).Count();
 
                 // 通学在籍数(MT)（通学かつ、MTかつ、入校予定日が対象日以上かつ、卒業予定日予定日が対象日以下）
-                //data.CommutingMtRegAmt = traineeList.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_COMMUTING)
-                //    && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                //    && x.EntrancePlanDate.CompareTo(data.Date) <= 0 && x.GraduatePlanDate.CompareTo(data.Date) >= 0).Count();
                 data.CommutingMtRegAmt = traineeList.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_COMMUTING)
                     && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                     && x.EntrancePlanDate <= data.Date && x.GraduatePlanDate >= data.Date).Count();
 
                 // 通学在籍数(AT)（通学かつ、ATかつ、入校予定日が対象日以上かつ、卒業予定日予定日が対象日以下）
-                //data.CommutingAtRegAmt = traineeList.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_COMMUTING)
-                //    && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                //    && x.EntrancePlanDate.CompareTo(data.Date) <= 0 && x.GraduatePlanDate.CompareTo(data.Date) >= 0).Count();
                 data.CommutingAtRegAmt = traineeList.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_COMMUTING)
                     && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                     && x.EntrancePlanDate <= data.Date && x.GraduatePlanDate >= data.Date).Count();
@@ -242,55 +217,31 @@ namespace VehicleDispatchPlan.Commons
                 if (targetTrainee != null)
                 {
                     // 合宿在籍数(MT-一段階)
-                    //data.LodgingMtFstRegAmt = data.LodgingMtFstRegAmt
-                    //    + targetTrainee.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
-                    //        && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                    //        && x.EntrancePlanDate.CompareTo(data.Date) <= 0 && x.TmpLicencePlanDate.CompareTo(data.Date) > 0).Count();
                     data.LodgingMtFstRegAmt = data.LodgingMtFstRegAmt
                         + targetTrainee.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
                             && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                             && x.EntrancePlanDate <= data.Date && x.TmpLicencePlanDate > data.Date).Count();
                     // 合宿在籍数(MT-二段階)
-                    //data.LodgingMtSndRegAmt = data.LodgingMtSndRegAmt
-                    //    + targetTrainee.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
-                    //        && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                    //        && x.TmpLicencePlanDate.CompareTo(data.Date) <= 0 && x.GraduatePlanDate.CompareTo(data.Date) >= 0).Count();
                     data.LodgingMtSndRegAmt = data.LodgingMtSndRegAmt
                         + targetTrainee.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
                             && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                             && x.TmpLicencePlanDate <= data.Date && x.GraduatePlanDate >= data.Date).Count();
                     // 合宿在籍数(AT-一段階)
-                    //data.LodgingAtFstRegAmt = data.LodgingAtFstRegAmt
-                    //    + targetTrainee.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
-                    //        && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                    //        && x.EntrancePlanDate.CompareTo(data.Date) <= 0 && x.TmpLicencePlanDate.CompareTo(data.Date) > 0).Count();
                     data.LodgingAtFstRegAmt = data.LodgingAtFstRegAmt
                         + targetTrainee.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
                             && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                             && x.EntrancePlanDate <= data.Date && x.TmpLicencePlanDate > data.Date).Count();
                     // 合宿在籍数(AT-二段階)
-                    //data.LodgingAtSndRegAmt = data.LodgingAtSndRegAmt
-                    //    + targetTrainee.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
-                    //        && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                    //        && x.TmpLicencePlanDate.CompareTo(data.Date) <= 0 && x.GraduatePlanDate.CompareTo(data.Date) >= 0).Count();
                     data.LodgingAtSndRegAmt = data.LodgingAtSndRegAmt
                         + targetTrainee.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_LODGING)
                             && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                             && x.TmpLicencePlanDate <= data.Date && x.GraduatePlanDate >= data.Date).Count();
                     // 通学在籍数(MT)
-                    //data.CommutingMtRegAmt = data.CommutingMtRegAmt
-                    //    + targetTrainee.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_COMMUTING)
-                    //        && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                    //        && x.EntrancePlanDate.CompareTo(data.Date) <= 0 && x.GraduatePlanDate.CompareTo(data.Date) >= 0).Count();
                     data.CommutingMtRegAmt = data.CommutingMtRegAmt
                         + targetTrainee.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_COMMUTING)
                             && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                             && x.EntrancePlanDate <= data.Date && x.GraduatePlanDate >= data.Date).Count();
                     // 通学在籍数(AT)
-                    //data.CommutingAtRegAmt = data.CommutingAtRegAmt
-                    //    + targetTrainee.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_COMMUTING)
-                    //        && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                    //        && x.EntrancePlanDate.CompareTo(data.Date) <= 0 && x.GraduatePlanDate.CompareTo(data.Date) >= 0).Count();
                     data.CommutingAtRegAmt = data.CommutingAtRegAmt
                         + targetTrainee.Where(x => x.AttendTypeCd.Equals(AppConstant.CD_ATTEND_TYPE_COMMUTING)
                             && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
