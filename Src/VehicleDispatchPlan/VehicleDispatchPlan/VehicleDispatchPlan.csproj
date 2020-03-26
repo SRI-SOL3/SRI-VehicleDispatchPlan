@@ -195,6 +195,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Views\Forecast\Edit.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -206,7 +207,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Forecast\Edit.cshtml" />
     <Content Include="Views\Lodging\List.cshtml" />
     <Content Include="Views\Trainee\Delete.cshtml" />
     <Content Include="Views\Trainee\Details.cshtml" />
@@ -215,7 +215,7 @@
     <Content Include="Views\Trainee\Regist.cshtml" />
     <Content Include="Views\Home\Menu.cshtml" />
     <Content Include="Views\Calendar\Import.cshtml" />
-    <Content Include="Views\Calendar\Edit.cshtml" />
+    <Content Include="Views\Calendar\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
