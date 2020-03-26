@@ -28,7 +28,7 @@ namespace VehicleDispatchPlan_Dev.Controllers
         private MyDatabaseContext db = new MyDatabaseContext();
 
         // GET: Calendar
-        public ActionResult Edit(string SelectYear, string SelectMonth)
+        public ActionResult List(string SelectYear, string SelectMonth)
         {
             List<M_EntGrdCalendar> calendarList = new List<M_EntGrdCalendar>();
             // 年、月を指定して取得
@@ -47,7 +47,7 @@ namespace VehicleDispatchPlan_Dev.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(string cmd, [Bind(Include = "TrainingCourseCd,EntrancePlanDate,TmpLicencePlanDate,GraduatePlanDate")] List<M_EntGrdCalendar> calendarList)
+        public ActionResult List(string cmd, [Bind(Include = "TrainingCourseCd,EntrancePlanDate,TmpLicencePlanDate,GraduatePlanDate")] List<M_EntGrdCalendar> calendarList)
         {
             Trace.WriteLine("POST /Trainee/Edit");
 
