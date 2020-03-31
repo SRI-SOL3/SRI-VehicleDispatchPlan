@@ -41,6 +41,7 @@ namespace VehicleDispatchPlan.Models
 
         /// <summary>指導員名</summary>
         [Required]
+        [DisplayName("指導員名")]
         public string TrainerName { get; set; }
 
         /// <summary>コマ数</summary>
