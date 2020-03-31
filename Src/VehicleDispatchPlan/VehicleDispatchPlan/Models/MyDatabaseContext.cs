@@ -30,6 +30,10 @@ namespace VehicleDispatchPlan.Models
         public System.Data.Entity.DbSet<Models.T_Forecast> Forecast { get; set; }
         // 勤務属性別受入予測
         public System.Data.Entity.DbSet<Models.T_ForecastByWork> ForecastByWork { get; set; }
+        // 日別コマ数
+        public System.Data.Entity.DbSet<Models.T_DailyClasses> DailyClasses { get; set; }
+        // 指導員別コマ数
+        public System.Data.Entity.DbSet<Models.T_DailyClassesByTrainer> DailyClassesByTrainer { get; set; }
         // コードマスタ
         public System.Data.Entity.DbSet<Models.M_CodeMaster> CodeMaster { get; set; }
         // 勤務属性
