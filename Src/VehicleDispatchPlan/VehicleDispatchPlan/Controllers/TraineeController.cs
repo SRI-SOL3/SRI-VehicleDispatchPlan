@@ -183,6 +183,10 @@ namespace VehicleDispatchPlan.Controllers
                         {
                             // グループIDを設定
                             trainee.GroupId = groupId;
+                            // マスタは登録しないため、データをクリア（ＴＯＤＯ：他に良い方法があるか…？）
+                            trainee.AttendType = null;
+                            trainee.TrainingCourse = null;
+                            trainee.LodgingFacility = null;
                             // 登録処理
                             db.Trainee.Add(trainee);
                         }
@@ -369,6 +373,10 @@ namespace VehicleDispatchPlan.Controllers
             // 更新ボタンが押下された場合
             else if ("更新".Equals(cmd))
             {
+                // マスタは更新しないため、データをクリア（ＴＯＤＯ：他に良い方法があるか…？）
+                traineeEdt.Trainee.AttendType = null;
+                traineeEdt.Trainee.TrainingCourse = null;
+                traineeEdt.Trainee.LodgingFacility = null;
                 // 更新処理
                 db.Entry(traineeEdt.Trainee).State = EntityState.Modified;
                 db.SaveChanges();
