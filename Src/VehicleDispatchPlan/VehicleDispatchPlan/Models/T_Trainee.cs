@@ -37,16 +37,13 @@ namespace VehicleDispatchPlan.Models
             this.GroupId = trainee.GroupId;
             this.TraineeName = trainee.TraineeName;
             this.AttendTypeCd = trainee.AttendTypeCd;
-            this.AttendTypeName = trainee.AttendTypeName;
             this.SelectAttendType = trainee.SelectAttendType;
             this.TrainingCourseCd = trainee.TrainingCourseCd;
-            this.TrainingCourseName = trainee.TrainingCourseName;
             this.SelectTrainingCourse = trainee.SelectTrainingCourse;
             this.EntrancePlanDate = trainee.EntrancePlanDate;
             this.TmpLicencePlanDate = trainee.TmpLicencePlanDate;
             this.GraduatePlanDate = trainee.GraduatePlanDate;
             this.LodgingCd = trainee.LodgingCd;
-            this.LodgingName = trainee.LodgingName;
             this.SelectLodging = trainee.SelectLodging;
             this.AgentName = trainee.AgentName;
         }
@@ -72,10 +69,9 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("通学種別")]
         public string AttendTypeCd { get; set; }
 
-        /// <summary>[非DB項目]通学種別名<summary>
-        [NotMapped]
-        [DisplayName("通学種別")]
-        public string AttendTypeName { get; set; }
+        /// <summary>通学種別マスタ</summary>
+        [ForeignKey("AttendTypeCd")]
+        public virtual M_AttendType AttendType { get; set; }
 
         /// <summary>[非DB項目]通学種別選択肢<summary>
         [NotMapped]
@@ -86,10 +82,9 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("教習コース")]
         public string TrainingCourseCd { get; set;}
 
-        /// <summary>[非DB項目]教習コース名<summary>
-        [NotMapped]
-        [DisplayName("教習コース")]
-        public string TrainingCourseName { get; set; }
+        /// <summary>教習コースマスタ</summary>
+        [ForeignKey("TrainingCourseCd")]
+        public virtual M_TrainingCourse TrainingCourse { get; set; }
 
         /// <summary>[非DB項目]教習コース選択肢<summary>
         [NotMapped]
@@ -120,10 +115,9 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("宿泊施設")]
         public string LodgingCd { get; set; }
 
-        /// <summary>[非DB項目]宿泊施設名<summary>
-        [NotMapped]
-        [DisplayName("宿泊施設")]
-        public string LodgingName { get; set; }
+        /// <summary>宿泊施設マスタ</summary>
+        [ForeignKey("LodgingCd")]
+        public virtual M_LodgingFacility LodgingFacility { get; set; }
 
         /// <summary>[非DB項目]宿泊施設選択肢<summary>
         [NotMapped]

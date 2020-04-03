@@ -1,4 +1,4 @@
-﻿@model VehicleDispatchPlan.Models.V_TraineeRef
+﻿@model VehicleDispatchPlan.Models.T_Trainee
 
 @{
     ViewBag.Title = "教習生削除";
@@ -26,17 +26,17 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.AttendTypeName)
+            @Html.DisplayNameFor(model => model.AttendType.AttendTypeName)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.AttendTypeName)
+            @Html.DisplayFor(model => model.AttendType.AttendTypeName)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.TrainingCourseName)
+            @Html.DisplayNameFor(model => model.TrainingCourse.TrainingCourseName)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.TrainingCourseName)
+            @Html.DisplayFor(model => model.TrainingCourse.TrainingCourseName)
         </dd>
 
         <dt>
@@ -54,10 +54,10 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.LodgingName)
+            @Html.DisplayNameFor(model => model.LodgingFacility.LodgingName)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.LodgingName)
+            @Html.DisplayFor(model => model.LodgingFacility.LodgingName)
         </dd>
 
         <dt>

@@ -1,4 +1,4 @@
-﻿@model PagedList.IPagedList<VehicleDispatchPlan.Models.V_TraineeRef>
+﻿@model PagedList.IPagedList<VehicleDispatchPlan.Models.T_Trainee>
 @using PagedList.Mvc;
 @{
     ViewBag.Title = "教習生管理";
@@ -28,10 +28,10 @@
             @Html.DisplayNameFor(model => model.FirstOrDefault().TraineeName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().AttendTypeName)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().AttendType.AttendTypeName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().TrainingCourseName)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().TrainingCourse.TrainingCourseName)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.FirstOrDefault().EntrancePlanDate)
@@ -55,10 +55,10 @@
                 @Html.DisplayFor(modelItem => item.TraineeName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AttendTypeName)
+                @Html.DisplayFor(modelItem => item.AttendType.AttendTypeName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TrainingCourseName)
+                @Html.DisplayFor(modelItem => item.TrainingCourse.TrainingCourseName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.EntrancePlanDate)
