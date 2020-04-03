@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 /**
@@ -21,14 +22,17 @@ namespace VehicleDispatchPlan.Models
         /// <summary>教習コースコード</summary>
         [Key]
         [Required]
+        [DisplayName("教習コースコード")]
         public string TrainingCourseCd { get; set; }
 
         /// <summary>教習コース名</summary>
         [Required]
+        [DisplayName("教習コース")]
         public string TrainingCourseName { get; set; }
 
         /// <summary>実車コマ数</summary>
         [Required]
+        [DisplayName("実車コマ数")]
         public int PracticeClassQty { get; set; }
     }
 }

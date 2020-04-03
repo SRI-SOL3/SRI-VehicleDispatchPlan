@@ -40,8 +40,11 @@ namespace VehicleDispatchPlan.Controllers
             ViewBag.PlanDateFrom = planDateFrom;
             ViewBag.PlanDateTo = planDateTo;
 
+            DateTime dateFrom = planDateFrom ?? new DateTime(0001, 01, 01);
+            DateTime dateTo = planDateTo ?? new DateTime(9999, 12, 31);
+
             // 教習生一覧情報を取得
-            List<V_TraineeRef> tarineeList = this.GetTraineeList(planDateFrom, planDateTo);
+            List<T_Trainee> tarineeList = db.Trainee.Where(x => dateFrom <= x.EntrancePlanDate && x.EntrancePlanDate <= dateTo).ToList();
 
             int pageSize = 20;
             int pageNumber = (page ?? 1);
@@ -65,7 +68,11 @@ namespace VehicleDispatchPlan.Controllers
             }
 
             // 教習生情報を取得
-            V_TraineeRef trainee = this.GetTraineeInfo(id);
+            T_Trainee trainee = db.Trainee.Find(id);
+            if (trainee == null)
+            {
+                return HttpNotFound();
+            }
 
             return View(trainee);
         }
@@ -284,7 +291,11 @@ namespace VehicleDispatchPlan.Controllers
             V_TraineeEdt traineeEdt = new V_TraineeEdt();
 
             // DBから教習生情報を取得
-            traineeEdt.Trainee = db.Trainee.Where(x => x.TraineeId.Equals(id)).FirstOrDefault();
+            traineeEdt.Trainee = db.Trainee.Find(id);
+            if (traineeEdt.Trainee == null)
+            {
+                return HttpNotFound();
+            }
 
             // 編集モードを設定
             traineeEdt.EditMode = AppConstant.EditMode.Edit;
@@ -429,8 +440,9 @@ namespace VehicleDispatchPlan.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             // 教習生情報を取得
-            V_TraineeRef trainee = this.GetTraineeInfo(id);
+            T_Trainee trainee = db.Trainee.Find(id);
             if (trainee == null)
             {
                 return HttpNotFound();
@@ -461,120 +473,29 @@ namespace VehicleDispatchPlan.Controllers
         }
 
         /// <summary>
-        /// 教習生一覧取得
-        /// </summary>
-        /// <param name="planDateFrom">入校予定日From</param>
-        /// <param name="planDateTo">入校予定日To</param>
-        /// <returns>教習生一覧</returns>
-        private List<V_TraineeRef> GetTraineeList(DateTime? planDateFrom, DateTime? planDateTo)
-        {
-            bool whereFlg = false;
-
-            string sql = "SELECT "
-                + "  Trainee.TraineeId "
-                + "  , Trainee.GroupId "
-                + "  , Trainee.TraineeName "
-                + "  , Trainee.AttendTypeCd "
-                + "  , AttendType.Value AS AttendTypeName "
-                + "  , Trainee.TrainingCourseCd "
-                + "  , TrainingCourse.TrainingCourseName "
-                + "  , Trainee.EntrancePlanDate "
-                + "  , Trainee.TmpLicencePlanDate "
-                + "  , Trainee.GraduatePlanDate "
-                + "  , Trainee.LodgingCd "
-                + "  , LodgingFacility.LodgingName "
-                + "  , Trainee.AgentName "
-                + "FROM "
-                + "  T_Trainee Trainee "
-                + "  LEFT OUTER JOIN M_CodeMaster AttendType "
-                + "    ON AttendType.Div = '01' "
-                + "    AND Trainee.AttendTypeCd = AttendType.Cd "
-                + "  LEFT OUTER JOIN M_TrainingCourse TrainingCourse "
-                + "    ON Trainee.TrainingCourseCd = TrainingCourse.TrainingCourseCd "
-                + "  LEFT OUTER JOIN M_LodgingFacility LodgingFacility "
-                + "    ON Trainee.LodgingCd = LodgingFacility.LodgingCd ";
-
-            if (planDateFrom != null)
-            {
-                sql = sql + "WHERE Trainee.EntrancePlanDate >= '" + planDateFrom + "'";
-                whereFlg = true;
-            }
-
-            if (planDateTo != null)
-            {
-                sql = sql + (whereFlg ? " AND " : " WHERE ") + "Trainee.EntrancePlanDate <= '" + planDateTo + "'";
-            }
-
-            return db.Database.SqlQuery<V_TraineeRef>(sql).ToList();
-        }
-
-        /// <summary>
-        /// 教習生情報取得
-        /// </summary>
-        /// <param name="id">教習生ID</param>
-        /// <returns>教習生情報</returns>
-        private V_TraineeRef GetTraineeInfo(int? id)
-        {
-            string sql = "SELECT "
-                + "  Trainee.TraineeId "
-                + "  , Trainee.GroupId "
-                + "  , Trainee.TraineeName "
-                + "  , Trainee.AttendTypeCd "
-                + "  , AttendType.Value AS AttendTypeName "
-                + "  , Trainee.TrainingCourseCd "
-                + "  , TrainingCourse.TrainingCourseName "
-                + "  , Trainee.EntrancePlanDate "
-                + "  , Trainee.TmpLicencePlanDate "
-                + "  , Trainee.GraduatePlanDate "
-                + "  , Trainee.LodgingCd "
-                + "  , LodgingFacility.LodgingName "
-                + "  , Trainee.AgentName "
-                + "FROM "
-                + "  T_Trainee Trainee "
-                + "  LEFT OUTER JOIN M_CodeMaster AttendType "
-                + "    ON AttendType.Div = '01' "
-                + "    AND Trainee.AttendTypeCd = AttendType.Cd "
-                + "  LEFT OUTER JOIN M_TrainingCourse TrainingCourse "
-                + "    ON Trainee.TrainingCourseCd = TrainingCourse.TrainingCourseCd "
-                + "  LEFT OUTER JOIN M_LodgingFacility LodgingFacility "
-                + "    ON Trainee.LodgingCd = LodgingFacility.LodgingCd "
-                + "WHERE "
-                + "  Trainee.TraineeId = " + id;
-
-            return db.Database.SqlQuery<V_TraineeRef>(sql).ToList().FirstOrDefault();
-        }
-
-        /// <summary>
         /// ドロップダウンリストの選択肢を設定
         /// </summary>
         private void SetSelectItem(V_TraineeEdt traineeEdt)
         {
-            // 通学種別を取得
-            List<M_CodeMaster> attendType = db.CodeMaster.Where(x => AppConstant.DIV_ATTEND_TYPE.Equals(x.Div)).ToList();
-            // 教習コースマスタ取得
-            List<M_TrainingCourse> trainingCourse = db.TrainingCourse.ToList();
-            // 宿泊施設マスタ取得
-            List<M_LodgingFacility> lodgingFacility = db.LodgingFacility.ToList();
-
             // 編集モードの場合
             if (AppConstant.EditMode.Edit.Equals(traineeEdt.EditMode))
             {
                 // 通学種別の選択肢設定
-                traineeEdt.Trainee.SelectAttendType = new SelectList(attendType, "Cd", "Value", traineeEdt.Trainee.AttendTypeCd);
+                traineeEdt.Trainee.SelectAttendType = new SelectList(db.AttendType.ToList(), "AttendTypeCd", "AttendTypeName", traineeEdt.Trainee.AttendTypeCd);
                 // 教習コースの選択肢設定
-                traineeEdt.Trainee.SelectTrainingCourse = new SelectList(trainingCourse, "TrainingCourseCd", "TrainingCourseName", traineeEdt.Trainee.TrainingCourseCd);
+                traineeEdt.Trainee.SelectTrainingCourse = new SelectList(db.TrainingCourse.ToList(), "TrainingCourseCd", "TrainingCourseName", traineeEdt.Trainee.TrainingCourseCd);
                 // 宿泊施設の選択肢設定
-                traineeEdt.Trainee.SelectLodging = new SelectList(lodgingFacility, "LodgingCd", "LodgingName", traineeEdt.Trainee.LodgingCd);
+                traineeEdt.Trainee.SelectLodging = new SelectList(db.LodgingFacility.ToList(), "LodgingCd", "LodgingName", traineeEdt.Trainee.LodgingCd);
             }
             // 確認モードの場合
             else
             {
-                // 通学種別名を設定
-                traineeEdt.Trainee.AttendTypeName = attendType.Where(x => x.Cd.Equals(traineeEdt.Trainee.AttendTypeCd)).Select(x => x.Value).FirstOrDefault();
-                // 教習コース名を設定
-                traineeEdt.Trainee.TrainingCourseName = trainingCourse.Where(x => x.TrainingCourseCd.Equals(traineeEdt.Trainee.TrainingCourseCd)).Select(x => x.TrainingCourseName).FirstOrDefault();
-                // 宿泊施設名を設定
-                traineeEdt.Trainee.LodgingName = lodgingFacility.Where(x => x.LodgingCd.Equals(traineeEdt.Trainee.LodgingCd)).Select(x => x.LodgingName).FirstOrDefault();
+                // 通学種別を設定
+                traineeEdt.Trainee.AttendType = db.AttendType.Find(traineeEdt.Trainee.AttendTypeCd);
+                // 教習コースを設定
+                traineeEdt.Trainee.TrainingCourse = db.TrainingCourse.Find(traineeEdt.Trainee.TrainingCourseCd);
+                // 宿泊施設を設定
+                traineeEdt.Trainee.LodgingFacility = db.LodgingFacility.Find(traineeEdt.Trainee.LodgingCd);
             }
         }
 
@@ -583,24 +504,17 @@ namespace VehicleDispatchPlan.Controllers
         /// </summary>
         private void SetSelectItem(V_TraineeReg traineeReg)
         {
-            // 通学種別を取得
-            List<M_CodeMaster> attendType = db.CodeMaster.Where(x => AppConstant.DIV_ATTEND_TYPE.Equals(x.Div)).ToList();
-            // 教習コースマスタ取得
-            List<M_TrainingCourse> trainingCourse = db.TrainingCourse.ToList();
-            // 宿泊施設マスタ取得
-            List<M_LodgingFacility> lodgingFacility = db.LodgingFacility.ToList();
-
             // 編集モードの場合
             if (AppConstant.EditMode.Edit.Equals(traineeReg.EditMode))
             {
                 for (int i = 0; i < traineeReg.TraineeList.Count(); i++)
                 {
                     // 通学種別の選択肢設定
-                    traineeReg.TraineeList[i].SelectAttendType = new SelectList(attendType, "Cd", "Value", traineeReg.TraineeList[i].AttendTypeCd);
+                    traineeReg.TraineeList[i].SelectAttendType = new SelectList(db.AttendType.ToList(), "AttendTypeCd", "AttendTypeName", traineeReg.TraineeList[i].AttendTypeCd);
                     // 教習コースの選択肢設定
-                    traineeReg.TraineeList[i].SelectTrainingCourse = new SelectList(trainingCourse, "TrainingCourseCd", "TrainingCourseName", traineeReg.TraineeList[i].TrainingCourseCd);
+                    traineeReg.TraineeList[i].SelectTrainingCourse = new SelectList(db.TrainingCourse.ToList(), "TrainingCourseCd", "TrainingCourseName", traineeReg.TraineeList[i].TrainingCourseCd);
                     // 宿泊施設の選択肢設定
-                    traineeReg.TraineeList[i].SelectLodging = new SelectList(lodgingFacility, "LodgingCd", "LodgingName", traineeReg.TraineeList[i].LodgingCd);
+                    traineeReg.TraineeList[i].SelectLodging = new SelectList(db.LodgingFacility.ToList(), "LodgingCd", "LodgingName", traineeReg.TraineeList[i].LodgingCd);
                 }
             }
             // 確認モードの場合
@@ -609,11 +523,11 @@ namespace VehicleDispatchPlan.Controllers
                 for (int i = 0; i < traineeReg.TraineeList.Count(); i++)
                 {
                     // 通学種別名を設定
-                    traineeReg.TraineeList[i].AttendTypeName = attendType.Where(x => x.Cd.Equals(traineeReg.TraineeList[i].AttendTypeCd)).Select(x => x.Value).FirstOrDefault();
+                    traineeReg.TraineeList[i].AttendType = db.AttendType.Find(traineeReg.TraineeList[i].AttendTypeCd);
                     // 教習コース名を設定
-                    traineeReg.TraineeList[i].TrainingCourseName = trainingCourse.Where(x => x.TrainingCourseCd.Equals(traineeReg.TraineeList[i].TrainingCourseCd)).Select(x => x.TrainingCourseName).FirstOrDefault();
+                    traineeReg.TraineeList[i].TrainingCourse = db.TrainingCourse.Find(traineeReg.TraineeList[i].TrainingCourseCd);
                     // 宿泊施設名を設定
-                    traineeReg.TraineeList[i].LodgingName = lodgingFacility.Where(x => x.LodgingCd.Equals(traineeReg.TraineeList[i].LodgingCd)).Select(x => x.LodgingName).FirstOrDefault();
+                    traineeReg.TraineeList[i].LodgingFacility = db.LodgingFacility.Find(traineeReg.TraineeList[i].LodgingCd);
                 }
             }
         }

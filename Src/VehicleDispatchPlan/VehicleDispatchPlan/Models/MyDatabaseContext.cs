@@ -35,7 +35,7 @@ namespace VehicleDispatchPlan.Models
         // 指導員別コマ数
         public System.Data.Entity.DbSet<Models.T_DailyClassesByTrainer> DailyClassesByTrainer { get; set; }
         // コードマスタ
-        public System.Data.Entity.DbSet<Models.M_CodeMaster> CodeMaster { get; set; }
+        public System.Data.Entity.DbSet<Models.M_AttendType> AttendType { get; set; }
         // 勤務属性
         public System.Data.Entity.DbSet<Models.M_WorkType> WorkType { get; set; }
         // 教習コース
