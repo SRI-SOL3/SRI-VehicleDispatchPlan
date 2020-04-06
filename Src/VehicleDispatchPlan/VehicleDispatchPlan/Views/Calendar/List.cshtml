@@ -10,17 +10,17 @@
     @Html.ActionLink("CSVからインポート", "Import")
 </p>
 
-@using (Html.BeginForm(null, null, FormMethod.Get))
+@using (Html.BeginForm("List", "Calendar", FormMethod.Get))
 {
     <div class="form-inline">
         入校年月:
         @* 年 *@
         <div class="form-group" style="margin-left:10px;">
-            @Html.DropDownList("SelectYear", (IEnumerable<SelectListItem>)ViewBag.SelectYear, "対象年", new { htmlAttributes = new { @class = "form-control" } })
+            @Html.DropDownList("selectYear", (IEnumerable<SelectListItem>)ViewBag.SelectYear, "対象年", new { htmlAttributes = new { @class = "form-control" } })
         </div>
         @* 月 *@
         <div class="form-group" style="margin-left:10px;">
-            @Html.DropDownList("SelectMonth", new SelectListItem[]{
+            @Html.DropDownList("selectMonth", new SelectListItem[]{
                     new SelectListItem() { Value="1", Text="1" },
                     new SelectListItem() { Value="2", Text="2" },
                     new SelectListItem() { Value="3", Text="3" },
@@ -47,7 +47,7 @@
 
 <hr />
 
-@using (Html.BeginForm(null, null, FormMethod.Post))
+@using (Html.BeginForm("Calendar", "List", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })

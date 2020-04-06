@@ -14,17 +14,36 @@ namespace VehicleDispatchPlan.Constants
     /// </summary>
     public class AppConstant
     {
-        /// <summary>区分_通学種別</summary>
-        public const string DIV_ATTEND_TYPE = "01";
-        /// <summary>ｺｰﾄﾞ_合宿</summary>
-        public const string CD_ATTEND_TYPE_LODGING = "01";
-        /// <summary>ｺｰﾄﾞ_通い</summary>
-        public const string CD_ATTEND_TYPE_COMMUTING = "02";
+        /// <summary>通学種別コード_合宿</summary>
+        public const string ATTEND_TYPE_CD_LODGING = "01";
+        /// <summary>通学種別コード_通い</summary>
+        public const string ATTEND_TYPE_CD_COMMUTING = "02";
 
         /// <summary>教習コースコード_MT</summary>
         public const string TRAINING_COURSE_CD_MT = "01";
         /// <summary>教習コースコード_AT</summary>
         public const string TRAINING_COURSE_CD_AT = "02";
+
+        /// <summary>コマンド_確認</summary>
+        public const string CMD_CONFIRM = "確認";
+        /// <summary>コマンド_更新</summary>
+        public const string CMD_UPDATE = "更新";
+        /// <summary>コマンド_登録</summary>
+        public const string CMD_REGIST = "登録";
+        /// <summary>コマンド_戻る</summary>
+        public const string CMD_RETURN = "戻る";
+        /// <summary>コマンド_追加</summary>
+        public const string CMD_ADD = "追加";
+        /// <summary>コマンド_削除</summary>
+        public const string CMD_REMOVE = "削除";
+        /// <summary>コマンド_仮免・卒業日設定</summary>
+        public const string CMD_SET_TMP_GRD = "仮免・卒業日設定";
+        /// <summary>コマンド_読込</summary>
+        public const string CMD_READ = "読込";
+        /// <summary>コマンド_検索</summary>
+        public const string CMD_SEARCH = "検索";
+        /// <summary>コマンド_再表示</summary>
+        public const string CMD_REDISPLAY = "再表示";
 
         /// <summary>系統_総受入残数</summary>
         public const string SERIES_TOTAL_REM_AMT = "総受入残数";
@@ -32,12 +51,18 @@ namespace VehicleDispatchPlan.Constants
         public const string SERIES_LODGING_REM_AMT = "合宿受入残数";
         /// <summary>系統_通学受入残数</summary>
         public const string SERIES_COMMUTING_REM_AMT = "通学受入残数";
-        /// <summary>系統_総在籍数</summary>
-        public const string SERIES_TOTAL_REG_AMT = "総在籍数";
-        /// <summary>系統_合宿在籍数</summary>
-        public const string SERIES_LODGING_REG_AMT = "合宿在籍数";
-        /// <summary>系統_通学在籍数</summary>
-        public const string SERIES_COMMUTING_REG_AMT = "通学在籍数";
+        /// <summary>系統_受入可能数</summary>
+        public const string SERIES_TOTAL_MAX_AMT = "総在籍可能数";
+        /// <summary>系統_合宿受入可能数</summary>
+        public const string SERIES_LODGING_MAX_AMT = "合宿在籍可能数";
+        /// <summary>系統_通学受入可能数</summary>
+        public const string SERIES_COMMUTING_MAX_AMT = "通学在籍可能数";
+        /// <summary>系統_総在籍見込数</summary>
+        public const string SERIES_TOTAL_REG_AMT = "総在籍見込数";
+        /// <summary>系統_合宿在見込籍数</summary>
+        public const string SERIES_LODGING_REG_AMT = "合宿在籍見込数";
+        /// <summary>系統_通学在見込籍数</summary>
+        public const string SERIES_COMMUTING_REG_AMT = "通学在籍見込数";
 
         /// <summary>編集モード</summary>
         public enum EditMode

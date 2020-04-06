@@ -4,14 +4,14 @@
     ViewBag.Title = "教習生管理";
 }
 
-<h2>教習生管理</h2>
+<h2>@ViewBag.Title</h2>
 
 @using (Html.BeginForm())
 {
     <p>
         入校予定日: @Html.TextBox("PlanDateFrom", String.Format("{0:d}", (DateTime?)ViewBag.PlanDateFrom), new { @class = "datefield", type = "date" })
         ～ @Html.TextBox("PlanDateTo", String.Format("{0:d}", (DateTime?)ViewBag.PlanDateTo), new { @class = "datefield", type = "date" })
-        <input type="submit" value="検索" />
+        <input type="submit" value="検索" class="btn btn-default" />
     </p>
 }
 

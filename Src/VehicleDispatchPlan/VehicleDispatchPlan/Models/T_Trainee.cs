@@ -69,7 +69,7 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("通学種別")]
         public string AttendTypeCd { get; set; }
 
-        /// <summary>通学種別マスタ</summary>
+        /// <summary>[外部キー]通学種別マスタ</summary>
         [ForeignKey("AttendTypeCd")]
         public virtual M_AttendType AttendType { get; set; }
 
@@ -82,7 +82,7 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("教習コース")]
         public string TrainingCourseCd { get; set;}
 
-        /// <summary>教習コースマスタ</summary>
+        /// <summary>[外部キー]教習コースマスタ</summary>
         [ForeignKey("TrainingCourseCd")]
         public virtual M_TrainingCourse TrainingCourse { get; set; }
 
@@ -115,7 +115,7 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("宿泊施設")]
         public string LodgingCd { get; set; }
 
-        /// <summary>宿泊施設マスタ</summary>
+        /// <summary>[外部キー]宿泊施設マスタ</summary>
         [ForeignKey("LodgingCd")]
         public virtual M_LodgingFacility LodgingFacility { get; set; }
 
