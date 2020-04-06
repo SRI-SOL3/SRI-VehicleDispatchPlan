@@ -8,7 +8,7 @@
 
 <h2>@ViewBag.Title</h2>
 
-@using (Html.BeginForm(Html.BeginForm(null, null, FormMethod.Post, new { name = "form1", id = "form1" })))
+@using (Html.BeginForm(null, null, FormMethod.Post, new { name = "form1", id = "form1" }))
 {
     @Html.AntiForgeryToken()
 
@@ -37,7 +37,7 @@
         </div>
 
         @* エラーメッセージ *@
-        <div style="color: Red">@Html.Encode(TempData["registErr"])</div>
+        <div style="color: Red">@Html.Encode(TempData["errorMessage"])</div>
 
         @* 一覧のsubmitにてインデックスを設定 *@
         <input type="hidden" name="index" value="" />

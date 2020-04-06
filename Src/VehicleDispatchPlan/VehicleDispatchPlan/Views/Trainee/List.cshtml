@@ -6,11 +6,11 @@
 
 <h2>@ViewBag.Title</h2>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("List", "Trainee", FormMethod.Get))
 {
     <p>
-        入校予定日: @Html.TextBox("PlanDateFrom", String.Format("{0:d}", (DateTime?)ViewBag.PlanDateFrom), new { @class = "datefield", type = "date" })
-        ～ @Html.TextBox("PlanDateTo", String.Format("{0:d}", (DateTime?)ViewBag.PlanDateTo), new { @class = "datefield", type = "date" })
+        入校予定日: @Html.TextBox("planDateFrom", ((DateTime?)ViewBag.PlanDateFrom), new { type = "date" })
+        ～ @Html.TextBox("planDateTo", ((DateTime?)ViewBag.PlanDateTo), new { type = "date" })
         <input type="submit" value="検索" class="btn btn-default" />
     </p>
 }
@@ -20,26 +20,34 @@
 </p>
 
 <table class="table">
+    @* ヘッダ部 *@
     <tr>
         <th>
+            @* 教習生ID *@
             @Html.DisplayNameFor(model => model.FirstOrDefault().TraineeId)
         </th>
         <th>
+            @* 教習生名 *@
             @Html.DisplayNameFor(model => model.FirstOrDefault().TraineeName)
         </th>
         <th>
+            @* 通学種別 *@
             @Html.DisplayNameFor(model => model.FirstOrDefault().AttendType.AttendTypeName)
         </th>
         <th>
+            @* 教習コース *@
             @Html.DisplayNameFor(model => model.FirstOrDefault().TrainingCourse.TrainingCourseName)
         </th>
         <th>
+            @* 入校予定日 *@
             @Html.DisplayNameFor(model => model.FirstOrDefault().EntrancePlanDate)
         </th>
         <th>
+            @* 仮免予定日 *@
             @Html.DisplayNameFor(model => model.FirstOrDefault().TmpLicencePlanDate)
         </th>
         <th>
+            @* 卒業予定日 *@
             @Html.DisplayNameFor(model => model.FirstOrDefault().GraduatePlanDate)
         </th>
         <th></th>
@@ -47,26 +55,34 @@
 
     @foreach (var item in Model)
     {
+        @* データ部 *@
         <tr>
             <td>
+                @* 教習生ID *@
                 @Html.DisplayFor(modelItem => item.TraineeId)
             </td>
             <td>
+                @* 教習生名 *@
                 @Html.DisplayFor(modelItem => item.TraineeName)
             </td>
             <td>
+                @* 通学種別 *@
                 @Html.DisplayFor(modelItem => item.AttendType.AttendTypeName)
             </td>
             <td>
+                @* 教習コース *@
                 @Html.DisplayFor(modelItem => item.TrainingCourse.TrainingCourseName)
             </td>
             <td>
+                @* 入校予定日 *@
                 @Html.DisplayFor(modelItem => item.EntrancePlanDate)
             </td>
             <td>
+                @* 仮免予定日 *@
                 @Html.DisplayFor(modelItem => item.TmpLicencePlanDate)
             </td>
             <td>
+                @* 卒業予定日 *@
                 @Html.DisplayFor(modelItem => item.GraduatePlanDate)
             </td>
             <td>
@@ -82,4 +98,5 @@
 <br />
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-@Html.PagedListPager(Model, page => Url.Action("List", new { page, planDateFrom = ViewBag.PlanDateFrom, planDateTo = ViewBag.PlanDateTo }))
+@Html.PagedListPager(Model, page => Url.Action("List", "Trainee",
+       new { page, planDateFrom = ViewBag.PlanDateFrom, planDateTo = ViewBag.PlanDateTo }))

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 /**
  * 指導員別コマ数
@@ -31,6 +28,10 @@ namespace VehicleDispatchPlan.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DisplayName("対象日")]
         public DateTime? Date { get; set; }
+
+        /// <summary>[外部キー]日別コマ数クラス</summary>
+        [ForeignKey("Date")]
+        public virtual T_DailyClasses DailyClasses { get; set; }
 
         /// <summary>No</summary>
         [Key]

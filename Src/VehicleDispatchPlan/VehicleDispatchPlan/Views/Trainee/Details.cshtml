@@ -10,6 +10,7 @@
     <h4>詳細情報</h4>
     <hr />
     <dl class="dl-horizontal">
+        @* 教習生ID *@
         <dt>
             @Html.DisplayNameFor(model => model.TraineeId)
         </dt>
@@ -17,6 +18,7 @@
             @Html.DisplayFor(model => model.TraineeId)
         </dd>
 
+        @* 教習生名 *@
         <dt>
             @Html.DisplayNameFor(model => model.TraineeName)
         </dt>
@@ -24,6 +26,7 @@
             @Html.DisplayFor(model => model.TraineeName)
         </dd>
 
+        @* 通学種別 *@
         <dt>
             @Html.DisplayNameFor(model => model.AttendType.AttendTypeName)
         </dt>
@@ -31,6 +34,7 @@
             @Html.DisplayFor(model => model.AttendType.AttendTypeName)
         </dd>
 
+        @* 教習コース *@
         <dt>
             @Html.DisplayNameFor(model => model.TrainingCourse.TrainingCourseName)
         </dt>
@@ -38,6 +42,7 @@
             @Html.DisplayFor(model => model.TrainingCourse.TrainingCourseName)
         </dd>
 
+        @* 入校予定日 *@
         <dt>
             @Html.DisplayNameFor(model => model.EntrancePlanDate)
         </dt>
@@ -45,6 +50,7 @@
             @Html.DisplayFor(model => model.EntrancePlanDate)
         </dd>
 
+        @* 仮免予定日 *@
         <dt>
             @Html.DisplayNameFor(model => model.TmpLicencePlanDate)
         </dt>
@@ -52,6 +58,7 @@
             @Html.DisplayFor(model => model.TmpLicencePlanDate)
         </dd>
 
+        @* 卒業予定日 *@
         <dt>
             @Html.DisplayNameFor(model => model.GraduatePlanDate)
         </dt>
@@ -59,6 +66,7 @@
             @Html.DisplayFor(model => model.GraduatePlanDate)
         </dd>
 
+        @* 宿泊施設 *@
         <dt>
             @Html.DisplayNameFor(model => model.LodgingFacility.LodgingName)
         </dt>
@@ -66,6 +74,7 @@
             @Html.DisplayFor(model => model.LodgingFacility.LodgingName)
         </dd>
 
+        @* エージェント *@
         <dt>
             @Html.DisplayNameFor(model => model.AgentName)
         </dt>

@@ -103,16 +103,18 @@ namespace VehicleDispatchPlan.Controllers
         /// <summary>
         /// 登録処理
         /// </summary>
-        /// <param name="trainee">教習生情報</param>
+        /// <param name="cmd">コマンド</param>
+        /// <param name="index">インデックス</param>
+        /// <param name="traineeReg">教習生登録情報</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Regist(string cmd, string index, [Bind(Include = "TraineeList")] V_TraineeReg traineeReg)
+        public ActionResult Regist(string cmd, int? index, [Bind(Include = "TraineeList")] V_TraineeReg traineeReg)
         {
             Trace.WriteLine("POST /Trainee/Regist");
 
             // 確認ボタンが押下された場合（TODO:本来はDBに一時登録データを持つべき？）
-            if ("確認".Equals(cmd))
+            if (AppConstant.CMD_CONFIRM.Equals(cmd))
             {
                 // 入力チェック
                 bool validation = true;
@@ -124,7 +126,7 @@ namespace VehicleDispatchPlan.Controllers
                         // 入校予定日、仮免予定日の比較
                         if (trainee.EntrancePlanDate >= trainee.TmpLicencePlanDate)
                         {
-                            TempData["errorMessage"] = "仮免予定日は入校予定日より後に設定してください。";
+                            ViewBag.ErrorMessage = "仮免予定日は入校予定日より後に設定してください。";
                             validation = false;
                             break;
                         }
@@ -132,7 +134,7 @@ namespace VehicleDispatchPlan.Controllers
                         // 仮免予定日、卒業予定日の比較
                         if (trainee.TmpLicencePlanDate >= trainee.GraduatePlanDate)
                         {
-                            TempData["errorMessage"] = "卒業予定日は仮免予定日より後に設定してください。";
+                            ViewBag.ErrorMessage = "卒業予定日は仮免予定日より後に設定してください。";
                             validation = false;
                             break;
                         }
@@ -140,7 +142,7 @@ namespace VehicleDispatchPlan.Controllers
                 }
                 else
                 {
-                    TempData["errorMessage"] = "必須項目（教習者名、通学種別、教習コース、入校予定日、仮免予定日、卒業予定日）を設定してください。";
+                    ViewBag.ErrorMessage = "必須項目（教習者名、通学種別、教習コース、入校予定日、仮免予定日、卒業予定日）を設定してください。";
                     validation = false;
                 }
 
@@ -148,11 +150,15 @@ namespace VehicleDispatchPlan.Controllers
                 {
                     // 確認モードに変更
                     traineeReg.EditMode = AppConstant.EditMode.Confirm;
-                    DateTime dateFrom = (DateTime)traineeReg.TraineeList.Select(x => x.EntrancePlanDate).Min();
-                    DateTime dateTo = (DateTime)traineeReg.TraineeList.Select(x => x.GraduatePlanDate).Max();
+                    // 入校予定日の最小値－10日（ＴＯＤＯ：いったん－10日としている）
+                    DateTime minEntDate = (DateTime)traineeReg.TraineeList.Select(x => x.EntrancePlanDate).Min();
+                    DateTime dateFrom = minEntDate.AddDays(-10);
+                    // 卒業予定日の最大値＋10日（ＴＯＤＯ：いったん＋10日としている）
+                    DateTime maxGrdDate = (DateTime)traineeReg.TraineeList.Select(x => x.GraduatePlanDate).Max();
+                    DateTime dateTo = maxGrdDate.AddDays(10);
                     // 表データを作成
                     Utility utility = new Utility();
-                    traineeReg.ChartData = utility.getChartData(db, dateFrom, dateTo, null, null, traineeReg.TraineeList);
+                    traineeReg.ChartData = utility.getChartData(db, dateFrom, dateTo, traineeReg.TraineeList);
                 }
                 else
                 {
@@ -162,14 +168,14 @@ namespace VehicleDispatchPlan.Controllers
             }
 
             // 戻るボタンが押下された場合
-            else if ("戻る".Equals(cmd))
+            else if (AppConstant.CMD_RETURN.Equals(cmd))
             {
                 // 編集モードに変更
                 traineeReg.EditMode = AppConstant.EditMode.Edit;
             }
 
             // 登録ボタンが押下された場合
-            else if ("登録".Equals(cmd))
+            else if (AppConstant.CMD_REGIST.Equals(cmd))
             {
                 // トランザクション作成
                 using (DbContextTransaction tran = db.Database.BeginTransaction())
@@ -206,18 +212,18 @@ namespace VehicleDispatchPlan.Controllers
             }
 
             // 仮免・卒業日設定ボタンが押下された場合
-            else if ("仮免・卒業日設定".Equals(cmd))
+            else if (AppConstant.CMD_SET_TMP_GRD.Equals(cmd))
             {
                 // ステータスをクリア
                 ModelState.Clear();
                 // 編集モードを設定
                 traineeReg.EditMode = AppConstant.EditMode.Edit;
                 // インデックスを元に教習生を取得
-                int i = Convert.ToInt32(index);
+                int i = (int)index;
                 T_Trainee trainee = traineeReg.TraineeList[i];
 
                 // 合宿の場合
-                if (AppConstant.CD_ATTEND_TYPE_LODGING.Equals(trainee.AttendTypeCd))
+                if (AppConstant.ATTEND_TYPE_CD_LODGING.Equals(trainee.AttendTypeCd))
                 {
                     // 教習コース、入校予定日の必須チェック
                     if (!string.IsNullOrEmpty(trainee.TrainingCourseCd) && trainee.EntrancePlanDate != null)
@@ -235,47 +241,53 @@ namespace VehicleDispatchPlan.Controllers
                         else
                         {
                             // エラー
-                            TempData["errorMessage"] = "入校予定日:" + ((DateTime)trainee.EntrancePlanDate).ToString("yyyy/MM/dd") + " のデータが入卒カレンダーに登録されていません。";
+                            ViewBag.ErrorMessage = "入校予定日の日付が入卒カレンダーに登録されていません。";
                         }
                     }
                     else
                     {
                         // エラー
-                        TempData["errorMessage"] = "教習コース、入校予定日を設定してください。";
+                        ViewBag.ErrorMessage = "教習コース、入校予定日を設定してください。";
                     }
                 }
                 // 合宿以外(通学)の場合
                 else
                 {
                     // エラー
-                    TempData["errorMessage"] = "通学種別が合宿ではない場合は入卒カレンダーからの設定はできません。";
+                    ViewBag.ErrorMessage = "通学種別が合宿ではない場合は入卒カレンダーからの設定はできません。";
                 }
             }
 
             // 追加ボタンが押下された場合
-            else if ("追加".Equals(cmd))
+            else if (AppConstant.CMD_ADD.Equals(cmd))
             {
                 // ステータスをクリア
                 ModelState.Clear();
                 // 編集モードを設定
                 traineeReg.EditMode = AppConstant.EditMode.Edit;
                 // インデックスを元に教習生を追加
-                int i = Convert.ToInt32(index);
+                int i = (int)index;
                 traineeReg.TraineeList.Insert(i + 1, new T_Trainee(traineeReg.TraineeList[i]));
                 // 教習者名をクリア
                 traineeReg.TraineeList[i + 1].TraineeName = "";
             }
 
             // 削除ボタンが押下された場合
-            else if ("削除".Equals(cmd))
+            else if (AppConstant.CMD_REMOVE.Equals(cmd))
             {
                 // ステータスをクリア
                 ModelState.Clear();
                 // 編集モードを設定
                 traineeReg.EditMode = AppConstant.EditMode.Edit;
                 // インデックスを元に教習生を削除
-                int i = Convert.ToInt32(index);
+                int i = (int)index;
                 traineeReg.TraineeList.RemoveAt(i);
+            }
+
+            // その他
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             // ドロップダウンリストの選択肢を設定
@@ -287,10 +299,11 @@ namespace VehicleDispatchPlan.Controllers
         /// <summary>
         /// 更新表示
         /// </summary>
+        /// <param name="id">教習生ID</param>
         /// <returns></returns>
         public ActionResult Edit(int id)
         {
-            Trace.WriteLine("GET /Trainee/Edit");
+            Trace.WriteLine("GET /Trainee/Edit/" + id);
 
             V_TraineeEdt traineeEdt = new V_TraineeEdt();
 
@@ -313,7 +326,8 @@ namespace VehicleDispatchPlan.Controllers
         /// <summary>
         /// 更新処理
         /// </summary>
-        /// <param name="trainee">教習生情報</param>
+        /// <param name="cmd">コマンド</param>
+        /// <param name="traineeEdt">教習生編集情報</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -322,7 +336,7 @@ namespace VehicleDispatchPlan.Controllers
             Trace.WriteLine("POST /Trainee/Edit/" + traineeEdt.Trainee.TraineeId);
 
             // 確認ボタンが押下された場合
-            if ("確認".Equals(cmd))
+            if (AppConstant.CMD_CONFIRM.Equals(cmd))
             {
                 // 入力チェック
                 bool validation = true;
@@ -331,20 +345,20 @@ namespace VehicleDispatchPlan.Controllers
                     // 入校予定日、仮免予定日の比較
                     if (traineeEdt.Trainee.EntrancePlanDate >= traineeEdt.Trainee.TmpLicencePlanDate)
                     {
-                        TempData["errorMessage"] = "仮免予定日は入校予定日より後に設定してください。";
+                        ViewBag.ErrorMessage = "仮免予定日は入校予定日より後に設定してください。";
                         validation = false;
                     }
 
                     // 仮免予定日、卒業予定日の比較
                     if (traineeEdt.Trainee.TmpLicencePlanDate >= traineeEdt.Trainee.GraduatePlanDate)
                     {
-                        TempData["errorMessage"] = "卒業予定日は仮免予定日より後に設定してください。";
+                        ViewBag.ErrorMessage = "卒業予定日は仮免予定日より後に設定してください。";
                         validation = false;
                     }
                 }
                 else
                 {
-                    TempData["errorMessage"] = "必須項目（教習者名、通学種別、教習コース、入校予定日、仮免予定日、卒業予定日）を設定してください。";
+                    ViewBag.ErrorMessage = "必須項目（教習者名、通学種別、教習コース、入校予定日、仮免予定日、卒業予定日）を設定してください。";
                     validation = false;
                 }
 
@@ -352,9 +366,13 @@ namespace VehicleDispatchPlan.Controllers
                 {
                     // 確認モードに設定
                     traineeEdt.EditMode = AppConstant.EditMode.Confirm;
+                    // 入校予定日－10日（ＴＯＤＯ：いったん－10日としている）
+                    DateTime dateFrom = ((DateTime)traineeEdt.Trainee.EntrancePlanDate).AddDays(-10);
+                    // 卒業予定日＋10日（ＴＯＤＯ：いったん＋10日としている）
+                    DateTime dateTo = ((DateTime)traineeEdt.Trainee.GraduatePlanDate).AddDays(10);
                     // 表データを作成
                     Utility utility = new Utility();
-                    traineeEdt.ChartData = utility.getChartData(db, (DateTime)traineeEdt.Trainee.EntrancePlanDate, (DateTime)traineeEdt.Trainee.GraduatePlanDate, null, null, new List<T_Trainee> { traineeEdt.Trainee });
+                    traineeEdt.ChartData = utility.getChartData(db, dateFrom, dateTo, new List<T_Trainee> { traineeEdt.Trainee });
                 }
                 else
                 {
@@ -364,14 +382,14 @@ namespace VehicleDispatchPlan.Controllers
             }
 
             // 戻るボタンが押下された場合
-            else if ("戻る".Equals(cmd))
+            else if (AppConstant.CMD_RETURN.Equals(cmd))
             {
                 // 編集モードに変更
                 traineeEdt.EditMode = AppConstant.EditMode.Edit;
             }
 
             // 更新ボタンが押下された場合
-            else if ("更新".Equals(cmd))
+            else if (AppConstant.CMD_UPDATE.Equals(cmd))
             {
                 // マスタは更新しないため、データをクリア（ＴＯＤＯ：他に良い方法があるか…？）
                 traineeEdt.Trainee.AttendType = null;
@@ -385,7 +403,7 @@ namespace VehicleDispatchPlan.Controllers
             }
 
             // 仮免・卒業日設定ボタンが押下された場合
-            else if ("仮免・卒業日設定".Equals(cmd))
+            else if (AppConstant.CMD_SET_TMP_GRD.Equals(cmd))
             {
                 // ステータスをクリア
                 ModelState.Clear();
@@ -393,7 +411,7 @@ namespace VehicleDispatchPlan.Controllers
                 traineeEdt.EditMode = AppConstant.EditMode.Edit;
 
                 // 合宿の場合
-                if (AppConstant.CD_ATTEND_TYPE_LODGING.Equals(traineeEdt.Trainee.AttendTypeCd))
+                if (AppConstant.ATTEND_TYPE_CD_LODGING.Equals(traineeEdt.Trainee.AttendTypeCd))
                 {
                     // 教習コース、入校予定日の必須チェック
                     if (!string.IsNullOrEmpty(traineeEdt.Trainee.TrainingCourseCd) && traineeEdt.Trainee.EntrancePlanDate != null)
@@ -411,21 +429,27 @@ namespace VehicleDispatchPlan.Controllers
                         else
                         {
                             // エラー
-                            TempData["errorMessage"] = "入校予定日：のデータが入卒カレンダーに登録されていません。";
+                            ViewBag.ErrorMessage = "入校予定日の日付が入卒カレンダーに登録されていません。";
                         }
                     }
                     else
                     {
                         // エラー
-                        TempData["errorMessage"] = "教習コース、入校予定日を設定してください。";
+                        ViewBag.ErrorMessage = "教習コース、入校予定日を設定してください。";
                     }
                 }
                 // 合宿以外(通学)の場合
                 else
                 {
                     // エラー
-                    TempData["errorMessage"] = "通学の場合は入卒カレンダーからの設定はできません。";
+                    ViewBag.ErrorMessage = "通学の場合は入卒カレンダーからの設定はできません。";
                 }
+            }
+
+            // その他
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             // ドロップダウンリストの選択肢を設定
@@ -483,6 +507,7 @@ namespace VehicleDispatchPlan.Controllers
         /// <summary>
         /// ドロップダウンリストの選択肢を設定
         /// </summary>
+        /// <param name="traineeEdt">教習生編集情報</param>
         private void SetSelectItem(V_TraineeEdt traineeEdt)
         {
             // 編集モードの場合
@@ -510,6 +535,7 @@ namespace VehicleDispatchPlan.Controllers
         /// <summary>
         /// ドロップダウンリストの選択肢を設定
         /// </summary>
+        /// <param name="traineeReg">教習生登録情報</param>
         private void SetSelectItem(V_TraineeReg traineeReg)
         {
             // 編集モードの場合

@@ -144,30 +144,29 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202003240546491_Initial.cs" />
-    <Compile Include="Migrations\202003240546491_Initial.designer.cs">
-      <DependentUpon>202003240546491_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\202004030612081_Initial.cs" />
+    <Compile Include="Migrations\202004030612081_Initial.designer.cs">
+      <DependentUpon>202004030612081_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202003250938474_AddRequired.cs" />
-    <Compile Include="Migrations\202003250938474_AddRequired.designer.cs">
-      <DependentUpon>202003250938474_AddRequired.cs</DependentUpon>
+    <Compile Include="Migrations\202004060450521_DropForecast.cs" />
+    <Compile Include="Migrations\202004060450521_DropForecast.designer.cs">
+      <DependentUpon>202004060450521_DropForecast.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004060648312_AddForeignDailyClasses.cs" />
+    <Compile Include="Migrations\202004060648312_AddForeignDailyClasses.designer.cs">
+      <DependentUpon>202004060648312_AddForeignDailyClasses.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MyDatabaseContext.cs" />
-    <Compile Include="Models\M_Agent.cs" />
-    <Compile Include="Models\M_CodeMaster.cs" />
+    <Compile Include="Models\M_AttendType.cs" />
     <Compile Include="Models\M_EntGrdCalendar.cs" />
     <Compile Include="Models\M_LodgingFacility.cs" />
     <Compile Include="Models\M_TrainingCourse.cs" />
-    <Compile Include="Models\M_WorkType.cs" />
-    <Compile Include="Models\T_Forecast.cs" />
-    <Compile Include="Models\T_ForecastByWork.cs" />
+    <Compile Include="Models\T_DailyClasses.cs" />
+    <Compile Include="Models\T_DailyClassesByTrainer.cs" />
     <Compile Include="Models\T_Trainee.cs" />
     <Compile Include="Models\V_ChartData.cs" />
-    <Compile Include="Models\V_EntGrdCalendarEdt.cs" />
-    <Compile Include="Models\V_Forecast.cs" />
     <Compile Include="Models\V_TraineeEdt.cs" />
-    <Compile Include="Models\V_TraineeRef.cs" />
     <Compile Include="Models\V_TraineeReg.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -216,6 +215,7 @@
     <Content Include="Views\Home\Menu.cshtml" />
     <Content Include="Views\Calendar\Import.cshtml" />
     <Content Include="Views\Calendar\List.cshtml" />
+    <Content Include="Views\Shared\Table.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -234,11 +234,14 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202003240546491_Initial.resx">
-      <DependentUpon>202003240546491_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202004030612081_Initial.resx">
+      <DependentUpon>202004030612081_Initial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202003250938474_AddRequired.resx">
-      <DependentUpon>202003250938474_AddRequired.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202004060450521_DropForecast.resx">
+      <DependentUpon>202004060450521_DropForecast.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004060648312_AddForeignDailyClasses.resx">
+      <DependentUpon>202004060648312_AddForeignDailyClasses.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using VehicleDispatchPlan.Constants;
-using VehicleDispatchPlan.Models;
 
 /**
  * 教習生登録

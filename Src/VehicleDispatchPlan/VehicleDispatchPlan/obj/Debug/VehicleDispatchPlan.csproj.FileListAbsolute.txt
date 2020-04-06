@@ -181,10 +181,11 @@ C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\Vehi
 C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\bin\ja\System.Web.WebPages.resources.dll
 C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\bin\ja\System.Web.WebPages.Deployment.resources.dll
 C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\bin\ja\System.Web.WebPages.Razor.resources.dll
-C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.Migrations.Initial.resources
-C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.csproj.GenerateResource.cache
 C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.csproj.CopyComplete
 C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.dll
 C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.pdb
 C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.csprojAssemblyReference.cache
-C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.Migrations.AddRequired.resources
+C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.Migrations.Initial.resources
+C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.csproj.GenerateResource.cache
+C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.Migrations.DropForecast.resources
+C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.Migrations.AddForeignDailyClasses.resources
