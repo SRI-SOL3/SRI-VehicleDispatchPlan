@@ -9,9 +9,9 @@
 @using (Html.BeginForm("List", "Trainee", FormMethod.Get))
 {
     <p>
-        入校予定日: @Html.TextBox("planDateFrom", ((DateTime?)ViewBag.PlanDateFrom), new { type = "date" })
-        ～ @Html.TextBox("planDateTo", ((DateTime?)ViewBag.PlanDateTo), new { type = "date" })
-        <input type="submit" value="検索" class="btn btn-default" />
+        入校予定日: @Html.TextBox("planDateFrom", (string)ViewBag.PlanDateFrom, new { type = "date" })
+        ～ @Html.TextBox("planDateTo", (string)ViewBag.PlanDateTo, new { type = "date" })
+        <input type="submit" value="検索" class="btn btn-default" style="margin-left:5px;" />
     </p>
 }
 

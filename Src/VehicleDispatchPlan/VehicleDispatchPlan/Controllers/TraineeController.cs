@@ -35,11 +35,13 @@ namespace VehicleDispatchPlan.Controllers
         /// <returns></returns>
         public ActionResult List(DateTime? planDateFrom, DateTime? planDateTo, int? page)
         {
-            Trace.WriteLine("GET /Trainee/List");
+            Trace.WriteLine("GET /Trainee/List/" + page);
 
-            ViewBag.PlanDateFrom = planDateFrom;
-            ViewBag.PlanDateTo = planDateTo;
+            // 日付型を"yyyy-MM-dd"形式の文字列に変換
+            ViewBag.PlanDateFrom = planDateFrom != null ? ((DateTime)planDateFrom).ToString("yyyy-MM-dd") : null;
+            ViewBag.PlanDateTo = planDateTo != null ? ((DateTime)planDateTo).ToString("yyyy-MM-dd") : null;
 
+            // nullの場合は0001/01/01～9999/12/31を設定
             DateTime dateFrom = planDateFrom ?? new DateTime(0001, 01, 01);
             DateTime dateTo = planDateTo ?? new DateTime(9999, 12, 31);
 
@@ -47,7 +49,7 @@ namespace VehicleDispatchPlan.Controllers
             List<T_Trainee> tarineeList = db.Trainee.Where(x => dateFrom <= x.EntrancePlanDate && x.EntrancePlanDate <= dateTo).ToList();
 
             int pageSize = 20;
-            int pageNumber = (page ?? 1);
+            int pageNumber = page ?? 1;
 
             return View(tarineeList.ToPagedList(pageNumber, pageSize));
         }
