@@ -55,13 +55,13 @@
     </tbody>
 </table>
 <div class="row" style="overflow: auto;">
-    <table border="1" style="table-layout: fixed; width: 100%;">
+    <table border="1" style="table-layout: fixed;">
         <thead>
             @* 日付 *@
             <tr>
                 @foreach (V_ChartData item in Model)
                 {
-                    <th width="40" style="text-align: center;">@item.Date.ToString("M/d")</th>
+                    <th style="width:40px; min-width:40px; text-align: center;">@item.Date.ToString("M/d")</th>
                 }
             </tr>
         </thead>

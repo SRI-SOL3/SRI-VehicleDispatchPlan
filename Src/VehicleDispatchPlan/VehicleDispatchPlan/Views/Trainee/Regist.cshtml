@@ -39,7 +39,7 @@
         <div style="color: Red">@ViewBag.ErrorMessage</div>
 
         @* 一覧のsubmitにてインデックスを設定 *@
-        <input type="hidden" name="index" value="" />
+        @Html.Hidden("index", "")
 
         <table class="table">
             @* ヘッダ部 *@

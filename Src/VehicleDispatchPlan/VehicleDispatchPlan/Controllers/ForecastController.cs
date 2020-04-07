@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Web.Mvc;
 using VehicleDispatchPlan.Commons;
 using VehicleDispatchPlan.Constants;
@@ -45,23 +46,50 @@ namespace VehicleDispatchPlan.Controllers
             // グラフデータ
             List<V_ChartData> chartData = new List<V_ChartData>();
 
-            bool validation = true;
-
-            // 検索ボタンもしくは再表示ボタンが押下された場合
-            if (AppConstant.CMD_SEARCH.Equals(cmd) 
-                || AppConstant.CMD_REDISPLAY.Equals(cmd))
+            if (!string.IsNullOrEmpty(cmd))
             {
-                // 入力チェック
-                if (dateFrom == null || dateTo == null)
+                bool validation = true;
+
+                // 検索ボタンが押下された場合
+                if (AppConstant.CMD_SEARCH.Equals(cmd))
                 {
-                    ViewBag.ErrorMessage = "検索条件を指定してください。";
-                    validation = false;
+                    // 入力チェック
+                    if (dateFrom == null || dateTo == null)
+                    {
+                        ViewBag.ErrorMessage = "検索条件を指定してください。";
+                        validation = false;
+                    }
+                    // 前後チェック
+                    if (validation == true && (dateFrom > dateTo))
+                    {
+                        ViewBag.ErrorMessage = "日付の前後関係が不正です。";
+                        validation = false;
+                    }
+
+                    // 日付型を"yyyy-MM-dd"形式の文字列に変換
+                    ViewBag.DateFrom = dateFrom != null ? ((DateTime)dateFrom).ToString("yyyy-MM-dd") : null;
+                    ViewBag.DateTo = dateTo != null ? ((DateTime)dateTo).ToString("yyyy-MM-dd") : null;
                 }
-                // 前後チェック
-                if (validation == true && (dateFrom > dateTo))
+
+                // 再表示ボタンが押下された場合
+                else if (AppConstant.CMD_REDISPLAY.Equals(cmd))
                 {
-                    ViewBag.ErrorMessage = "日付の前後関係が不正です。";
-                    validation = false;
+                    // 入力チェック
+                    if (dateFrom == null || dateTo == null)
+                    {
+                        validation = false;
+                    }
+                    // 前後チェック
+                    if (validation == true && (dateFrom > dateTo))
+                    {
+                        validation = false;
+                    }
+                }
+
+                // その他
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
 
                 if (validation == true)
