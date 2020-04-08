@@ -3,13 +3,13 @@
 @model VehicleDispatchPlan.Models.V_SearchInstractorViewModel
 
 @{
-    ViewBag.Title = "List";
+    ViewBag.Title = "Seach";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>指導員管理</h2>
+<h2>Seach</h2>
 
-@using (Html.BeginForm("List", "Instractor", FormMethod.Get))
+@using (Html.BeginForm("Seach", "Instractor", FormMethod.Get))
 {
     @*対象日*@
     <div class="form-horizontal">
@@ -27,10 +27,6 @@
             </div>
         </div>
     </div>
-
-    @* エラーメッセージ *@
-    <div style="color: Red">@ViewBag.ErrorMessage</div>
-
 }
 
 

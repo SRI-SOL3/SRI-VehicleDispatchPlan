@@ -230,7 +230,7 @@
     <Content Include="Views\Calendar\Import.cshtml" />
     <Content Include="Views\Calendar\List.cshtml" />
     <Content Include="Views\Shared\Table.cshtml" />
-    <Content Include="Views\Instractor\List.cshtml" />
+    <Content Include="Views\Instractor\Seach.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
