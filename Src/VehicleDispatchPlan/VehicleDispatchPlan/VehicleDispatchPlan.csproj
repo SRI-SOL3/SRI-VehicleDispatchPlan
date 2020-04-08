@@ -141,7 +141,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LodgingController.cs" />
     <Compile Include="Controllers\TraineeController.cs" />
-    <Compile Include="Controllers\InstractorController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -157,14 +156,6 @@
     <Compile Include="Migrations\202004060648312_AddForeignDailyClasses.designer.cs">
       <DependentUpon>202004060648312_AddForeignDailyClasses.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202004062359171_InitialInstractor.cs" />
-    <Compile Include="Migrations\202004062359171_InitialInstractor.designer.cs">
-      <DependentUpon>202004062359171_InitialInstractor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004070254021_addInstractor.cs" />
-    <Compile Include="Migrations\202004070254021_addInstractor.designer.cs">
-      <DependentUpon>202004070254021_addInstractor.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MyDatabaseContext.cs" />
     <Compile Include="Models\M_AttendType.cs" />
@@ -175,16 +166,11 @@
     <Compile Include="Models\T_DailyClassesByTrainer.cs" />
     <Compile Include="Models\T_Trainee.cs" />
     <Compile Include="Models\V_ChartData.cs" />
-    <Compile Include="Models\V_SearchInstractorViewModel.cs" />
     <Compile Include="Models\V_TraineeEdt.cs" />
     <Compile Include="Models\V_TraineeReg.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\MyDatabaseContext-12.mdf" />
-    <Content Include="App_Data\MyDatabaseContext-12_log.ldf">
-      <DependentUpon>MyDatabaseContext-12.mdf</DependentUpon>
-    </Content>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -230,9 +216,10 @@
     <Content Include="Views\Calendar\Import.cshtml" />
     <Content Include="Views\Calendar\List.cshtml" />
     <Content Include="Views\Shared\Table.cshtml" />
-    <Content Include="Views\Instractor\Seach.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -255,12 +242,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202004060648312_AddForeignDailyClasses.resx">
       <DependentUpon>202004060648312_AddForeignDailyClasses.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004062359171_InitialInstractor.resx">
-      <DependentUpon>202004062359171_InitialInstractor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004070254021_addInstractor.resx">
-      <DependentUpon>202004070254021_addInstractor.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
