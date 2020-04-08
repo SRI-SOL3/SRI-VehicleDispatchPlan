@@ -64,7 +64,7 @@ namespace VehicleDispatchPlan.Controllers
             {
                 db.DailyClassesByTrainer.Add(t_DailyClassesByTrainer);
                 db.SaveChanges();
-                return RedirectToAction("Seach");
+                return RedirectToAction("List");
             }
 
             ViewBag.Date = new SelectList(db.DailyClasses, "Date", "Date", t_DailyClassesByTrainer.Date);
@@ -88,7 +88,7 @@ namespace VehicleDispatchPlan.Controllers
             }
 
         
-            return RedirectToAction("Seach",model);
+            return RedirectToAction("List",model);
 
           
         }
@@ -149,7 +149,7 @@ namespace VehicleDispatchPlan.Controllers
             T_DailyClassesByTrainer t_DailyClassesByTrainer = db.DailyClassesByTrainer.Find(id);
             db.DailyClassesByTrainer.Remove(t_DailyClassesByTrainer);
             db.SaveChanges();
-            return RedirectToAction("Seach");
+            return RedirectToAction("List");
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace VehicleDispatchPlan.Controllers
         /// </summary>
         /// <param name="model">指導員用Model</param>
         /// <returns>一覧画面</returns>
-        public ActionResult Seach([Bind(Include = "Date")] V_SearchInstractorViewModel model)
+        public ActionResult List([Bind(Include = "Date")] V_SearchInstractorViewModel model)
         {
             if (model.Date != null)
             {
