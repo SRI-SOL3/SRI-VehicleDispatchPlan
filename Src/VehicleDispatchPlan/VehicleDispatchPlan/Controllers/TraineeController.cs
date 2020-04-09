@@ -498,8 +498,11 @@ namespace VehicleDispatchPlan.Controllers
 
             // 教習生データを取得
             T_Trainee trainee = db.Trainee.Find(id);
-            // 削除
-            db.Trainee.Remove(trainee);
+            if (trainee != null)
+            {
+                // 削除
+                db.Trainee.Remove(trainee);
+            }
             db.SaveChanges();
 
             // 一覧へリダイレクト
@@ -540,17 +543,22 @@ namespace VehicleDispatchPlan.Controllers
         /// <param name="traineeReg">教習生登録情報</param>
         private void SetSelectItem(V_TraineeReg traineeReg)
         {
+            // マスタを取得
+            List<M_AttendType> attendTypeList = db.AttendType.ToList();
+            List<M_TrainingCourse> trainingCourseList = db.TrainingCourse.ToList();
+            List<M_LodgingFacility> lodgingFacilitList = db.LodgingFacility.ToList();
+
             // 編集モードの場合
             if (AppConstant.EditMode.Edit.Equals(traineeReg.EditMode))
             {
                 for (int i = 0; i < traineeReg.TraineeList.Count(); i++)
                 {
                     // 通学種別の選択肢設定
-                    traineeReg.TraineeList[i].SelectAttendType = new SelectList(db.AttendType.ToList(), "AttendTypeCd", "AttendTypeName", traineeReg.TraineeList[i].AttendTypeCd);
+                    traineeReg.TraineeList[i].SelectAttendType = new SelectList(attendTypeList, "AttendTypeCd", "AttendTypeName", traineeReg.TraineeList[i].AttendTypeCd);
                     // 教習コースの選択肢設定
-                    traineeReg.TraineeList[i].SelectTrainingCourse = new SelectList(db.TrainingCourse.ToList(), "TrainingCourseCd", "TrainingCourseName", traineeReg.TraineeList[i].TrainingCourseCd);
+                    traineeReg.TraineeList[i].SelectTrainingCourse = new SelectList(trainingCourseList, "TrainingCourseCd", "TrainingCourseName", traineeReg.TraineeList[i].TrainingCourseCd);
                     // 宿泊施設の選択肢設定
-                    traineeReg.TraineeList[i].SelectLodging = new SelectList(db.LodgingFacility.ToList(), "LodgingCd", "LodgingName", traineeReg.TraineeList[i].LodgingCd);
+                    traineeReg.TraineeList[i].SelectLodging = new SelectList(lodgingFacilitList, "LodgingCd", "LodgingName", traineeReg.TraineeList[i].LodgingCd);
                 }
             }
             // 確認モードの場合
@@ -558,12 +566,12 @@ namespace VehicleDispatchPlan.Controllers
             {
                 for (int i = 0; i < traineeReg.TraineeList.Count(); i++)
                 {
-                    // 通学種別名を設定
-                    traineeReg.TraineeList[i].AttendType = db.AttendType.Find(traineeReg.TraineeList[i].AttendTypeCd);
-                    // 教習コース名を設定
-                    traineeReg.TraineeList[i].TrainingCourse = db.TrainingCourse.Find(traineeReg.TraineeList[i].TrainingCourseCd);
-                    // 宿泊施設名を設定
-                    traineeReg.TraineeList[i].LodgingFacility = db.LodgingFacility.Find(traineeReg.TraineeList[i].LodgingCd);
+                    // 通学種別を設定
+                    traineeReg.TraineeList[i].AttendType = attendTypeList.Where(x => x.AttendTypeCd.Equals(traineeReg.TraineeList[i].AttendTypeCd)).FirstOrDefault();
+                    // 教習コース    を設定
+                    traineeReg.TraineeList[i].TrainingCourse = trainingCourseList.Where(x => x.TrainingCourseCd.Equals(traineeReg.TraineeList[i].TrainingCourseCd)).FirstOrDefault();
+                    // 宿泊施設を設定
+                    traineeReg.TraineeList[i].LodgingFacility = lodgingFacilitList.Where(x => x.LodgingCd.Equals(traineeReg.TraineeList[i].LodgingCd)).FirstOrDefault();
                 }
             }
         }

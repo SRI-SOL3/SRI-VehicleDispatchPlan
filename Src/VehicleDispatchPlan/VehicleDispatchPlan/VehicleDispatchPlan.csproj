@@ -156,6 +156,7 @@
     <Compile Include="Migrations\202004060648312_AddForeignDailyClasses.designer.cs">
       <DependentUpon>202004060648312_AddForeignDailyClasses.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202004070538052_AddForeignEntGrdCalendar.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MyDatabaseContext.cs" />
     <Compile Include="Models\M_AttendType.cs" />
@@ -166,6 +167,8 @@
     <Compile Include="Models\T_DailyClassesByTrainer.cs" />
     <Compile Include="Models\T_Trainee.cs" />
     <Compile Include="Models\V_ChartData.cs" />
+    <Compile Include="Models\V_EntGrdCalendarEdt.cs" />
+    <Compile Include="Models\V_ForecastCht.cs" />
     <Compile Include="Models\V_TraineeEdt.cs" />
     <Compile Include="Models\V_TraineeReg.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -194,7 +197,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Views\Forecast\Edit.cshtml" />
+    <Content Include="Views\Forecast\Chart.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
