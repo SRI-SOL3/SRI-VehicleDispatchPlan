@@ -28,10 +28,9 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("教習コース")]
         public string TrainingCourseCd { get; set; }
 
-        /// <summary>[非DB項目]教習コース名<summary>
-        [NotMapped]
-        [DisplayName("教習コース")]
-        public string TrainingCourseName { get; set; }
+        /// <summary>[外部キー]教習コースマスタ</summary>
+        [ForeignKey("TrainingCourseCd")]
+        public virtual M_TrainingCourse TrainingCourse { get; set; }
 
         /// <summary>[非DB項目]教習コース選択肢<summary>
         [NotMapped]
@@ -59,5 +58,9 @@ namespace VehicleDispatchPlan.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DisplayName("卒業予定日")]
         public DateTime? GraduatePlanDate { get; set; }
+
+        /// <summary>削除フラグ</summary>
+        [NotMapped]
+        public bool DeleteFlg { get; set; }
     }
 }
