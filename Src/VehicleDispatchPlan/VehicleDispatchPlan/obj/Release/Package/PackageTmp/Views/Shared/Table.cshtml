@@ -1,0 +1,162 @@
+﻿@model List<VehicleDispatchPlan.Models.V_ChartData>
+@using VehicleDispatchPlan.Models;
+
+<table border="1" align="left">
+    <thead>
+        <tr>
+            <th width="200" colspan="3" style="text-align: center;">日付</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th rowspan="3" style="text-align: center;">受入残</th>
+            <th colspan="2" style="text-align: center;">総数</th>
+        </tr>
+        <tr>
+            <th colspan="2" style="text-align: center;">合宿</th>
+        </tr>
+        <tr>
+            <th colspan="2" style="text-align: center;">通学</th>
+        </tr>
+        <tr>
+            <th rowspan="3" style="text-align: center;">在籍可能</th>
+            <th colspan="2" style="text-align: center;">総数</th>
+        </tr>
+        <tr>
+            <th colspan="2" style="text-align: center;">合宿</th>
+        </tr>
+        <tr>
+            <th colspan="2" style="text-align: center;">通学</th>
+        </tr>
+        <tr>
+            <th rowspan="7" style="text-align: center;">在籍見込</th>
+            <th colspan="2" style="text-align: center;">総数</th>
+        </tr>
+        <tr>
+            <th rowspan="4" style="text-align: center;">合宿</th>
+            <th style="text-align: center;">MT-1</th>
+        </tr>
+        <tr>
+            <th style="text-align: center;">MT-2</th>
+        </tr>
+        <tr>
+            <th style="text-align: center;">AT-1</th>
+        </tr>
+        <tr>
+            <th style="text-align: center;">AT-2</th>
+        </tr>
+        <tr>
+            <th rowspan="2" style="text-align: center;">通学</th>
+            <th style="text-align: center;">MT</th>
+        </tr>
+        <tr>
+            <th style="text-align: center;">AT</th>
+        </tr>
+    </tbody>
+</table>
+<div class="row" style="overflow: auto;">
+    <table border="1" style="table-layout: fixed;">
+        <thead>
+            @* 日付 *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <th style="width:40px; min-width:40px; text-align: center;">@item.Date.ToString("M/d")</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @* 受入残 - 総数 *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.AcceptTotalRemAmt</td>
+                }
+            </tr>
+            @* 受入残 - 合宿 *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.AcceptLodgingRemAmt</td>
+                }
+            </tr>
+            @* 受入残 - 通学 *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.AcceptCommutingRemAmt</td>
+                }
+            </tr>
+            @* 在籍最大 - 総数 *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.DailyTotalMaxAmt</td>
+                }
+            </tr>
+            @* 在籍最大 - 合宿 *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.DailyLodgingMaxAmt</td>
+                }
+            </tr>
+            @* 在籍最大 - 通学 *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.DailyCommutingMaxAmt</td>
+                }
+            </tr>
+            @* 在籍実績 - 総数 *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.TotalRegAmt</td>
+                }
+            </tr>
+            @* 在籍実績 - 合宿(MT1) *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.LodgingMtFstRegAmt</td>
+                }
+            </tr>
+            @* 在籍実績 - 合宿(MT2) *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.LodgingMtSndRegAmt</td>
+                }
+            </tr>
+            @* 在籍実績 - 合宿(AT1) *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.LodgingAtFstRegAmt</td>
+                }
+            </tr>
+            @* 在籍実績 - 合宿(AT2) *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.LodgingAtSndRegAmt</td>
+                }
+            </tr>
+            @* 在籍実績 - 通学(MT) *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.CommutingMtRegAmt</td>
+                }
+            </tr>
+            @* 在籍実績 - 通学(AT) *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.CommutingAtRegAmt</td>
+                }
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -3,7 +3,4 @@
   <parameter name="MyDbConnection-Web.config Connection String" description="MyDbConnection データベースに接続するためにアプリケーションによって web.config で使用される接続文字列。" defaultValue="Data Source=(localdb)\MSSQLLocalDB; Integrated Security=True; MultipleActiveResultSets=True; AttachDbFilename=|DataDirectory|MyDatabaseContext-12.mdf" tags="SqlConnectionString">
     <parameterEntry kind="XmlFile" scope="C:\\プロジェクト別\\自動車教習所\\project\\VehicleDispatchPlan\\Src\\VehicleDispatchPlan\\VehicleDispatchPlan\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='MyDbConnection']/@connectionString" />
   </parameter>
-  <parameter name="MyDbConnection_DatabasePublish-Web.config Connection String" description="MyDbConnection_DatabasePublish データベースに接続するためにアプリケーションによって web.config で使用される接続文字列。" defaultValue="MyDbConnection_DatabasePublish.ConnetionString" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\プロジェクト別\\自動車教習所\\project\\VehicleDispatchPlan\\Src\\VehicleDispatchPlan\\VehicleDispatchPlan\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='MyDbConnection_DatabasePublish']/@connectionString" />
-  </parameter>
 </parameters>

@@ -9,7 +9,7 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{90DAE845-7916-4E20-B1B8-0E59B575B173}</ProjectGuid>
+    <ProjectGuid>{9D345F84-5E7C-43F2-95BE-308CE4FE53B4}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -19,7 +19,7 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
-    <IISExpressSSLPort>44328</IISExpressSSLPort>
+    <IISExpressSSLPort>44393</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -145,18 +145,21 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202004030612081_Initial.cs" />
-    <Compile Include="Migrations\202004030612081_Initial.designer.cs">
+    <Compile Include="Migrations\202004030612081_Initial.Designer.cs">
       <DependentUpon>202004030612081_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202004060450521_DropForecast.cs" />
-    <Compile Include="Migrations\202004060450521_DropForecast.designer.cs">
+    <Compile Include="Migrations\202004060450521_DropForecast.Designer.cs">
       <DependentUpon>202004060450521_DropForecast.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202004060648312_AddForeignDailyClasses.cs" />
-    <Compile Include="Migrations\202004060648312_AddForeignDailyClasses.designer.cs">
+    <Compile Include="Migrations\202004060648312_AddForeignDailyClasses.Designer.cs">
       <DependentUpon>202004060648312_AddForeignDailyClasses.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202004070538052_AddForeignEntGrdCalendar.cs" />
+    <Compile Include="Migrations\202004100209303_AddForeignEntGrdCalendar.cs" />
+    <Compile Include="Migrations\202004100209303_AddForeignEntGrdCalendar.Designer.cs">
+      <DependentUpon>202004100209303_AddForeignEntGrdCalendar.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MyDatabaseContext.cs" />
     <Compile Include="Models\M_AttendType.cs" />
@@ -185,7 +188,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <None Include="Properties\PublishProfiles\VehicleDispatchPlanTest - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\sri-vehicledispatchplan-dev - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -197,7 +200,6 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Views\Forecast\Chart.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -209,16 +211,20 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Calendar\Import.cshtml" />
+    <Content Include="Views\Calendar\List.cshtml" />
+    <Content Include="Views\Forecast\Chart.cshtml" />
     <Content Include="Views\Lodging\List.cshtml" />
+    <Content Include="Views\Lodging\Regist.cshtml" />
     <Content Include="Views\Trainee\Delete.cshtml" />
     <Content Include="Views\Trainee\Details.cshtml" />
     <Content Include="Views\Trainee\Edit.cshtml" />
     <Content Include="Views\Trainee\List.cshtml" />
     <Content Include="Views\Trainee\Regist.cshtml" />
     <Content Include="Views\Home\Menu.cshtml" />
-    <Content Include="Views\Calendar\Import.cshtml" />
-    <Content Include="Views\Calendar\List.cshtml" />
     <Content Include="Views\Shared\Table.cshtml" />
+    <Content Include="Views\Lodging\Edit.cshtml" />
+    <Content Include="Views\Lodging\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -246,6 +252,9 @@
     <EmbeddedResource Include="Migrations\202004060648312_AddForeignDailyClasses.resx">
       <DependentUpon>202004060648312_AddForeignDailyClasses.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004100209303_AddForeignEntGrdCalendar.resx">
+      <DependentUpon>202004100209303_AddForeignEntGrdCalendar.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -263,9 +272,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>53913</DevelopmentServerPort>
+          <DevelopmentServerPort>60783</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44328/</IISUrl>
+          <IISUrl>https://localhost:44393/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
