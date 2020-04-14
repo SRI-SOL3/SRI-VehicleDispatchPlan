@@ -14,62 +14,69 @@ namespace VehicleDispatchPlan.Controllers
     {
         private MyDatabaseContext db = new MyDatabaseContext();
 
-        // GET: T_DailyClassesByTrainer
-        public ActionResult Index(T_DailyClasses t_DailyClasses)
+        /// <summary>
+        /// 指定日付の指導員を登録
+        /// </summary>
+        /// <param name="dailyClassesByTrainer">指導員別コマ数クラス</param>
+        /// <returns>指導員一覧画面</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "Date,No,TrainerName,Classes")] T_DailyClassesByTrainer dailyClassesByTrainer)
         {
-
-            var dailyClassesByTrainer = db.DailyClassesByTrainer.Include(t => t.DailyClasses);
-
-            if (t_DailyClasses != null) 
-            { 
-                db.DailyClasses.FirstOrDefault().Date = DateTime.Today;
-                return View(dailyClassesByTrainer.ToList());
-            }
-            else
-            
-            
-            return View(dailyClassesByTrainer.ToList());
-        }
-
-        // GET: T_DailyClassesByTrainer/Details/5
-        public ActionResult Details(DateTime id)
-        {
-            if (id == null)
+            ///nullチェック
+            if (dailyClassesByTrainer == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            T_DailyClassesByTrainer t_DailyClassesByTrainer = db.DailyClassesByTrainer.Find(id);
-            if (t_DailyClassesByTrainer == null)
+            
+            ///データ追加のため対象日のNoを取得してインクリメント
+            var nextNum = db.DailyClassesByTrainer.Where(item => ((DateTime)item.Date).Equals((DateTime)dailyClassesByTrainer.Date)).Select(s => s.No).Max() + 1;
+            if (nextNum == 0)
             {
-                return HttpNotFound();
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            return View(t_DailyClassesByTrainer);
-        }
 
-        // GET: T_DailyClassesByTrainer/Create
-        public ActionResult Create()
-        {
-            ViewBag.Date = new SelectList(db.DailyClasses, "Date", "Date");
-            return View();
-        }
-
-        // POST: T_DailyClassesByTrainer/Create
-        // 過多ポスティング攻撃を防止するには、バインド先とする特定のプロパティを有効にしてください。
-        // 詳細については、https://go.microsoft.com/fwlink/?LinkId=317598 を参照してください。
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Date,No,TrainerName,Classes")] T_DailyClassesByTrainer t_DailyClassesByTrainer)
-        {
             if (ModelState.IsValid)
             {
-                db.DailyClassesByTrainer.Add(t_DailyClassesByTrainer);
+                ///追加するデータ（No）
+                dailyClassesByTrainer.No = nextNum;
+
+                ///データ追加
+                db.DailyClassesByTrainer.Add(dailyClassesByTrainer);
                 db.SaveChanges();
-                return RedirectToAction("List");
+
             }
 
-            ViewBag.Date = new SelectList(db.DailyClasses, "Date", "Date", t_DailyClassesByTrainer.Date);
-            return View(t_DailyClassesByTrainer);
+            ///指導員一覧画面へ遷移
+            return BackToList(dailyClassesByTrainer.Date);
         }
+
+
+
+        /// <summary>
+        /// 指導員登録用の設定を行う
+        /// </summary>
+        /// <param name="Date">指定日付</param>
+        /// <returns>登録画面へ遷移</returns>
+        public ActionResult Create(DateTime? Date)
+        {
+            //指導員登録用インスタンス
+            var dailyClassesByTrainer = new T_DailyClassesByTrainer();
+
+            //引数が空であればエラー
+            if (Date == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            }
+
+            ///日付を設定
+            dailyClassesByTrainer.Date = Date;
+
+            return View(dailyClassesByTrainer);
+        }
+
+
         /// <summary>
         /// 指導員データの保存処理を行う。（複数レコード）
         /// </summary>
@@ -78,62 +85,43 @@ namespace VehicleDispatchPlan.Controllers
         public ActionResult Edit([Bind(Include = "Date,t_DailyClassesByTrainer")] V_SearchInstractorViewModel model)
         {
 
-            foreach(var trainer in model.t_DailyClassesByTrainer)
+            ///一覧画面で編集されたデータを登録
+            foreach(var Instructor in model.t_DailyClassesByTrainer)
             {
-                trainer.Date = trainer.DailyClasses.Date;
-                trainer.DailyClasses = null;
+                Instructor.Date = Instructor.DailyClasses.Date;
+                Instructor.DailyClasses = null;
                 
-                db.Entry(trainer).State = EntityState.Modified;
+                db.Entry(Instructor).State = EntityState.Modified;
                 db.SaveChanges();
+                
             }
 
-        
-            return RedirectToAction("List",model);
+            return BackToList(model.Date);
 
           
         }
 
-        // GET: T_DailyClassesByTrainer/Edit/5
-        //public ActionResult Edit(DateTime id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    T_DailyClassesByTrainer t_DailyClassesByTrainer = db.DailyClassesByTrainer.Find(id);
-        //    if (t_DailyClassesByTrainer == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    ViewBag.Date = new SelectList(db.DailyClasses, "Date", "Date", t_DailyClassesByTrainer.Date);
-        //    return View(t_DailyClassesByTrainer);
-        //}
 
-        // POST: T_DailyClassesByTrainer/Edit/5
-        // 過多ポスティング攻撃を防止するには、バインド先とする特定のプロパティを有効にしてください。
-        // 詳細については、https://go.microsoft.com/fwlink/?LinkId=317598 を参照してください。
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit([Bind(Include = "Date,No,TrainerName,Classes")] T_DailyClassesByTrainer t_DailyClassesByTrainer)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        db.Entry(t_DailyClassesByTrainer).State = EntityState.Modified;
-        //        db.SaveChanges();
-        //        return RedirectToAction("Seach");
-        //    }
-        //    ViewBag.Date = new SelectList(db.DailyClasses, "Date", "Date", t_DailyClassesByTrainer.Date);
-        //    return View(t_DailyClassesByTrainer);
-        //}
-
+        /// <summary>
+        /// 削除画面表示
+        /// </summary>
+        /// <param name="Date">指定日付</param>
+        /// <param name="No">指導員別コマ数クラスのNO</param>
+        /// <returns></returns>
         // GET: T_DailyClassesByTrainer/Delete/5
-        public ActionResult Delete(DateTime id)
+        public ActionResult Delete(DateTime? Date,int? No)
         {
-            if (id == null)
+
+            ///nullチェック
+            if (No == null || Date == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            T_DailyClassesByTrainer t_DailyClassesByTrainer = db.DailyClassesByTrainer.Find(id);
+
+            ///削除対象のデータを取得
+            T_DailyClassesByTrainer t_DailyClassesByTrainer = db.DailyClassesByTrainer.Find(Date, No);
+
+            
             if (t_DailyClassesByTrainer == null)
             {
                 return HttpNotFound();
@@ -141,15 +129,21 @@ namespace VehicleDispatchPlan.Controllers
             return View(t_DailyClassesByTrainer);
         }
 
+
+        /// <summary>
+        /// 削除実施
+        /// </summary>
+        /// <param name="No"></param>
+        /// <returns>指導員一覧画面</returns>
         // POST: T_DailyClassesByTrainer/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(DateTime id)
+        public ActionResult DeleteConfirmed(DateTime? Date, int? No)
         {
-            T_DailyClassesByTrainer t_DailyClassesByTrainer = db.DailyClassesByTrainer.Find(id);
+            T_DailyClassesByTrainer t_DailyClassesByTrainer = db.DailyClassesByTrainer.Find(Date, No);
             db.DailyClassesByTrainer.Remove(t_DailyClassesByTrainer);
             db.SaveChanges();
-            return RedirectToAction("List");
+            return BackToList(Date);
         }
 
         /// <summary>
@@ -165,6 +159,7 @@ namespace VehicleDispatchPlan.Controllers
                 ///画面で指定した日付を設定
                 var list = db.DailyClassesByTrainer.Where(item => ((DateTime)item.Date).Equals((DateTime)model.Date)).ToList();
                 model.t_DailyClassesByTrainer = list.ToList();
+                ViewBag.DataExistsflg = true;
             }
             else
             {
@@ -173,7 +168,23 @@ namespace VehicleDispatchPlan.Controllers
 
             }
 
+            ViewBag.Info = "テスト";
+
             return (View(model));
+        }
+
+        /// <summary>
+        /// 指導員一覧へのリダイレクト
+        /// </summary>
+        /// <param name="Date">指定日付</param>
+        /// <returns>指導員一覧へのリダイレクト</returns>
+        public ActionResult BackToList(DateTime? Date)
+        {
+            V_SearchInstractorViewModel model = new V_SearchInstractorViewModel();
+            model.Date = Date;
+            model.t_DailyClassesByTrainer = new List<T_DailyClassesByTrainer>();
+
+            return RedirectToAction("List", model);
         }
 
         protected override void Dispose(bool disposing)

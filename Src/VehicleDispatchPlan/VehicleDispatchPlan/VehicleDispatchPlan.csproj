@@ -142,6 +142,7 @@
     <Compile Include="Controllers\InstractorController.cs" />
     <Compile Include="Controllers\LodgingController.cs" />
     <Compile Include="Controllers\TraineeController.cs" />
+    <Compile Include="Controllers\T_DailyClassesByTrainerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -223,6 +224,13 @@
     <Content Include="Views\Calendar\List.cshtml" />
     <Content Include="Views\Shared\Table.cshtml" />
     <Content Include="Views\Instractor\List.cshtml" />
+    <Content Include="Views\Instractor\Delete.cshtml" />
+    <Content Include="Views\Instractor\Create.cshtml" />
+    <Content Include="Views\T_DailyClassesByTrainer\Create.cshtml" />
+    <Content Include="Views\T_DailyClassesByTrainer\Delete.cshtml" />
+    <Content Include="Views\T_DailyClassesByTrainer\Details.cshtml" />
+    <Content Include="Views\T_DailyClassesByTrainer\Edit.cshtml" />
+    <Content Include="Views\T_DailyClassesByTrainer\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
