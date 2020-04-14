@@ -220,6 +220,59 @@ namespace VehicleDispatchPlan.Controllers
             return RedirectToAction("List");
         }
 
+        public ActionResult Confirm(string cmd, [Bind(Include = "DateFrom,DateTo,LodgingCd")] V_LodgingCfm lodgingCfm)
+        {
+            Trace.WriteLine("GET /Lodging/Confirm");
+
+            // 教習生情報を初期化
+            lodgingCfm.Trainee = new List<T_Trainee>();
+
+            // コマンドが空（初回表示）でない場合
+            if (!string.IsNullOrEmpty(cmd))
+            {
+                // 検索ボタンが押下された場合
+                if (AppConstant.CMD_SEARCH.Equals(cmd))
+                {
+                    bool validation = true;
+
+                    // 入力チェック
+                    if (lodgingCfm.DateFrom == null || lodgingCfm.DateTo == null || string.IsNullOrEmpty(lodgingCfm.LodgingCd))
+                    {
+                        ViewBag.ErrorMessage = "検索条件を指定してください。";
+                        validation = false;
+                    }
+                    // 前後チェック
+                    if (validation == true && (lodgingCfm.DateFrom > lodgingCfm.DateTo))
+                    {
+                        ViewBag.ErrorMessage = "日付の前後関係が不正です。";
+                        validation = false;
+                    }
+
+                    if (validation == true)
+                    {
+                        // 合宿生かつ、宿泊施設が一致かつ、対象期間に在籍する教習生を取得
+                        lodgingCfm.Trainee = db.Trainee.Where(
+                            x => x.AttendTypeCd.Equals(AppConstant.ATTEND_TYPE_CD_LODGING)
+                            &&  x.LodgingCd.Equals(lodgingCfm.LodgingCd)
+                            && (x.EntrancePlanDate >= lodgingCfm.DateFrom && x.EntrancePlanDate <= lodgingCfm.DateTo
+                            || x.GraduatePlanDate >= lodgingCfm.DateFrom && x.GraduatePlanDate <= lodgingCfm.DateTo
+                            || x.EntrancePlanDate < lodgingCfm.DateFrom && lodgingCfm.DateTo < x.GraduatePlanDate)).ToList();
+                    }
+                }
+
+                // その他
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+            }
+
+            // ドロップダウンリストの選択肢を設定
+            lodgingCfm.SelectLodging = new SelectList(db.LodgingFacility.OrderBy(x => x.LodgingCd).ToList(), "LodgingCd", "LodgingName", lodgingCfm.LodgingCd);
+
+            return View(lodgingCfm);
+        }
+
         /// <summary>
         /// データベース接続の破棄
         /// </summary>

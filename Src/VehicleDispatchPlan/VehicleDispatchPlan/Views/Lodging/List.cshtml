@@ -1,5 +1,4 @@
 ﻿@model List<VehicleDispatchPlan.Models.M_LodgingFacility>
-@using VehicleDispatchPlan.Constants;
 
 @{
     ViewBag.Title = "宿泊施設管理";
@@ -8,7 +7,8 @@
 <h2>@ViewBag.Title</h2>
 
 <p>
-    @Html.ActionLink("新規登録", "Regist")
+    @Html.ActionLink("新規登録", "Regist") &nbsp|&nbsp
+    @Html.ActionLink("宿泊確認", "Confirm")
 </p>
 
 <div>@ViewBag.Message</div>

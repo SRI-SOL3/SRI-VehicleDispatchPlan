@@ -172,6 +172,7 @@
     <Compile Include="Models\V_ChartData.cs" />
     <Compile Include="Models\V_EntGrdCalendarEdt.cs" />
     <Compile Include="Models\V_ForecastCht.cs" />
+    <Compile Include="Models\V_LodgingCfm.cs" />
     <Compile Include="Models\V_TraineeEdt.cs" />
     <Compile Include="Models\V_TraineeReg.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -225,6 +226,7 @@
     <Content Include="Views\Shared\Table.cshtml" />
     <Content Include="Views\Lodging\Edit.cshtml" />
     <Content Include="Views\Lodging\Delete.cshtml" />
+    <Content Include="Views\Lodging\Confirm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
