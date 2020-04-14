@@ -28,28 +28,50 @@ namespace VehicleDispatchPlan_Dev.Controllers
         // データベースコンテキスト
         private MyDatabaseContext db = new MyDatabaseContext();
 
-       /// <summary>
-       /// 一覧表示
-       /// </summary>
-       /// <param name="selectYear">対象年</param>
-       /// <param name="selectMonth">対象月</param>
-       /// <returns></returns>
-        public ActionResult List(string selectYear, string selectMonth)
+        /// <summary>
+        /// 一覧表示
+        /// </summary>
+        /// <param name="cmd">コマンド</param>
+        /// <param name="entGrdCalendarEdt">入卒カレンダー編集情報</param>
+        /// <returns></returns>
+        public ActionResult List(string cmd, [Bind(Include = "Year,Month")] V_EntGrdCalendarEdt entGrdCalendarEdt)
         {
-            List<M_EntGrdCalendar> calendarList = new List<M_EntGrdCalendar>();
-            // 年、月を指定して取得
-            if (!string.IsNullOrEmpty(selectYear) && !string.IsNullOrEmpty(selectMonth))
+            Trace.WriteLine("GET /Calendar/List");
+
+            // カレンダー情報を初期化
+            entGrdCalendarEdt.CalendarList = new List<M_EntGrdCalendar>();
+
+            if (!string.IsNullOrEmpty(cmd))
             {
-                calendarList = db.EntGrdCalendar.Where(
-                    x => ((DateTime)x.EntrancePlanDate).Year.ToString().Equals(selectYear)
-                    && ((DateTime)x.EntrancePlanDate).Month.ToString().Equals(selectMonth)).ToList();
+                // 検索ボタンが押下された場合
+                if (AppConstant.CMD_SEARCH.Equals(cmd))
+                {
+                    // 年、月を指定して取得
+                    if (!string.IsNullOrEmpty(entGrdCalendarEdt.Year) && !string.IsNullOrEmpty(entGrdCalendarEdt.Month))
+                    {
+                        // 年と月を指定してカレンダーを取得
+                        entGrdCalendarEdt.CalendarList = db.EntGrdCalendar.Where(
+                            x => ((DateTime)x.EntrancePlanDate).Year.ToString().Equals(entGrdCalendarEdt.Year)
+                            && ((DateTime)x.EntrancePlanDate).Month.ToString().Equals(entGrdCalendarEdt.Month))
+                            .OrderBy(x => x.EntrancePlanDate).ThenBy(x => x.TrainingCourseCd).ToList();
+                        // 削除フラグをfalseに設定
+                        entGrdCalendarEdt.CalendarList.ForEach(x => x.DeleteFlg = false);
+                    }
+                    else
+                    {
+                        ViewBag.ErrorMessage = "検索条件を指定してください。";
+                    }
+                }
+
+                // その他
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
             }
 
-            // ドロップダウンリストの選択肢を設定
-            this.SetSelectItem(calendarList);
-            this.SetDisplayItem();
 
-            return View(calendarList);
+            return View(entGrdCalendarEdt);
         }
 
         /// <summary>
@@ -60,34 +82,71 @@ namespace VehicleDispatchPlan_Dev.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult List(string cmd, [Bind(Include = "TrainingCourseCd,EntrancePlanDate,TmpLicencePlanDate,GraduatePlanDate")] List<M_EntGrdCalendar> calendarList)
+        public ActionResult List(string cmd, int? index, [Bind(Include = "Year,Month,CalendarList")] V_EntGrdCalendarEdt entGrdCalendarEdt)
         {
-            Trace.WriteLine("POST /Trainee/Edit");
+            Trace.WriteLine("POST /Calendar/List");
 
-            if ("更新".Equals(cmd))
+            // 更新ボタンが押下された場合
+            if (AppConstant.CMD_UPDATE.Equals(cmd))
             {
                 if (ModelState.IsValid)
                 {
-                    // 重複チェック
-                    int repeatedNum = calendarList.GroupBy(x => new { x.TrainingCourseCd, x.EntrancePlanDate })
-                        .Select(x => new { Count = x.Count() }).Where(x => x.Count != 1).Count();
-                    if (repeatedNum > 0)
+                    foreach (M_EntGrdCalendar calendar in entGrdCalendarEdt.CalendarList)
                     {
-                        ViewBag.ErrorMessage = "教習コース、入校予定日の重複データがあります。";
+                        if (calendar.DeleteFlg == false)
+                        {
+                            // 更新（ステータスを修正に設定）
+                            db.Entry(calendar).State = EntityState.Modified;
+                        }
+                        else
+                        {
+                            // 削除対象を取得
+                            M_EntGrdCalendar target = db.EntGrdCalendar.Find(calendar.TrainingCourseCd, calendar.EntrancePlanDate);
+                            if (target != null)
+                            {
+                                db.EntGrdCalendar.Remove(target);
+                            }
+                        }
                     }
-                    // ＴＯＤＯ：データの登録/更新
+                    db.SaveChanges();
+
+                    // 年と月を指定してカレンダーを取得
+                    entGrdCalendarEdt.CalendarList = db.EntGrdCalendar.Where(
+                        x => ((DateTime)x.EntrancePlanDate).Year.ToString().Equals(entGrdCalendarEdt.Year)
+                        && ((DateTime)x.EntrancePlanDate).Month.ToString().Equals(entGrdCalendarEdt.Month))
+                        .OrderBy(x => x.EntrancePlanDate).ThenBy(x => x.TrainingCourseCd).ToList();
+                    // 削除フラグをfalseに設定
+                    entGrdCalendarEdt.CalendarList.ForEach(x => x.DeleteFlg = false);
+
+                    // 完了メッセージ
+                    ViewBag.CompMessage = "データを更新しました。";
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "必須項目（教習コース、入校予定日、仮免予定日、卒業予定日）を設定してください。";
+                    ViewBag.ErrorMessage = "必須項目（仮免予定日、卒業予定日）を設定してください。";
                 }
             }
 
-            // ドロップダウンリストの選択肢を設定
-            this.SetSelectItem(calendarList);
-            this.SetDisplayItem();
+            // 削除ボタンが押下された場合
+            else if (AppConstant.CMD_REMOVE.Equals(cmd))
+            {
+                // ステータスをクリア
+                ModelState.Clear();
+                // インデックスを元にカレンダーを削除
+                int i = (int)index;
+                entGrdCalendarEdt.CalendarList[i].DeleteFlg = true;
+            }
 
-            return View(calendarList);
+            // その他
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            // 外部キーのマスタを設定
+            this.SetForeignMaster(entGrdCalendarEdt.CalendarList);
+
+            return View(entGrdCalendarEdt);
         }
 
         /// <summary>
@@ -110,6 +169,8 @@ namespace VehicleDispatchPlan_Dev.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Import(string cmd, HttpPostedFileBase postedFile, [Bind(Include = "TrainingCourseCd,EntrancePlanDate,TmpLicencePlanDate,GraduatePlanDate")] List<M_EntGrdCalendar> calendarList)
         {
+            Trace.WriteLine("POST /Calendar/Import");
+
             // 読込ボタンが押下された場合
             if (AppConstant.CMD_READ.Equals(cmd))
             {
@@ -151,10 +212,10 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             // 読み込んだ一行をカンマ毎に分けて配列に格納
                             string[] values = line.Split(',');
 
-                            // 教習コース名
-                            string trainingCourseName;
                             // 入校予定日
                             DateTime entrancePlanDate;
+                            // 教習コースコード
+                            string trainingCourseCd;
                             // 仮免予定日
                             DateTime tmpLicencePlanDate;
                             // 卒業予定日
@@ -167,33 +228,33 @@ namespace VehicleDispatchPlan_Dev.Controllers
                                 break;
                             }
 
-                            // ----- 教習コース -----
-                            // 必須チェック
-                            if (string.IsNullOrEmpty(values[0]))
-                            {
-                                ViewBag.ErrorMessage = "教習コースが未設定のため、読み込みを途中で終了しました。";
-                                break;
-                            }
-                            // マスタ存在チェック
-                            trainingCourseName = trainingCourse.Where(
-                                x => x.TrainingCourseCd.Equals(values[0])).Select(x => x.TrainingCourseName).FirstOrDefault();
-                            if (string.IsNullOrEmpty(trainingCourseName))
-                            {
-                                ViewBag.ErrorMessage = "教習コースの設定が不正のため、読み込みを途中で終了しました。";
-                                break;
-                            }
-
                             // ----- 入校予定日 -----
                             // 必須チェック
-                            if (string.IsNullOrEmpty(values[1]))
+                            if (string.IsNullOrEmpty(values[0]))
                             {
                                 ViewBag.ErrorMessage = "入校予定日が未設定のため、読み込みを途中で終了しました。";
                                 break;
                             }
                             // 日付整合性チェック
-                            if (!DateTime.TryParse(values[1], out entrancePlanDate))
+                            if (!DateTime.TryParse(values[0], out entrancePlanDate))
                             {
                                 ViewBag.ErrorMessage = "入校予定日の設定が不正のため、読み込みを途中で終了しました。";
+                                break;
+                            }
+
+                            // ----- 教習コース -----
+                            // 必須チェック
+                            if (string.IsNullOrEmpty(values[1]))
+                            {
+                                ViewBag.ErrorMessage = "教習コースが未設定のため、読み込みを途中で終了しました。";
+                                break;
+                            }
+                            // マスタ存在チェック
+                            trainingCourseCd = trainingCourse.Where(
+                                x => x.TrainingCourseCd.Equals(values[1])).Select(x => x.TrainingCourseCd).FirstOrDefault();
+                            if (string.IsNullOrEmpty(trainingCourseCd))
+                            {
+                                ViewBag.ErrorMessage = "教習コースの設定が不正のため、読み込みを途中で終了しました。";
                                 break;
                             }
 
@@ -226,12 +287,13 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             }
 
                             // 各項目を設定
-                            M_EntGrdCalendar calendar = new M_EntGrdCalendar();
-                            calendar.TrainingCourseCd = values[0];
-                            calendar.TrainingCourseName = trainingCourseName;
-                            calendar.EntrancePlanDate = entrancePlanDate;
-                            calendar.TmpLicencePlanDate = tmpLicencePlanDate;
-                            calendar.GraduatePlanDate = graduatePlanDate;
+                            M_EntGrdCalendar calendar = new M_EntGrdCalendar()
+                            {
+                                EntrancePlanDate = entrancePlanDate,
+                                TrainingCourseCd = trainingCourseCd,
+                                TmpLicencePlanDate = tmpLicencePlanDate,
+                                GraduatePlanDate = graduatePlanDate
+                            };
                             // リストに追加
                             calendarList.Add(calendar);
                         }
@@ -257,42 +319,27 @@ namespace VehicleDispatchPlan_Dev.Controllers
                     }
                     else
                     {
-                        // トランザクション作成
-                        using (DbContextTransaction tran = db.Database.BeginTransaction())
+                        // データの登録/更新
+                        foreach (M_EntGrdCalendar calendar in calendarList)
                         {
-                            try
+                            // 存在チェック
+                            if (db.EntGrdCalendar.Where(x => x.TrainingCourseCd.Equals(calendar.TrainingCourseCd)
+                                && ((DateTime)x.EntrancePlanDate).Equals((DateTime)calendar.EntrancePlanDate)).Count() == 0)
                             {
-                                // データの登録/更新
-                                foreach (M_EntGrdCalendar calendar in calendarList)
-                                {
-                                    // 存在チェック
-                                    if (db.EntGrdCalendar.Where(x => x.TrainingCourseCd.Equals(calendar.TrainingCourseCd) 
-                                        && ((DateTime)x.EntrancePlanDate).Equals((DateTime)calendar.EntrancePlanDate)).Count() == 0)
-                                    {
-                                        // 登録処理
-                                        db.EntGrdCalendar.Add(calendar);
-                                    }
-                                    else
-                                    {
-                                        // 更新処理
-                                        db.Entry(calendar).State = EntityState.Modified;
-                                    }
-                                }
-                                db.SaveChanges();
-                                // コミット
-                                tran.Commit();
-                                // 完了メッセージ
-                                ViewBag.CompMessage = "インポートが完了しました。";
-                                // 表示データを初期化
-                                calendarList = new List<M_EntGrdCalendar>();
+                                // 登録処理
+                                db.EntGrdCalendar.Add(calendar);
                             }
-                            catch (Exception e)
+                            else
                             {
-                                // ロールバック
-                                tran.Rollback();
-                                throw e;
+                                // 更新処理
+                                db.Entry(calendar).State = EntityState.Modified;
                             }
                         }
+                        db.SaveChanges();
+                        // 完了メッセージ
+                        ViewBag.CompMessage = "インポートが完了しました。";
+                        // 表示データを初期化
+                        calendarList = new List<M_EntGrdCalendar>();
                     }
                 }
                 else
@@ -314,30 +361,6 @@ namespace VehicleDispatchPlan_Dev.Controllers
         }
 
         /// <summary>
-        /// 画面項目を設定
-        /// </summary>
-        private void SetDisplayItem()
-        {
-            // 年の選択肢を設定
-            int nowYear = DateTime.Now.Year;
-            List<SelectListItem> selectYear = new List<SelectListItem>()
-            {
-                new SelectListItem() { Text = (nowYear - 5).ToString(), Value=(nowYear - 5).ToString() }
-                , new SelectListItem() { Text = (nowYear - 4).ToString(), Value=(nowYear - 4).ToString() }
-                , new SelectListItem() { Text = (nowYear - 3).ToString(), Value=(nowYear - 3).ToString() }
-                , new SelectListItem() { Text = (nowYear - 2).ToString(), Value=(nowYear - 2).ToString() }
-                , new SelectListItem() { Text = (nowYear - 1).ToString(), Value=(nowYear - 1).ToString() }
-                , new SelectListItem() { Text = nowYear.ToString(), Value=nowYear.ToString() }
-                , new SelectListItem() { Text = (nowYear + 1).ToString(), Value=(nowYear + 1).ToString() }
-                , new SelectListItem() { Text = (nowYear + 2).ToString(), Value=(nowYear + 2).ToString() }
-                , new SelectListItem() { Text = (nowYear + 3).ToString(), Value=(nowYear + 3).ToString() }
-                , new SelectListItem() { Text = (nowYear + 4).ToString(), Value=(nowYear + 4).ToString() }
-                , new SelectListItem() { Text = (nowYear + 5).ToString(), Value=(nowYear + 5).ToString() }
-            };
-            ViewBag.SelectYear = selectYear;
-        }
-
-        /// <summary>
         /// ドロップダウンリストの選択肢を設定
         /// </summary>
         private void SetSelectItem(List<M_EntGrdCalendar> calendarList)
@@ -349,6 +372,21 @@ namespace VehicleDispatchPlan_Dev.Controllers
             {
                 // 教習コースの選択肢設定
                 calendarList[i].SelectTrainingCourse = new SelectList(trainingCourse, "TrainingCourseCd", "TrainingCourseName", calendarList[i].TrainingCourseCd);
+            }
+        }
+
+        /// <summary>
+        /// 外部キーのマスターを設定
+        /// </summary>
+        private void SetForeignMaster(List<M_EntGrdCalendar> calendarList)
+        {
+            // 教習コースマスタ取得
+            List<M_TrainingCourse> trainingCourse = db.TrainingCourse.ToList();
+
+            for (int i = 0; i < calendarList.Count(); i++)
+            {
+                // 教習コースマスタを設定
+                calendarList[i].TrainingCourse = trainingCourse.Where(x => x.TrainingCourseCd.Equals(calendarList[i].TrainingCourseCd)).FirstOrDefault();
             }
         }
 

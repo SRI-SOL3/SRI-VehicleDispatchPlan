@@ -1,7 +1,73 @@
-﻿
+﻿@model List<VehicleDispatchPlan.Models.M_LodgingFacility>
+
 @{
-    ViewBag.Title = "宿泊管理";
+    ViewBag.Title = "宿泊施設管理";
 }
 
-<h2>宿泊管理</h2>
+<h2>@ViewBag.Title</h2>
 
+<p>
+    @Html.ActionLink("新規登録", "Regist") &nbsp|&nbsp
+    @Html.ActionLink("宿泊確認", "Confirm")
+</p>
+
+<div>@ViewBag.Message</div>
+
+<table class="table">
+    @* ヘッダ部 *@
+    <tr>
+        <th>
+            @* 宿泊施設コード *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().LodgingCd)
+        </th>
+        <th>
+            @* 宿泊施設名 *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().LodgingName)
+        </th>
+        <th>
+            @* 電話番号 *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().TelNo)
+        </th>
+        <th>
+            @* 郵便番号 *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().PostalNo)
+        </th>
+        <th>
+            @* 住所 *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Address)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        @* データ部 *@
+        <tr>
+            <td>
+                @* 宿泊施設コード *@
+                @Html.DisplayFor(modelItem => item.LodgingCd)
+            </td>
+            <td>
+                @* 宿泊施設名 *@
+                @Html.DisplayFor(modelItem => item.LodgingName)
+            </td>
+            <td>
+                @* 電話番号 *@
+                @Html.DisplayFor(modelItem => item.TelNo)
+            </td>
+            <td>
+                @* 郵便番号 *@
+                @Html.DisplayFor(modelItem => item.PostalNo)
+            </td>
+            <td>
+                @* 住所 *@
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.ActionLink("編集", "Edit", new { cd = item.LodgingCd }) |
+                @Html.ActionLink("削除", "Delete", new { cd = item.LodgingCd })
+            </td>
+        </tr>
+    }
+
+</table>
