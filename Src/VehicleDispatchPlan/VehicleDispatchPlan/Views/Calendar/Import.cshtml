@@ -41,12 +41,12 @@
             @* ヘッダ部 *@
             <tr>
                 <th>
-                    @* 教習コース *@
-                    @Html.DisplayNameFor(model => model.FirstOrDefault().TrainingCourseCd)
-                </th>
-                <th>
                     @* 入校予定日 *@
                     @Html.DisplayNameFor(model => model.FirstOrDefault().EntrancePlanDate)
+                </th>
+                <th>
+                    @* 教習コース *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().TrainingCourseCd)
                 </th>
                 <th>
                     @* 仮免予定日 *@
@@ -62,12 +62,12 @@
                 @* データ部 *@
                 <tr>
                     <td>
-                        @* 教習コース *@
-                        @Html.DropDownListFor(modelitem => Model[i].TrainingCourseCd, Model[i].SelectTrainingCourse, new { htmlAttributes = new { @class = "form-control" } })
-                    </td>
-                    <td>
                         @* 入校予定日 *@
                         @Html.EditorFor(modelitem => Model[i].EntrancePlanDate, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })
+                    </td>
+                    <td>
+                        @* 教習コース *@
+                        @Html.DropDownListFor(modelitem => Model[i].TrainingCourseCd, Model[i].SelectTrainingCourse, new { htmlAttributes = new { @class = "form-control" } })
                     </td>
                     <td>
                         @* 仮免予定日 *@

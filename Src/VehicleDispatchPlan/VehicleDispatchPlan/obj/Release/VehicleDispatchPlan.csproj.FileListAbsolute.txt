@@ -93,5 +93,6 @@ C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\Vehi
 C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Release\VehicleDispatchPlan.dll
 C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Release\VehicleDispatchPlan.pdb
 C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Release\VehicleDispatchPlan.csprojAssemblyReference.cache
-C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Release\VehicleDispatchPlan.Migrations.AddRequired.resources
-C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Release\VehicleDispatchPlan.Migrations.AddDailyClasses.resources
+C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Release\VehicleDispatchPlan.Migrations.DropForecast.resources
+C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Release\VehicleDispatchPlan.Migrations.AddForeignDailyClasses.resources
+C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Release\VehicleDispatchPlan.Migrations.AddForeignEntGrdCalendar.resources

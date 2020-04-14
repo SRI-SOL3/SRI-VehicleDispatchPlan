@@ -179,36 +179,44 @@ namespace VehicleDispatchPlan.Controllers
             // 登録ボタンが押下された場合
             else if (AppConstant.CMD_REGIST.Equals(cmd))
             {
-                // トランザクション作成
-                using (DbContextTransaction tran = db.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        // グループIDを加算
-                        int groupId = db.Trainee.Select(x => x.GroupId).Max() + 1;
+                // グループIDを加算
+                int groupId = db.Trainee.Select(x => x.GroupId).Max() + 1;
+                // 外部キーマスタのリセット＆グループIDの設定
+                traineeReg.TraineeList.ForEach(x => this.ResetForeignMaster(x, groupId));
+                // 登録処理
+                db.Trainee.AddRange(traineeReg.TraineeList);
+                db.SaveChanges();
 
-                        foreach (T_Trainee trainee in traineeReg.TraineeList)
-                        {
-                            // グループIDを設定
-                            trainee.GroupId = groupId;
-                            // マスタは登録しないため、データをクリア（ＴＯＤＯ：他に良い方法があるか…？）
-                            trainee.AttendType = null;
-                            trainee.TrainingCourse = null;
-                            trainee.LodgingFacility = null;
-                            // 登録処理
-                            db.Trainee.Add(trainee);
-                        }
-                        db.SaveChanges();
-                        // コミット
-                        tran.Commit();
-                    }
-                    catch (Exception e)
-                    {
-                        // ロールバック
-                        tran.Rollback();
-                        throw e;
-                    }
-                }
+                //// トランザクション作成
+                //using (DbContextTransaction tran = db.Database.BeginTransaction())
+                //{
+                //    try
+                //    {
+                //        // グループIDを加算
+                //        int groupId = db.Trainee.Select(x => x.GroupId).Max() + 1;
+
+                //        foreach (T_Trainee trainee in traineeReg.TraineeList)
+                //        {
+                //            // グループIDを設定
+                //            trainee.GroupId = groupId;
+                //            // マスタは登録しないため、データをクリア（ＴＯＤＯ：他に良い方法があるか…？）
+                //            trainee.AttendType = null;
+                //            trainee.TrainingCourse = null;
+                //            trainee.LodgingFacility = null;
+                //            // 登録処理
+                //            db.Trainee.Add(trainee);
+                //        }
+                //        db.SaveChanges();
+                //        // コミット
+                //        tran.Commit();
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        // ロールバック
+                //        tran.Rollback();
+                //        throw e;
+                //    }
+                //}
                 // 一覧へリダイレクト
                 return RedirectToAction("List");
             }
@@ -296,6 +304,21 @@ namespace VehicleDispatchPlan.Controllers
             this.SetSelectItem(traineeReg);
 
             return View(traineeReg);
+        }
+
+        /// <summary>
+        /// 外部キーマスタのリセット
+        /// </summary>
+        /// <param name="trainee">教習生情報</param>
+        /// <param name="groupId">グループID</param>
+        private void ResetForeignMaster(T_Trainee trainee, int groupId)
+        {
+            // グループIDを設定
+            trainee.GroupId = groupId;
+            // 各マスタをリセット
+            trainee.AttendType = null;
+            trainee.TrainingCourse = null;
+            trainee.LodgingFacility = null;
         }
 
         /// <summary>
@@ -498,8 +521,11 @@ namespace VehicleDispatchPlan.Controllers
 
             // 教習生データを取得
             T_Trainee trainee = db.Trainee.Find(id);
-            // 削除
-            db.Trainee.Remove(trainee);
+            if (trainee != null)
+            {
+                // 削除
+                db.Trainee.Remove(trainee);
+            }
             db.SaveChanges();
 
             // 一覧へリダイレクト
@@ -516,11 +542,11 @@ namespace VehicleDispatchPlan.Controllers
             if (AppConstant.EditMode.Edit.Equals(traineeEdt.EditMode))
             {
                 // 通学種別の選択肢設定
-                traineeEdt.Trainee.SelectAttendType = new SelectList(db.AttendType.ToList(), "AttendTypeCd", "AttendTypeName", traineeEdt.Trainee.AttendTypeCd);
+                traineeEdt.Trainee.SelectAttendType = new SelectList(db.AttendType.OrderBy(x => x.AttendTypeCd).ToList(), "AttendTypeCd", "AttendTypeName", traineeEdt.Trainee.AttendTypeCd);
                 // 教習コースの選択肢設定
-                traineeEdt.Trainee.SelectTrainingCourse = new SelectList(db.TrainingCourse.ToList(), "TrainingCourseCd", "TrainingCourseName", traineeEdt.Trainee.TrainingCourseCd);
+                traineeEdt.Trainee.SelectTrainingCourse = new SelectList(db.TrainingCourse.OrderBy(x => x.TrainingCourseCd).ToList(), "TrainingCourseCd", "TrainingCourseName", traineeEdt.Trainee.TrainingCourseCd);
                 // 宿泊施設の選択肢設定
-                traineeEdt.Trainee.SelectLodging = new SelectList(db.LodgingFacility.ToList(), "LodgingCd", "LodgingName", traineeEdt.Trainee.LodgingCd);
+                traineeEdt.Trainee.SelectLodging = new SelectList(db.LodgingFacility.OrderBy(x => x.LodgingCd).ToList(), "LodgingCd", "LodgingName", traineeEdt.Trainee.LodgingCd);
             }
             // 確認モードの場合
             else
@@ -540,17 +566,22 @@ namespace VehicleDispatchPlan.Controllers
         /// <param name="traineeReg">教習生登録情報</param>
         private void SetSelectItem(V_TraineeReg traineeReg)
         {
+            // マスタを取得
+            List<M_AttendType> attendTypeList = db.AttendType.OrderBy(x => x.AttendTypeCd).ToList();
+            List<M_TrainingCourse> trainingCourseList = db.TrainingCourse.OrderBy(x => x.TrainingCourseCd).ToList();
+            List<M_LodgingFacility> lodgingFacilitList = db.LodgingFacility.OrderBy(x => x.LodgingCd).ToList();
+
             // 編集モードの場合
             if (AppConstant.EditMode.Edit.Equals(traineeReg.EditMode))
             {
                 for (int i = 0; i < traineeReg.TraineeList.Count(); i++)
                 {
                     // 通学種別の選択肢設定
-                    traineeReg.TraineeList[i].SelectAttendType = new SelectList(db.AttendType.ToList(), "AttendTypeCd", "AttendTypeName", traineeReg.TraineeList[i].AttendTypeCd);
+                    traineeReg.TraineeList[i].SelectAttendType = new SelectList(attendTypeList, "AttendTypeCd", "AttendTypeName", traineeReg.TraineeList[i].AttendTypeCd);
                     // 教習コースの選択肢設定
-                    traineeReg.TraineeList[i].SelectTrainingCourse = new SelectList(db.TrainingCourse.ToList(), "TrainingCourseCd", "TrainingCourseName", traineeReg.TraineeList[i].TrainingCourseCd);
+                    traineeReg.TraineeList[i].SelectTrainingCourse = new SelectList(trainingCourseList, "TrainingCourseCd", "TrainingCourseName", traineeReg.TraineeList[i].TrainingCourseCd);
                     // 宿泊施設の選択肢設定
-                    traineeReg.TraineeList[i].SelectLodging = new SelectList(db.LodgingFacility.ToList(), "LodgingCd", "LodgingName", traineeReg.TraineeList[i].LodgingCd);
+                    traineeReg.TraineeList[i].SelectLodging = new SelectList(lodgingFacilitList, "LodgingCd", "LodgingName", traineeReg.TraineeList[i].LodgingCd);
                 }
             }
             // 確認モードの場合
@@ -558,12 +589,12 @@ namespace VehicleDispatchPlan.Controllers
             {
                 for (int i = 0; i < traineeReg.TraineeList.Count(); i++)
                 {
-                    // 通学種別名を設定
-                    traineeReg.TraineeList[i].AttendType = db.AttendType.Find(traineeReg.TraineeList[i].AttendTypeCd);
-                    // 教習コース名を設定
-                    traineeReg.TraineeList[i].TrainingCourse = db.TrainingCourse.Find(traineeReg.TraineeList[i].TrainingCourseCd);
-                    // 宿泊施設名を設定
-                    traineeReg.TraineeList[i].LodgingFacility = db.LodgingFacility.Find(traineeReg.TraineeList[i].LodgingCd);
+                    // 通学種別を設定
+                    traineeReg.TraineeList[i].AttendType = attendTypeList.Where(x => x.AttendTypeCd.Equals(traineeReg.TraineeList[i].AttendTypeCd)).FirstOrDefault();
+                    // 教習コースを設定
+                    traineeReg.TraineeList[i].TrainingCourse = trainingCourseList.Where(x => x.TrainingCourseCd.Equals(traineeReg.TraineeList[i].TrainingCourseCd)).FirstOrDefault();
+                    // 宿泊施設を設定
+                    traineeReg.TraineeList[i].LodgingFacility = lodgingFacilitList.Where(x => x.LodgingCd.Equals(traineeReg.TraineeList[i].LodgingCd)).FirstOrDefault();
                 }
             }
         }
