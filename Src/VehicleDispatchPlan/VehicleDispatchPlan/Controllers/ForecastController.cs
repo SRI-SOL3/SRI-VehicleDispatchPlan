@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Web.Mvc;
 using VehicleDispatchPlan.Commons;
@@ -26,62 +27,49 @@ namespace VehicleDispatchPlan.Controllers
         /// 受入予測確認
         /// </summary>
         /// <param name="cmd">コマンド</param>
-        /// <param name="dateFrom">日付From</param>
-        /// <param name="dateTo">日付To</param>
-        /// <param name="totalRemAmt">総受入残数</param>
-        /// <param name="lodgingRemAmt">総在籍可能数</param>
-        /// <param name="commutingRemAmt">総在籍見込数</param>
-        /// <param name="totalMaxAmt">合宿受入残数</param>
-        /// <param name="lodgingMaxAmt">合宿在籍可能数</param>
-        /// <param name="commutingMaxAmt">合宿在籍見込数</param>
-        /// <param name="totalRegAmt">通学受入残数</param>
-        /// <param name="lodgingRegAmt">通学在籍可能数</param>
-        /// <param name=cCommutingRegAmt">通学在籍見込数</param>
+        /// <param name="forecastCht">受入予測図表</param>
         /// <returns></returns>
-        public ActionResult Edit(string cmd, DateTime? dateFrom, DateTime? dateTo
-            , bool? totalRemAmt, bool? lodgingRemAmt, bool? commutingRemAmt
-            , bool? totalMaxAmt, bool? lodgingMaxAmt, bool? commutingMaxAmt
-            , bool? totalRegAmt, bool? lodgingRegAmt, bool? commutingRegAmt)
+        public ActionResult Chart(string cmd
+            , [Bind(Include = "PlanDateFrom,PlanDateTo,TotalRemFlg,TotalMaxFlg,TotalRegFlg,LodgingRemFlg,LodgingMaxFlg,LodgingRegFlg,CommutingRemFlg,CommutingMaxFlg,CommutingRegFlg,ChartData")] V_ForecastCht forecastCht)
         {
-            // グラフデータ
-            List<V_ChartData> chartData = new List<V_ChartData>();
+            Trace.WriteLine("GET /Forecast/Chart");
 
-            if (!string.IsNullOrEmpty(cmd))
+            // グラフデータを初期化
+            forecastCht.ChartData = new List<V_ChartData>();
+
+            // コマンドが空（初回表示）の場合
+            if (string.IsNullOrEmpty(cmd))
+            {
+                // 各グラフ表示フラグをtrueに設定
+                forecastCht.TotalRemFlg = true;
+                forecastCht.TotalMaxFlg = true;
+                forecastCht.TotalRegFlg = true;
+                forecastCht.LodgingRemFlg = true;
+                forecastCht.LodgingMaxFlg = true;
+                forecastCht.LodgingRegFlg = true;
+                forecastCht.CommutingRemFlg = true;
+                forecastCht.CommutingMaxFlg = true;
+                forecastCht.CommutingRegFlg = true;
+            }
+
+            // コマンドが設定されている場合
+            else
             {
                 bool validation = true;
 
-                // 検索ボタンが押下された場合
-                if (AppConstant.CMD_SEARCH.Equals(cmd))
+                // 検索ボタンもしくは再表示ボタンが押下された場合
+                if (AppConstant.CMD_SEARCH.Equals(cmd) || AppConstant.CMD_REDISPLAY.Equals(cmd))
                 {
                     // 入力チェック
-                    if (dateFrom == null || dateTo == null)
+                    if (forecastCht.PlanDateFrom == null || forecastCht.PlanDateTo == null)
                     {
                         ViewBag.ErrorMessage = "検索条件を指定してください。";
                         validation = false;
                     }
                     // 前後チェック
-                    if (validation == true && (dateFrom > dateTo))
+                    if (validation == true && (forecastCht.PlanDateFrom > forecastCht.PlanDateTo))
                     {
                         ViewBag.ErrorMessage = "日付の前後関係が不正です。";
-                        validation = false;
-                    }
-
-                    // 日付型を"yyyy-MM-dd"形式の文字列に変換
-                    ViewBag.DateFrom = dateFrom != null ? ((DateTime)dateFrom).ToString("yyyy-MM-dd") : null;
-                    ViewBag.DateTo = dateTo != null ? ((DateTime)dateTo).ToString("yyyy-MM-dd") : null;
-                }
-
-                // 再表示ボタンが押下された場合
-                else if (AppConstant.CMD_REDISPLAY.Equals(cmd))
-                {
-                    // 入力チェック
-                    if (dateFrom == null || dateTo == null)
-                    {
-                        validation = false;
-                    }
-                    // 前後チェック
-                    if (validation == true && (dateFrom > dateTo))
-                    {
                         validation = false;
                     }
                 }
@@ -94,18 +82,19 @@ namespace VehicleDispatchPlan.Controllers
 
                 if (validation == true)
                 {
-                    // グラフと表を作成
                     Utility utility = new Utility();
-                    chartData = utility.getChartData(db, (DateTime)dateFrom, (DateTime)dateTo, null);
+                    // グラフデータを作成
+                    forecastCht.ChartData = utility.getChartData(db, (DateTime)forecastCht.PlanDateFrom, (DateTime)forecastCht.PlanDateTo, null);
                     // グラフを生成（各表示フラグはnullの場合、trueとする）
-                    ViewBag.ChartPath = utility.getChartPath(((DateTime)dateFrom).Year.ToString(), ((DateTime)dateFrom).Month.ToString(), chartData
-                        , totalRemAmt ?? true, lodgingRemAmt ?? true, commutingRemAmt ?? true
-                        , totalMaxAmt ?? true, lodgingMaxAmt ?? true, commutingMaxAmt ?? true
-                        , totalRegAmt ?? true, lodgingRegAmt ?? true, commutingRegAmt ?? true);
+                    ViewBag.ChartPath = utility.getChartPath(
+                        ((DateTime)forecastCht.PlanDateFrom).Year.ToString(), ((DateTime)forecastCht.PlanDateTo).Month.ToString(), forecastCht.ChartData
+                        , forecastCht.TotalRemFlg, forecastCht.LodgingRemFlg, forecastCht.CommutingRemFlg
+                        , forecastCht.TotalMaxFlg, forecastCht.LodgingMaxFlg, forecastCht.CommutingMaxFlg
+                        , forecastCht.TotalRegFlg, forecastCht.LodgingRegFlg, forecastCht.CommutingRegFlg);
                 }
             }
 
-            return View(chartData);
+            return View(forecastCht);
         }
 
         /// <summary>

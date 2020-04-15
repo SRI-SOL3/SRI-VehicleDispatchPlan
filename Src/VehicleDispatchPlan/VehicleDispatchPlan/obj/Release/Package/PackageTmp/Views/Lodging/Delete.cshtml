@@ -1,0 +1,65 @@
+﻿@model VehicleDispatchPlan.Models.M_LodgingFacility
+
+@{
+    ViewBag.Title = "宿泊施設削除";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<h3>この情報を削除してよろしいでしょうか？</h3>
+<h5 style="color:red;">※教習生情報に設定されている場合、対象の教習生の宿泊施設はクリアされます</h5>
+<div>
+    <h4>詳細情報</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        @* 宿泊施設コード *@
+        <dt>
+            @Html.DisplayNameFor(model => model.LodgingCd)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LodgingCd)
+        </dd>
+
+        @* 宿泊施設名 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.LodgingName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LodgingName)
+        </dd>
+
+        @* 電話番号 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.TelNo)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TelNo)
+        </dd>
+
+        @* 郵便番号 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.PostalNo)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PostalNo)
+        </dd>
+
+        @* 住所 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm("Delete", "Lodging", FormMethod.Post)) {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => Model.LodgingCd)
+        <div class="form-actions no-color">
+            <input type="submit" value="削除" class="btn btn-default" /> |
+            @Html.ActionLink("一覧", "List")
+        </div>
+    }
+</div>
