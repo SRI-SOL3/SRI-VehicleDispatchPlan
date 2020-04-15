@@ -1,5 +1,6 @@
 ﻿@model VehicleDispatchPlan.Models.V_TraineeEdt
 @using VehicleDispatchPlan.Constants;
+@using VehicleDispatchPlan.Models;
 
 @{
     ViewBag.Title = "更新";
@@ -8,7 +9,7 @@
 <h2>@ViewBag.Title</h2>
 
 
-@using (Html.BeginForm("Edit", "Trainee", FormMethod.Post))
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
@@ -22,25 +23,8 @@
         @Html.HiddenFor(model => model.Trainee.TraineeId)
         @Html.HiddenFor(model => model.Trainee.GroupId)
 
-        <div class="form-group">
-            @{
-                @* 編集モードによりボタンの表示を設定 *@
-                if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                {
-                    <input type="submit" name="cmd" value="@AppConstant.CMD_CONFIRM" class="btn btn-default" style="margin-left:10px;" />
-                }
-                else
-                {
-                    <input type="submit" name="cmd" value="@AppConstant.CMD_RETURN" class="btn btn-default" style="margin-left:10px;" />
-                    <input type="submit" name="cmd" value="@AppConstant.CMD_UPDATE" class="btn btn-default" style="margin-left:10px;" />
-                }
-            }
-        </div>
-
         @* エラーメッセージ *@
-        <div style="color: Red">@ViewBag.ErrorMessage</div>
-
-        <hr />
+        <div style="color: Red">@Html.Encode(TempData["errorMessage"])</div>
 
         @* 教習者名 *@
         <div class="form-group">
@@ -65,14 +49,14 @@
             @Html.LabelFor(model => model.Trainee.AttendTypeCd, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
+                    @* 編集モードにより未選択の有無を設定 *@
                     if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
                     {
                         @Html.DropDownListFor(model => model.Trainee.AttendTypeCd, Model.Trainee.SelectAttendType, "選択してください", new { htmlAttributes = new { @class = "form-control" } })
                     }
                     else
                     {
-                        @Html.EditorFor(model => model.Trainee.AttendType.AttendTypeName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.EditorFor(model => model.Trainee.AttendTypeName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                         @Html.HiddenFor(model => model.Trainee.AttendTypeCd)
                     }
                 }
@@ -84,14 +68,14 @@
             @Html.LabelFor(model => model.Trainee.TrainingCourseCd, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
+                    @* 編集モードにより未選択の有無を設定 *@
                     if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
                     {
                         @Html.DropDownListFor(model => model.Trainee.TrainingCourseCd, Model.Trainee.SelectTrainingCourse, "選択してください", new { htmlAttributes = new { @class = "form-control" } })
                     }
                     else
                     {
-                        @Html.EditorFor(model => model.Trainee.TrainingCourse.TrainingCourseName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.EditorFor(model => model.Trainee.TrainingCourseName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                         @Html.HiddenFor(model => model.Trainee.TrainingCourseCd)
                     }
                 }
@@ -108,7 +92,7 @@
                         if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
                         {
                             @Html.EditorFor(model => model.Trainee.EntrancePlanDate, new { htmlAttributes = new { @class = "form-control" } })
-                            <input type="submit" name="cmd" value="@AppConstant.CMD_SET_TMP_GRD" class="btn btn-default" style="margin-left: 10px;" />
+                            <input type="submit" name="cmd" value="仮免・卒業日設定" class="btn btn-default" style="margin-left: 10px;" />
                             <div style="margin-left:5px; height:auto; vertical-align:text-bottom;">
                                 <span style="position:absolute; bottom:0; font-size:12px;">入卒カレンダーから仮免予定日・卒業予定日を設定します。</span>
                             </div>
@@ -163,14 +147,14 @@
             @Html.LabelFor(model => model.Trainee.LodgingCd, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
+                    @* 編集モードにより未選択の有無を設定 *@
                     if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
                     {
                         @Html.DropDownListFor(model => model.Trainee.LodgingCd, Model.Trainee.SelectLodging, "選択してください", new { htmlAttributes = new { @class = "form-control" } })
                     }
                     else
                     {
-                        @Html.EditorFor(model => model.Trainee.LodgingFacility.LodgingName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.EditorFor(model => model.Trainee.LodgingName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                         @Html.HiddenFor(model => model.Trainee.LodgingCd)
                     }
                 }
@@ -195,11 +179,116 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                @{
+                    @* 編集モードによりボタンの表示を設定 *@
+                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
+                    {
+                        <input type="submit" name="cmd" value="確認" class="btn btn-default" />
+                    }
+                    else
+                    {
+                        <input type="submit" name="cmd" value="戻る" class="btn btn-default" />
+                        <input type="submit" name="cmd" value="更新" class="btn btn-default" />
+                    }
+                }
+            </div>
+        </div>
+
         @{
             if (Model.ChartData != null)
             {
-                // 表
-                @Html.Partial("../Shared/Table", Model.ChartData)
+                @* 表 *@
+                <div class="row" style="overflow: auto; margin-top: 30px;">
+                    <table border="1" style="table-layout: fixed; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th width="150" colspan="3" style="text-align: center;">日付</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <th width="40" style="text-align: center;">@item.Date.ToString("M/d")</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th rowspan="3" style="text-align: center;">受入残</th>
+                                <th colspan="2" style="text-align: center;">総数</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.AcceptTotalRemAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th colspan="2" style="text-align: center;">合宿</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.AcceptLodgingRemAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th colspan="2" style="text-align: center;">通学</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.AcceptCommutingRemAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th rowspan="7" style="text-align: center;">在籍</th>
+                                <th colspan="2" style="text-align: center;">総数</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.TotalRegAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th rowspan="4" style="text-align: center;">合宿</th>
+                                <th style="text-align: center;">MT-1</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.LodgingMtFstRegAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th style="text-align: center;">MT-2</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.LodgingMtSndRegAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th style="text-align: center;">AT-1</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.LodgingAtFstRegAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th style="text-align: center;">AT-2</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.LodgingAtSndRegAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th rowspan="2" style="text-align: center;">通学</th>
+                                <th style="text-align: center;">MT</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.CommutingMtRegAmt</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th style="text-align: center;">AT</th>
+                                @foreach (V_ChartData item in Model.ChartData)
+                                {
+                                    <td style="text-align: center;">@item.CommutingAtRegAmt</td>
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             }
         }
 
@@ -208,7 +297,7 @@
 
 <div>
     @{
-        @* 編集モードにより一覧リンクの表示有無を設定 *@
+        @* 編集モードによりreadonlyの有無を設定 *@
         if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
         {
             @Html.ActionLink("一覧", "List")

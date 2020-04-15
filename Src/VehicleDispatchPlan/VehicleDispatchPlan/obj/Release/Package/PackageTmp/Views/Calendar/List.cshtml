@@ -1,5 +1,4 @@
-﻿@model VehicleDispatchPlan.Models.V_EntGrdCalendarEdt
-@using VehicleDispatchPlan.Constants;
+﻿@model List<VehicleDispatchPlan.Models.M_EntGrdCalendar>
 
 @{
     ViewBag.Title = "入卒カレンダー";
@@ -11,42 +10,29 @@
     @Html.ActionLink("CSVからインポート", "Import")
 </p>
 
-@using (Html.BeginForm("List", "Calendar", FormMethod.Get))
+@using (Html.BeginForm(null, null, FormMethod.Get))
 {
     <div class="form-inline">
         入校年月:
         @* 年 *@
         <div class="form-group" style="margin-left:10px;">
-            @{ int nowYear = DateTime.Now.Year; }
-            @Html.DropDownListFor(model => Model.Year, new SelectListItem[] {
-                    new SelectListItem() { Text = (nowYear - 5).ToString(), Value=(nowYear - 5).ToString() },
-                    new SelectListItem() { Text = (nowYear - 4).ToString(), Value=(nowYear - 4).ToString() },
-                    new SelectListItem() { Text = (nowYear - 3).ToString(), Value=(nowYear - 3).ToString() },
-                    new SelectListItem() { Text = (nowYear - 2).ToString(), Value=(nowYear - 2).ToString() },
-                    new SelectListItem() { Text = (nowYear - 1).ToString(), Value=(nowYear - 1).ToString() },
-                    new SelectListItem() { Text = nowYear.ToString(), Value=nowYear.ToString() },
-                    new SelectListItem() { Text = (nowYear + 1).ToString(), Value=(nowYear + 1).ToString() },
-                    new SelectListItem() { Text = (nowYear + 2).ToString(), Value=(nowYear + 2).ToString() },
-                    new SelectListItem() { Text = (nowYear + 3).ToString(), Value=(nowYear + 3).ToString() },
-                    new SelectListItem() { Text = (nowYear + 4).ToString(), Value=(nowYear + 4).ToString() },
-                    new SelectListItem() { Text = (nowYear + 5).ToString(), Value=(nowYear + 5).ToString() }
-                }, "対象年", new { htmlAttributes = new { @class = "form-control" } })
+            @Html.DropDownList("SelectYear", (IEnumerable<SelectListItem>)ViewBag.SelectYear, "対象年", new { htmlAttributes = new { @class = "form-control" } })
         </div>
         @* 月 *@
         <div class="form-group" style="margin-left:10px;">
-            @Html.DropDownListFor(model => Model.Month, new SelectListItem[]{
-                    new SelectListItem() { Text="1", Value="1" },
-                    new SelectListItem() { Text="2", Value="2" },
-                    new SelectListItem() { Text="3", Value="3" },
-                    new SelectListItem() { Text="4", Value="4" },
-                    new SelectListItem() { Text="5", Value="5" },
-                    new SelectListItem() { Text="6", Value="6" },
-                    new SelectListItem() { Text="7", Value="7" },
-                    new SelectListItem() { Text="8", Value="8" },
-                    new SelectListItem() { Text="9", Value="9" },
-                    new SelectListItem() { Text="10", Value="10" },
-                    new SelectListItem() { Text="11", Value="11" },
-                    new SelectListItem() { Text="12", Value="12" }
+            @Html.DropDownList("SelectMonth", new SelectListItem[]{
+                    new SelectListItem() { Value="1", Text="1" },
+                    new SelectListItem() { Value="2", Text="2" },
+                    new SelectListItem() { Value="3", Text="3" },
+                    new SelectListItem() { Value="4", Text="4" },
+                    new SelectListItem() { Value="5", Text="5" },
+                    new SelectListItem() { Value="6", Text="6" },
+                    new SelectListItem() { Value="7", Text="7" },
+                    new SelectListItem() { Value="8", Text="8" },
+                    new SelectListItem() { Value="9", Text="9" },
+                    new SelectListItem() { Value="10", Text="10" },
+                    new SelectListItem() { Value="11", Text="11" },
+                    new SelectListItem() { Value="12", Text="12" }
                 }, "対象月", new { htmlAttributes = new { @class = "form-control" } })
         </div>
 
@@ -59,88 +45,74 @@
     </div>
 }
 
-@* エラーメッセージ *@
-<div style="color: Red">@ViewBag.ErrorMessage</div>
-@* 完了メッセージ *@
-<div style="color: green">@ViewBag.CompMessage</div>
-
 <hr />
 
-@using (Html.BeginForm("List", "Calendar", FormMethod.Post, new { name = "form1", id = "form1" }))
+@using (Html.BeginForm(null, null, FormMethod.Post))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
     Html.EnableClientValidation(false);
 
-    <div style="margin-left:5px; height:50px; align-content:center">
+    @*<div style="margin-left:5px; height:50px; align-content:center">
         @{
-            if (Model.CalendarList.Count() == 0)
+            if (Model.Count() == 0)
             {
-                <input type="submit" name="cmd" value="@AppConstant.CMD_UPDATE" class="btn btn-default" disabled="disabled" />
+                <input type="submit" name="cmd" value="更新" class="btn btn-default" disabled="disabled" />
             }
             else
             {
-                <input type="submit" name="cmd" value="@AppConstant.CMD_UPDATE" class="btn btn-default" />
+                <input type="submit" name="cmd" value="更新" class="btn btn-default" />
             }
         }
-    </div>
+    </div>*@
 
-    @* 一覧のsubmitにてインデックスを設定 *@
-    @Html.Hidden("index", "")
-    @* 対象年と月をhiddenで保持 *@
-    @Html.HiddenFor(model => Model.Year)
-    @Html.HiddenFor(model => Model.Month)
+    @* エラーメッセージ *@
+    @*<div style="color: Red">@Html.Encode(TempData["errorMessage"])</div>*@
 
-    <div style="overflow-y: auto; width:720px; height:500px;">
-        <table class="table" style="width:700px;">
+    <div style="overflow-y: auto; width:620px; height:500px;">
+        <table class="table" style="width:600px;">
             <tr>
+                @* 教習コース *@
                 <th>
-                    @* 入校予定日 *@
-                    @Html.DisplayNameFor(model => Model.CalendarList.FirstOrDefault().EntrancePlanDate)
+                    @Html.DisplayNameFor(model => Model.FirstOrDefault().TrainingCourseCd)
                 </th>
+                @* 入校予定日 *@
                 <th>
-                    @* 教習コース *@
-                    @Html.DisplayNameFor(model => Model.CalendarList.FirstOrDefault().TrainingCourseCd)
+                    @Html.DisplayNameFor(model => Model.FirstOrDefault().EntrancePlanDate)
                 </th>
+                @* 仮免予定日 *@
                 <th>
-                    @* 仮免予定日 *@
-                    @Html.DisplayNameFor(model => Model.CalendarList.FirstOrDefault().TmpLicencePlanDate)
+                    @Html.DisplayNameFor(model => Model.FirstOrDefault().TmpLicencePlanDate)
                 </th>
+                @* 卒業予定日 *@
                 <th>
-                    @* 卒業予定日 *@
-                    @Html.DisplayNameFor(model => Model.CalendarList.FirstOrDefault().GraduatePlanDate)
+                    @Html.DisplayNameFor(model => Model.FirstOrDefault().GraduatePlanDate)
                 </th>
-                <th></th>
             </tr>
 
-            @for (int i = 0; i < Model.CalendarList.Count(); i++)
+            @for (int i = 0; i < Model.Count(); i++)
             {
-                // 削除フラグがtrueの場合、行にhiddenを設定
-                string hidden = Model.CalendarList[i].DeleteFlg ? "hidden=hidden" : "";
-                <tr @hidden>
+                <tr>
+                    @* 教習コース *@
                     <td>
-                        @* 入校予定日 *@
-                        @Html.DisplayFor(modelItem => Model.CalendarList[i].EntrancePlanDate)
-                        @Html.HiddenFor(modelitem => Model.CalendarList[i].EntrancePlanDate)
+                        @*@Html.DropDownListFor(modelitem => Model[i].TrainingCourseCd, Model[i].SelectTrainingCourse, new { htmlAttributes = new { @class = "form-control" } })*@
+                        @Html.DisplayFor(modelitem => Model[i].SelectTrainingCourse.Where(x => x.Value.Equals(Model[i].TrainingCourseCd)).FirstOrDefault().Text)
                     </td>
+                    @* 入校予定日 *@
                     <td>
-                        @* 教習コース *@
-                        @Html.DisplayFor(modelitem => Model.CalendarList[i].TrainingCourse.TrainingCourseName)
-                        @Html.HiddenFor(modelitem => Model.CalendarList[i].TrainingCourseCd)
+                        @*@Html.EditorFor(modelitem => Model[i].EntrancePlanDate, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })*@
+                        @Html.DisplayFor(modelItem => Model[i].EntrancePlanDate)
                     </td>
+                    @* 仮免予定日 *@
                     <td>
-                        @* 仮免予定日 *@
-                        @Html.EditorFor(modelitem => Model.CalendarList[i].TmpLicencePlanDate, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })
+                        @*@Html.EditorFor(modelitem => Model[i].TmpLicencePlanDate, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })*@
+                        @Html.DisplayFor(modelItem => Model[i].TmpLicencePlanDate)
                     </td>
+                    @* 卒業予定日 *@
                     <td>
-                        @* 卒業予定日 *@
-                        @Html.EditorFor(modelitem => Model.CalendarList[i].GraduatePlanDate, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })
-                    </td>
-                    <td>
-                        @* 削除ボタン *@
-                        <input type="submit" name="cmd" value="@AppConstant.CMD_REMOVE" class="btn btn-default" onclick="reflect('@i')" style="font-size: 12px" />
-                        @Html.HiddenFor(modelitem => Model.CalendarList[i].DeleteFlg)
+                        @*@Html.EditorFor(modelitem => Model[i].GraduatePlanDate, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })*@
+                        @Html.DisplayFor(modelItem => Model[i].GraduatePlanDate)
                     </td>
                 </tr>
             }
@@ -148,10 +120,3 @@
         </table>
     </div>
 }
-
-<script type="text/javascript">
-    function reflect(index) {
-        document.form1.index.value = index;
-    }
-</script>
-

@@ -1,0 +1,115 @@
+﻿@model List<VehicleDispatchPlan.Models.V_ChartData>
+@using VehicleDispatchPlan.Constants;
+
+@{
+    ViewBag.Title = "受入予測管理";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("Edit", "Forecast", FormMethod.Get))
+{
+    <div class="form-inline">
+        <p>
+            対象期間: @Html.TextBox("dateFrom", (string)ViewBag.PlanDateFrom, new { type = "date" })
+            ～ @Html.TextBox("dateTo", (string)ViewBag.PlanDateTo, new { type = "date" })
+            <input type="submit" name="cmd" value="@AppConstant.CMD_SEARCH" class="btn btn-default" />
+        </p>
+    </div>
+}
+
+@* エラーメッセージ *@
+<div style="color: Red">@ViewBag.ErrorMessage</div>
+<hr />
+
+@using (Html.BeginForm("Edit", "Forecast", FormMethod.Get))
+{
+    <div class="form-horizontal">
+        @{
+            if (Model.Count() > 0)
+            {
+                // 表
+                @Html.Partial("../Shared/Table", Model)
+
+                // チェックボックス
+                <div class="row" style="margin-top:30px; display: flex;">
+                    <div style="margin-left:30px;">
+                        @* 総受入残数 *@
+                        <label for="totalRemAmt" style="cursor:pointer; display:flex;">
+                            @Html.CheckBox("totalRemAmt", true, new { style = "cursor:pointer;" })
+                            <div style="width:20px; border: 2px solid rgb(255, 0, 0); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                            @AppConstant.SERIES_TOTAL_REM_AMT
+                        </label>
+                        @* 総在籍可能数 *@
+                        <label for="totalMaxAmt" style="cursor:pointer; display:flex;">
+                            @Html.CheckBox("totalMaxAmt", true, new { style = "cursor:pointer;" })
+                            <div style="width:20px; border: 1.5px dashed rgb(200, 60, 60); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                            @AppConstant.SERIES_TOTAL_MAX_AMT
+                        </label>
+                        @* 総在籍見込数 *@
+                        <label for="totalRegAmt" style="cursor:pointer; display:flex;">
+                            @Html.CheckBox("totalRegAmt", true, new { style = "cursor:pointer;" })
+                            <div style="width:20px; height:10px; border: 2px solid rgb(200, 60, 60); background-color:rgba(200, 60, 60, 0.2); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                            @AppConstant.SERIES_TOTAL_REG_AMT
+                        </label>
+                    </div>
+                    <div style="margin-left:30px;">
+                        @* 合宿受入残数 *@
+                        <label for="lodgingRemAmt" style="cursor:pointer; display:flex;">
+                            @Html.CheckBox("lodgingRemAmt", true, new { style = "cursor:pointer;" })
+                            <div style="width:20px; border: 2px solid rgb(0, 0, 255); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                            @AppConstant.SERIES_LODGING_REM_AMT
+                        </label>
+                        @* 合宿在籍可能数 *@
+                        <label for="lodgingMaxAmt" style="cursor:pointer; display:flex;">
+                            @Html.CheckBox("lodgingMaxAmt", true, new { style = "cursor:pointer;" })
+                            <div style="width:20px; border: 1.5px dashed rgb(30, 100, 160);  align-self:center; margin-left:2px; margin-right:3px;"></div>
+                            @AppConstant.SERIES_LODGING_MAX_AMT
+                        </label>
+                        @* 合宿在籍見込数 *@
+                        <label for="lodgingRegAmt" style="cursor:pointer; display:flex;">
+                            @Html.CheckBox("lodgingRegAmt", true, new { style = "cursor:pointer;" })
+                            <div style="width:20px; height:10px; border: 2px solid rgb(30, 100, 160); background-color:rgba(30, 100, 160, 0.2); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                            @AppConstant.SERIES_LODGING_REG_AMT
+                        </label>
+                    </div>
+                    <div style="margin-left:30px;">
+                        @* 通学受入残数 *@
+                        <label for="commutingRemAmt" style="cursor:pointer; display:flex;">
+                            @Html.CheckBox("commutingRemAmt", true, new { style = "cursor:pointer;" })
+                            <div style="width:20px; border: 2px solid rgb(0, 200, 0); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                            @AppConstant.SERIES_COMMUTING_REM_AMT
+                        </label>
+                        @* 通学在籍可能数 *@
+                        <label for="commutingMaxAmt" style="cursor:pointer; display:flex;">
+                            @Html.CheckBox("commutingMaxAmt", true, new { style = "cursor:pointer;" })
+                            <div style="width:20px; border: 1.5px dashed rgb(30, 160, 60); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                            @AppConstant.SERIES_COMMUTING_MAX_AMT
+                        </label>
+                        @* 通学在籍見込数 *@
+                        <label for="commutingRegAmt" style="cursor:pointer; display:flex;">
+                            @Html.CheckBox("commutingRegAmt", true, new { style = "cursor:pointer;" })
+                            <div style="width:20px; height:10px; border: 2px solid rgb(30, 160, 60); background-color:rgba(30, 160, 60, 0.2); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                            @AppConstant.SERIES_COMMUTING_REG_AMT
+                        </label>
+                    </div>
+
+                    @* 再表示 *@
+                    <input type="submit" id="chart" name="cmd" value="@AppConstant.CMD_REDISPLAY" class="btn btn-default" style="margin-left:30px;" />
+                    @Html.Hidden("dateFrom", (string)ViewBag.PlanDateFrom)
+                    @Html.Hidden("dateTo", (string)ViewBag.PlanDateTo)
+                </div>
+
+                // グラフ
+                <div class="row" style="overflow: auto;">
+                    <img src="@ViewBag.ChartPath" />
+                </div>
+            }
+        }
+
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

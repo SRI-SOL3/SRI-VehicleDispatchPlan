@@ -45,8 +45,7 @@ namespace VehicleDispatchPlan.Commons
                 // 対象期間の教習生データを全て取得
                 traineeList = db.Trainee.Where(
                     x => x.EntrancePlanDate >= dateFrom && x.EntrancePlanDate <= dateTo
-                    || x.GraduatePlanDate >= dateFrom && x.GraduatePlanDate <= dateTo
-                    || x.EntrancePlanDate < dateFrom && dateTo < x.GraduatePlanDate).ToList();
+                    || x.GraduatePlanDate >= dateFrom && x.GraduatePlanDate <= dateTo).ToList();
             }
             // 引数の教習生がnullでない場合（教習生管理(登録/更新)）
             else
@@ -57,8 +56,7 @@ namespace VehicleDispatchPlan.Commons
                 traineeList = db.Trainee.Where(
                     x => !traineeIdList.Contains(x.TraineeId)
                     && (x.EntrancePlanDate >= dateFrom && x.EntrancePlanDate <= dateTo
-                    || x.GraduatePlanDate >= dateFrom && x.GraduatePlanDate <= dateTo
-                    || x.EntrancePlanDate < dateFrom && dateTo < x.GraduatePlanDate)).ToList();
+                    || x.GraduatePlanDate >= dateFrom && x.GraduatePlanDate <= dateTo)).ToList();
             }
 
             // 教習コースマスタから、MT/ATの実車コマ数を取得
