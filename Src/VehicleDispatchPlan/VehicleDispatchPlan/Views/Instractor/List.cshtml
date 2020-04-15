@@ -1,0 +1,114 @@
+﻿@using VehicleDispatchPlan.Models
+@using VehicleDispatchPlan.Constants;
+@model VehicleDispatchPlan.Models.V_SearchInstractorViewModel
+
+@{
+    ViewBag.Title = "指導員管理";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+@using (Html.BeginForm("List", "Instractor", FormMethod.Get))
+{
+    @*対象日*@
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@AppConstant.CMD_SEARCH" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+
+    @* エラーメッセージ *@
+    <div style="color: Red">@ViewBag.ErrorMessage</div>
+    <div>@ViewBag.Info</div>
+}
+
+
+@*データが存在するときのみ表示*@
+@if (ViewBag.DataExistsflg == true)
+{
+    <table class="table">
+        <tr>
+            @Html.ActionLink("対象日の指導員を新規に登録", "Create", new { Date = Model.Date })
+        </tr>
+    </table>
+
+
+}
+
+
+@using (Html.BeginForm("Edit", "Instractor", FormMethod.Get))
+{
+    @* 画面表示用にインスタンスを作成 *@
+    var t_DailyClasses = new T_DailyClassesByTrainer();
+
+    @* V_SearchInstractorViewModelの日付をhiddenで持つ *@
+    @Html.HiddenFor(model => model.Date)
+
+    <table class="table">
+        <tr>
+            @* 対象日は非表示 *@
+            @Html.HiddenFor(model => t_DailyClasses.DailyClasses.Date)
+            @* ヘッダ部 *@
+            <th>
+                @Html.DisplayNameFor(model => t_DailyClasses.TrainerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => t_DailyClasses.Classes)
+            </th>
+            <th>
+                @*空白*@
+            </th>
+            <th>
+                @*空白*@
+            </th>
+
+        </tr>
+
+        @for (int i = 0; i < Model.t_DailyClassesByTrainer.Count(); i++)
+        {
+            <tr>
+                @* データ部 *@
+
+                @* 対象日は非表示 *@
+                @Html.HiddenFor(modelItem => Model.t_DailyClassesByTrainer[i].DailyClasses.Date)
+
+                <td>
+                    @Html.EditorFor(modelItem => Model.t_DailyClassesByTrainer[i].TrainerName, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;" } })
+                </td>
+                <td>
+                    @Html.EditorFor(modelItem => Model.t_DailyClassesByTrainer[i].Classes, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;" } })
+                </td>
+                <td>
+                    @* 主キー *@
+                    @Html.HiddenFor(modelItem => Model.t_DailyClassesByTrainer[i].No)
+                </td>
+                <td>
+                    @Html.ActionLink("削除", "Delete", new { No = Model.t_DailyClassesByTrainer[i].No, Date = Model.Date })
+                </td>
+            </tr>
+        }
+
+    </table>
+
+
+    <div class="form-group">
+        <div class="col-md-offset-10 col-md-10">
+            @*<input type="submit" name="cmd" value="@AppConstant.CMD_CONFIRM" class="btn btn-default" style="margin-left:10px;" />*@
+            <input type="submit" value="@AppConstant.CMD_UPDATE" class="btn btn-default" style="margin-left:10px;" />
+        </div>
+    </div>
+
+
+
+
+}
