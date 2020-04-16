@@ -20,6 +20,34 @@ namespace VehicleDispatchPlan.Models
     /// </summary>
     public class T_TraineeLodging
     {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public T_TraineeLodging() { }
+
+        /// <summary>
+        /// コンストラクタ（コピー）
+        /// </summary>
+        /// <param name="trainee">コピー元</param>
+        public T_TraineeLodging(T_TraineeLodging trainee)
+        {
+            // 各項目の値をコピー
+            this.TraineeId = trainee.TraineeId;
+            this.GroupId = trainee.GroupId;
+            this.TraineeName = trainee.TraineeName;
+            this.Gender = trainee.Gender;
+            this.TrainingCourseCd = trainee.TrainingCourseCd;
+            this.SelectTrainingCourse = trainee.SelectTrainingCourse;
+            this.EntrancePlanDate = trainee.EntrancePlanDate;
+            this.TmpLicencePlanDate = trainee.TmpLicencePlanDate;
+            this.GraduatePlanDate = trainee.GraduatePlanDate;
+            this.LodgingCd = trainee.LodgingCd;
+            this.SelectLodging = trainee.SelectLodging;
+            this.AgentName = trainee.AgentName;
+            this.SchoolName = trainee.SchoolName;
+            this.CancelFlg = trainee.CancelFlg;
+        }
+
         /// <summary>教習生ID<summary>
         [Key]
         [Required]

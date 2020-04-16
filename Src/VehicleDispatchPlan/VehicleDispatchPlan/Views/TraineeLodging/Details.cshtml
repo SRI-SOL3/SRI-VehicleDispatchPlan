@@ -1,0 +1,114 @@
+﻿@model VehicleDispatchPlan.Models.T_TraineeLodging
+
+@{
+    ViewBag.Title = "教習生詳細";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div>
+    <h4>詳細情報</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        @* 教習生ID *@
+        <dt>
+            @Html.DisplayNameFor(model => model.TraineeId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TraineeId)
+        </dd>
+
+        @* 教習生名 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.TraineeName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TraineeName)
+        </dd>
+
+        @* 性別 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.Gender)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Gender)
+        </dd>
+
+        @* 教習コース *@
+        <dt>
+            @Html.DisplayNameFor(model => model.TrainingCourse.TrainingCourseName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TrainingCourse.TrainingCourseName)
+        </dd>
+
+        @* 申込日 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.ReserveDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReserveDate)
+        </dd>
+
+        @* 入校予定日 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.EntrancePlanDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EntrancePlanDate)
+        </dd>
+
+        @* 仮免予定日 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.TmpLicencePlanDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TmpLicencePlanDate)
+        </dd>
+
+        @* 卒業予定日 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.GraduatePlanDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.GraduatePlanDate)
+        </dd>
+
+        @* 宿泊施設 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.LodgingFacility.LodgingName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LodgingFacility.LodgingName)
+        </dd>
+
+        @* エージェント *@
+        <dt>
+            @Html.DisplayNameFor(model => model.AgentName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AgentName)
+        </dd>
+
+        @* 学校名 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.SchoolName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SchoolName)
+        </dd>
+
+        @* キャンセルフラグ *@
+        <dt>
+            @Html.DisplayNameFor(model => model.CancelFlg)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CancelFlg)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("編集", "Edit", new { id = Model.TraineeId }) |
+    @Html.ActionLink("一覧", "List")
+</p>

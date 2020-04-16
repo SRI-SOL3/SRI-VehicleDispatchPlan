@@ -15,10 +15,10 @@ namespace VehicleDispatchPlan.Models
     /// <summary>
     /// 教習生編集クラス
     /// </summary>
-    public class V_TraineeEdt
+    public class V_TraineeLodgingEdt
     {
         /// <summary>教習生</summary>
-        public T_Trainee Trainee { get; set; }
+        public T_TraineeLodging Trainee { get; set; }
 
         /// <summary>編集モード</summary>
         public AppConstant.EditMode EditMode { get; set; }

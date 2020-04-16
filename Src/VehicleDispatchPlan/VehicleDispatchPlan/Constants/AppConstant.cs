@@ -1,12 +1,14 @@
-﻿/**
- * 共通定数
- *
- * @author t-murayama
- * @version 1.0
- * ----------------------------------
- * 2020/03/01 t-murayama 新規作成
- *
- */
+﻿
+using System.Web.Mvc;
+/**
+* 共通定数
+*
+* @author t-murayama
+* @version 1.0
+* ----------------------------------
+* 2020/03/01 t-murayama 新規作成
+*
+*/
 namespace VehicleDispatchPlan.Constants
 {
     /// <summary>
@@ -23,6 +25,11 @@ namespace VehicleDispatchPlan.Constants
         public const string TRAINING_COURSE_CD_MT = "01";
         /// <summary>教習コースコード_AT</summary>
         public const string TRAINING_COURSE_CD_AT = "02";
+
+        /// <summary>性別_男性</summary>
+        public const string GENDER_MALE = "M";
+        /// <summary>性別_女性</summary>
+        public const string GENDER_FEMALE = "F";
 
         /// <summary>コマンド_確認</summary>
         public const string CMD_CONFIRM = "確認";
