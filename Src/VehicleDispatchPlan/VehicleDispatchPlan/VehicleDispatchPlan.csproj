@@ -139,6 +139,7 @@
     <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\ForecastController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InstractorController.cs" />
     <Compile Include="Controllers\LodgingController.cs" />
     <Compile Include="Controllers\TraineeController.cs" />
     <Compile Include="Global.asax.cs">
@@ -169,10 +170,12 @@
     <Compile Include="Models\T_DailyClasses.cs" />
     <Compile Include="Models\T_DailyClassesByTrainer.cs" />
     <Compile Include="Models\T_Trainee.cs" />
+    <Compile Include="Models\T_TraineeLodging.cs" />
     <Compile Include="Models\V_ChartData.cs" />
     <Compile Include="Models\V_EntGrdCalendarEdt.cs" />
     <Compile Include="Models\V_ForecastCht.cs" />
     <Compile Include="Models\V_LodgingCfm.cs" />
+    <Compile Include="Models\V_SearchInstractorViewModel.cs" />
     <Compile Include="Models\V_TraineeEdt.cs" />
     <Compile Include="Models\V_TraineeReg.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -227,6 +230,9 @@
     <Content Include="Views\Lodging\Edit.cshtml" />
     <Content Include="Views\Lodging\Delete.cshtml" />
     <Content Include="Views\Lodging\Confirm.cshtml" />
+    <Content Include="Views\Instractor\Create.cshtml" />
+    <Content Include="Views\Instractor\Delete.cshtml" />
+    <Content Include="Views\Instractor\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
