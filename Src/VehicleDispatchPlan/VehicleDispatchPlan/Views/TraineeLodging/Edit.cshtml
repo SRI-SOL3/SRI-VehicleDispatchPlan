@@ -68,7 +68,7 @@
                     @* 編集モードによりreadonlyの有無を設定 *@
                     if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
                     {
-                        @Html.DropDownListFor(model => model.Trainee.Gender, new SelectListItem[] {
+                        @Html.DropDownListFor(model => Model.Trainee.Gender, new SelectListItem[] {
                             new SelectListItem() { Text = AppConstant.GENDER_MALE, Value=AppConstant.GENDER_MALE },
                             new SelectListItem() { Text = AppConstant.GENDER_FEMALE, Value=AppConstant.GENDER_FEMALE }
                         }, "選択してください", new { htmlAttributes = new { @class = "form-control" } })

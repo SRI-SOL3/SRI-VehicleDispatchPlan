@@ -155,7 +155,9 @@ namespace VehicleDispatchPlan.Controllers
         {
             if (model.Date != null)
             {
-
+                // ----- 追加 -----
+                ModelState.Clear();
+                // ----------------
                 ///画面で指定した日付を設定
                 var list = db.DailyClassesByTrainer.Where(item => ((DateTime)item.Date).Equals((DateTime)model.Date)).ToList();
                 model.t_DailyClassesByTrainer = list.ToList();

@@ -123,7 +123,7 @@
                             }
                             else
                             {
-                                @Html.EditorFor(modelitem => Model.TraineeList[i].Gender, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                @Html.EditorFor(modelitem => Model.TraineeList[i].Gender, new { htmlAttributes = new { @class = "form-control", @style = "width: 50px;", @readonly = "readonly" } })
                             }
                         }
                     </td>
@@ -137,7 +137,7 @@
                             }
                             else
                             {
-                                @Html.EditorFor(modelitem => Model.TraineeList[i].TrainingCourse.TrainingCourseName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                @Html.EditorFor(modelitem => Model.TraineeList[i].TrainingCourse.TrainingCourseName, new { htmlAttributes = new { @class = "form-control", @style = "width: 70px;", @readonly = "readonly" } })
                                 @Html.HiddenFor(modelitem => Model.TraineeList[i].TrainingCourseCd)
                             }
                         }
@@ -218,7 +218,7 @@
                             }
                             else
                             {
-                                @Html.EditorFor(modelitem => Model.TraineeList[i].LodgingFacility.LodgingName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                @Html.EditorFor(modelitem => Model.TraineeList[i].LodgingFacility.LodgingName, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;", @readonly = "readonly" } })
                                 @Html.HiddenFor(modelitem => Model.TraineeList[i].LodgingCd)
                             }
                         }
@@ -261,7 +261,8 @@
                             }
                             else
                             {
-                                @Html.EditorFor(modelitem => Model.TraineeList[i].CancelFlg, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                @Html.HiddenFor(model => Model.TraineeList[i].CancelFlg)
+                                @Html.EditorFor(model => Model.TraineeList[i].CancelFlg, new { htmlAttributes = new { @class = "form-control", @style = "width: 70px;height:20px;", @disabled = "disabled" } })
                             }
                         }
                     </td>

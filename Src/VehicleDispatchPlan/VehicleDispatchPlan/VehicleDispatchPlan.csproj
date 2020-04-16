@@ -180,7 +180,7 @@
     <Compile Include="Models\V_ForecastCht.cs" />
     <Compile Include="Models\V_LodgingCfm.cs" />
     <Compile Include="Models\V_SearchInstractorViewModel.cs" />
-    <Compile Include="Models\V_TraineeEdt.cs" />
+    <Compile Include="Models\V_TraineeLodgingEdt.cs" />
     <Compile Include="Models\V_TraineeLodgingReg.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
