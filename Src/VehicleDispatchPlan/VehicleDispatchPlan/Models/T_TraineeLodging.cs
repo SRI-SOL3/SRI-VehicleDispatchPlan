@@ -36,7 +36,7 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("教習者名")]
         public string TraineeName { get; set; }
 
-        /// <summary>性別<summary>
+        /// <summary>性別（M:男 / F:女）<summary>
         [Required]
         [DisplayName("性別")]
         public string Gender { get; set; }
@@ -98,8 +98,12 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("エージェント")]
         public string AgentName { get; set; }
 
-        /// <summary>学校名（ＴＯＤＯ：マスタで管理？）<summary>
-        [DisplayName("エージェント")]
+        /// <summary>学校名<summary>
+        [DisplayName("学校名")]
         public string SchoolName { get; set; }
+
+        /// <summary>キャンセルフラグ</summary>
+        [DisplayName("キャンセル")]
+        public bool CancelFlg { get; set; }
     }
 }

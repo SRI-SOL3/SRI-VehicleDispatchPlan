@@ -161,6 +161,10 @@
     <Compile Include="Migrations\202004100209303_AddForeignEntGrdCalendar.Designer.cs">
       <DependentUpon>202004100209303_AddForeignEntGrdCalendar.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202004160213525_AddTraineeLodging.cs" />
+    <Compile Include="Migrations\202004160213525_AddTraineeLodging.designer.cs">
+      <DependentUpon>202004160213525_AddTraineeLodging.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MyDatabaseContext.cs" />
     <Compile Include="Models\M_AttendType.cs" />
@@ -262,6 +266,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202004100209303_AddForeignEntGrdCalendar.resx">
       <DependentUpon>202004100209303_AddForeignEntGrdCalendar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004160213525_AddTraineeLodging.resx">
+      <DependentUpon>202004160213525_AddTraineeLodging.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
