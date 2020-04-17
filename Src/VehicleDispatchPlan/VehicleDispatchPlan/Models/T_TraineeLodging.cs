@@ -69,6 +69,10 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("性別")]
         public string Gender { get; set; }
 
+        /// <summary>[非DB項目]性別選択肢<summary>
+        [NotMapped]
+        public SelectList SelectGender { get; set; }
+
         /// <summary>教習コース<summary>
         [Required]
         [DisplayName("教習コース")]

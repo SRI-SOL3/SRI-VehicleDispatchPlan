@@ -492,6 +492,11 @@ namespace VehicleDispatchPlan.Controllers
             // 編集モードの場合
             if (AppConstant.EditMode.Edit.Equals(traineeEdt.EditMode))
             {
+                // 性別の選択肢設定
+                traineeEdt.Trainee.SelectGender = new SelectList(new List<SelectListItem> {
+                        new SelectListItem() { Text = AppConstant.GENDER_MALE, Value=AppConstant.GENDER_MALE },
+                        new SelectListItem() { Text = AppConstant.GENDER_FEMALE, Value=AppConstant.GENDER_FEMALE }
+                    }, "Value", "Text", traineeEdt.Trainee.Gender);
                 // 教習コースの選択肢設定
                 traineeEdt.Trainee.SelectTrainingCourse = new SelectList(db.TrainingCourse.OrderBy(x => x.TrainingCourseCd).ToList(), "TrainingCourseCd", "TrainingCourseName", traineeEdt.Trainee.TrainingCourseCd);
                 // 宿泊施設の選択肢設定
@@ -522,6 +527,11 @@ namespace VehicleDispatchPlan.Controllers
             {
                 for (int i = 0; i < traineeReg.TraineeList.Count(); i++)
                 {
+                    // 性別の選択肢設定
+                    traineeReg.TraineeList[i].SelectGender = new SelectList(new List<SelectListItem> {
+                        new SelectListItem() { Text = AppConstant.GENDER_MALE, Value=AppConstant.GENDER_MALE },
+                        new SelectListItem() { Text = AppConstant.GENDER_FEMALE, Value=AppConstant.GENDER_FEMALE }
+                    }, "Value", "Text", traineeReg.TraineeList[i].Gender);
                     // 教習コースの選択肢設定
                     traineeReg.TraineeList[i].SelectTrainingCourse = new SelectList(trainingCourseList, "TrainingCourseCd", "TrainingCourseName", traineeReg.TraineeList[i].TrainingCourseCd);
                     // 宿泊施設の選択肢設定
