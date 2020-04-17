@@ -6,7 +6,7 @@
 
 <h2>@ViewBag.Title</h2>
 
-@using (Html.BeginForm("List", "TraineeTraineeLodging", FormMethod.Get))
+@using (Html.BeginForm("List", "TraineeLodging", FormMethod.Get))
 {
     <p>
         入校予定日: @Html.TextBox("planDateFrom", (string)ViewBag.PlanDateFrom, new { type = "date" })
