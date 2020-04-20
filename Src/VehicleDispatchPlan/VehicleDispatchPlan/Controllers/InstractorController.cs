@@ -24,7 +24,7 @@ namespace VehicleDispatchPlan.Controllers
         public ActionResult Create([Bind(Include = "Date,No,TrainerName,Classes")] T_DailyClassesByTrainer dailyClassesByTrainer)
         {
             ///nullチェック
-            if (dailyClassesByTrainer == null)
+            if (dailyClassesByTrainer == null && dailyClassesByTrainer.Date == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -34,6 +34,13 @@ namespace VehicleDispatchPlan.Controllers
             if (nextNum == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            ///コマ数入力チェック
+            if (dailyClassesByTrainer.Classes <= 0)
+            {
+                ViewBag.ErrorMessage = "コマ数を入力してください。";
+                return View(dailyClassesByTrainer);
             }
 
             if (ModelState.IsValid)
@@ -46,6 +53,13 @@ namespace VehicleDispatchPlan.Controllers
                 db.SaveChanges();
 
             }
+            else
+            {
+                ViewBag.ErrorMessage = "項目に値を入力してください。";
+                return View(dailyClassesByTrainer);
+            }
+
+
 
             ///指導員一覧画面へ遷移
             return BackToList(dailyClassesByTrainer.Date);
@@ -96,6 +110,10 @@ namespace VehicleDispatchPlan.Controllers
                 
             }
 
+            ///更新メッセージ表示
+
+            TempData["更新"] = "指導員のデータを更新しました。　更新日時:" + DateTime.Now.ToString("yyyy年MM月dd日 HH時mm分ss秒");
+
             return BackToList(model.Date);
 
           
@@ -120,12 +138,13 @@ namespace VehicleDispatchPlan.Controllers
 
             ///削除対象のデータを取得
             T_DailyClassesByTrainer t_DailyClassesByTrainer = db.DailyClassesByTrainer.Find(Date, No);
-
-            
             if (t_DailyClassesByTrainer == null)
             {
                 return HttpNotFound();
             }
+
+            
+
             return View(t_DailyClassesByTrainer);
         }
 
@@ -162,6 +181,7 @@ namespace VehicleDispatchPlan.Controllers
                 var list = db.DailyClassesByTrainer.Where(item => ((DateTime)item.Date).Equals((DateTime)model.Date)).ToList();
                 model.t_DailyClassesByTrainer = list.ToList();
                 ViewBag.DataExistsflg = true;
+                
             }
             else
             {
@@ -169,6 +189,7 @@ namespace VehicleDispatchPlan.Controllers
                 model.t_DailyClassesByTrainer = new List<T_DailyClassesByTrainer>();
 
             }
+
 
 
             return (View(model));
@@ -185,6 +206,7 @@ namespace VehicleDispatchPlan.Controllers
             model.Date = Date;
             model.t_DailyClassesByTrainer = new List<T_DailyClassesByTrainer>();
 
+            
             return RedirectToAction("List", model);
         }
 

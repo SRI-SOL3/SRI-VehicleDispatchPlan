@@ -1,0 +1,115 @@
+﻿@model VehicleDispatchPlan.Models.T_TraineeCommuting
+
+@{
+    ViewBag.Title = "通学教習生削除";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<h3>この情報を削除してよろしいでしょうか？</h3>
+<h5 style="color:red;">※キャンセルの場合は「編集画面」で操作してください</h5>
+
+<div>
+    <h4>詳細情報</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        @* 教習生ID *@
+        <dt>
+            @Html.DisplayNameFor(model => model.TraineeId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TraineeId)
+        </dd>
+
+        @* 教習生名 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.TraineeName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TraineeName)
+        </dd>
+
+        @* 性別 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.Gender)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Gender)
+        </dd>
+
+        @* 教習コース *@
+        <dt>
+            @Html.DisplayNameFor(model => model.TrainingCourse.TrainingCourseName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TrainingCourse.TrainingCourseName)
+        </dd>
+
+        @* 入校予定日 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.EntrancePlanDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EntrancePlanDate)
+        </dd>
+
+        @* 仮免予定日 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.GraduatePlanDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.GraduatePlanDate)
+        </dd>
+
+        @* 卒業予定日 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.GraduatePlanDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.GraduatePlanDate)
+        </dd>
+
+        @* 高校名 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.SchoolName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SchoolName)
+        </dd>
+
+        @* 中学区 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.MiddleSchoolDistrict)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.MiddleSchoolDistrict)
+        </dd>
+
+        @* 集客形態 *@
+        <dt>
+            @Html.DisplayNameFor(model => model.FormOfAttractingCustomers)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FormOfAttractingCustomers)
+        </dd>
+
+        @* キャンセルフラグ *@
+        <dt>
+            @Html.DisplayNameFor(model => model.CancelFlg)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CancelFlg)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm("Delete", "TraineeCommuting", FormMethod.Post)) {
+        @Html.AntiForgeryToken()
+        ///@Html.HiddenFor(model => Model.LodgingCd)
+
+        <div class="form-actions no-color">
+            <input type="submit" value="削除" class="btn btn-default" /> |
+            @Html.ActionLink("一覧", "List")
+        </div>
+    }
+</div>

@@ -7,19 +7,23 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>ViewBag.Title</h2>
+<h2>@ViewBag.Title</h2>
 
 @{
+    var TempDate = Model.Date;
     @Html.HiddenFor(model => model.Date, htmlAttributes: new { @class = "control-label col-md-2" })
     @Html.HiddenFor(model => model.No, htmlAttributes: new { @class = "control-label col-md-2" })
+
 }
 
+@* エラーメッセージ *@
+<div style="color: Red">@ViewBag.ErrorMessage</div>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     <div class="form-horizontal">
-        <h4>T_DailyClassesByTrainer</h4>
+        <h4>指導員登録</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
@@ -41,14 +45,18 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="@AppConstant.CMD_REGIST" class="btn btn-default" />
+            </div>
+            <div>
+                @Html.ActionLink("戻る", "List", new { Date = TempDate })
             </div>
         </div>
     </div>
 
 
+
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+
+
+
