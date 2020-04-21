@@ -46,6 +46,7 @@
             <th style="text-align: center;">AT-2</th>
         </tr>
         <tr>
+            @* ＴＯＤＯ：表の通学の部分にも一段階二段階の人数を出す *@
             <th rowspan="2" style="text-align: center;">通学</th>
             <th style="text-align: center;">MT</th>
         </tr>
@@ -61,7 +62,7 @@
             <tr>
                 @foreach (V_ChartData item in Model)
                 {
-                    <th style="width:40px; min-width:40px; text-align: center;">@Html.ActionLink(item.Date.ToString("M/d"),"../Instractor/List", new V_SearchInstractorViewModel() { Date = item.Date })</th>
+                    <th style="width:40px; min-width:40px; text-align: center;">@Html.ActionLink(item.Date.ToString("M/d"),"../DailyParameter/Edit", new V_SearchInstractorViewModel() { Date = item.Date })</th>
                 }
             </tr>
         </thead>

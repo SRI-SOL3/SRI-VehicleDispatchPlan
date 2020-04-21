@@ -203,12 +203,20 @@ namespace VehicleDispatchPlan_Dev.Controllers
                     string filepath = uploadDir + Path.GetFileName(postedFile.FileName);
                     postedFile.SaveAs(filepath);
                     // テキストを全行読み込み
+
                     using (StreamReader sr = new StreamReader(filepath, Encoding.UTF8))
                     {
+                        int row = 0;
                         while (!sr.EndOfStream)
                         {
+                            row++;
                             // CSVファイルの一行を読み込む
                             string line = sr.ReadLine();
+                            // ヘッダ行はスキップ
+                            if (row == 1)
+                            {
+                                continue;
+                            }
                             // 読み込んだ一行をカンマ毎に分けて配列に格納
                             string[] values = line.Split(',');
 

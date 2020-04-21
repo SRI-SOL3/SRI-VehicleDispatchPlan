@@ -1,0 +1,188 @@
+﻿@model VehicleDispatchPlan.Models.T_DailyClasses
+@using VehicleDispatchPlan.Constants;
+
+@{
+    ViewBag.Title = "更新";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("Edit", "DailyParemeter", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>日別予測条件</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @{
+            Html.EnableClientValidation(false);
+        }
+        @Html.HiddenFor(model => model.Date)
+
+        <div class="form-group">
+            <input type="submit" value="@AppConstant.CMD_UPDATE" class="btn btn-default" style="margin-left:10px;" />
+        </div>
+
+        @* エラーメッセージ *@
+        <div style="color: Red">@ViewBag.ErrorMessage</div>
+
+        <hr />
+
+        @* 合宿比率[%] *@
+        <div class="form-group">
+            @Html.LabelFor(model => model.LodgingRatio, htmlAttributes: new { @class = "control-label col-md-2", @title = "あいうえお" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.LodgingRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+            </div>
+        </div>
+
+        @* 通学比率[%] *@
+        <div class="form-group">
+            @Html.LabelFor(model => model.CommutingRatio, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.CommutingRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+            </div>
+        </div>
+
+        <table>
+            <tr height="50px">
+                <th colspan="3"></th>
+                <td style="text-align:center;font-size:18px;">合宿</td>
+                <td style="text-align:center;font-size:18px;">通学</td>
+            </tr>
+
+            <tr>
+                <th rowspan="4" width="100px" style="text-align:center;border:1px solid lightgrey;">在籍比率[%]</th>
+                <th rowspan="2" width="30px" style="text-align:center;border:1px solid lightgrey;">AT</th>
+                <th width="60px" style="text-align:center;border:1px solid lightgrey;">一段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.LdgAtFstRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.CmtAtFstRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th style="text-align:center;border:1px solid lightgrey;">二段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.LdgAtSndRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.CmtAtSndRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th rowspan="2" style="text-align:center;border:1px solid lightgrey;">MT</th>
+                <th style="text-align:center;border:1px solid lightgrey;">一段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.LdgMtFstRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.CmtMtFstRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th style="text-align:center;border:1px solid lightgrey;">二段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.LdgMtSndRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.CmtMtSndRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr style="height:5px;"></tr>
+
+            <tr>
+                <th rowspan="4" style="text-align:center;border:1px solid lightgrey;">コマ数</th>
+                <th rowspan="2" style="text-align:center;border:1px solid lightgrey;">AT</th>
+                <th style="text-align:center;border:1px solid lightgrey;">一段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.LdgAtFstClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.CmtAtFstClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th style="text-align:center;border:1px solid lightgrey;">二段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.LdgAtSndClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.CmtAtSndClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th rowspan="2" style="text-align:center;border:1px solid lightgrey;">MT</th>
+                <th style="text-align:center;border:1px solid lightgrey;">一段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.LdgMtFstClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.CmtMtFstClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th style="text-align:center;border:1px solid lightgrey;">二段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.LdgMtSndClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.CmtMtSndClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr style="height:5px;"></tr>
+
+            <tr>
+                <th rowspan="4" style="text-align:center;border:1px solid lightgrey;">コマ数/日</th>
+                <th rowspan="2" style="text-align: center;border: 1px solid lightgrey;">AT</th>
+                <th style="text-align: center;border:1px solid lightgrey;">一段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.LdgAtFstClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.CmtAtFstClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th style=" text-align: center;border:1px solid lightgrey;">二段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.LdgAtSndClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.CmtAtSndClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th rowspan="2" style=" text-align: center;border:1px solid lightgrey;">MT</th>
+                <th style="text-align: center;border: 1px solid lightgrey;">一段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.LdgMtFstClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.CmtMtFstClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th style="text-align:center;border:1px solid lightgrey;">二段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.LdgMtSndClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.CmtMtSndClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+        </table>
+
+    </div>
+}
+
+<div>
+    @Html.ActionLink("受入予測へ戻る", "../Forecast/Chart")
+</div>
+
+<script type="text/javascript">
+    function setRatio(element) {
+        if (element.id == "LodgingRatio") {
+            if (0 <= element.value && element.value <= 100) {
+                document.getElementById("CommutingRatio").value = 100 - element.value;
+            } else {
+                document.getElementById("CommutingRatio").value = 0;
+            }
+        } else if (obj.id == "CommutingRatio") {
+            if (0 <= element.value && element.value <= 100) {
+                document.getElementById("LodgingRatio").value = 100 - element.value;
+            } else {
+                document.getElementById("LodgingRatio").value = 0;
+            }
+        }
+    }
+</script>

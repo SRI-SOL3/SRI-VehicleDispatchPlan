@@ -137,6 +137,7 @@
     <Compile Include="Commons\Utility.cs" />
     <Compile Include="Constants\AppConstant.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
+    <Compile Include="Controllers\DailyParameterController.cs" />
     <Compile Include="Controllers\ForecastController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InstractorController.cs" />
@@ -146,29 +147,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202004030612081_Initial.cs" />
-    <Compile Include="Migrations\202004030612081_Initial.Designer.cs">
-      <DependentUpon>202004030612081_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004060450521_DropForecast.cs" />
-    <Compile Include="Migrations\202004060450521_DropForecast.Designer.cs">
-      <DependentUpon>202004060450521_DropForecast.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004060648312_AddForeignDailyClasses.cs" />
-    <Compile Include="Migrations\202004060648312_AddForeignDailyClasses.Designer.cs">
-      <DependentUpon>202004060648312_AddForeignDailyClasses.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004100209303_AddForeignEntGrdCalendar.cs" />
-    <Compile Include="Migrations\202004100209303_AddForeignEntGrdCalendar.Designer.cs">
-      <DependentUpon>202004100209303_AddForeignEntGrdCalendar.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004160213525_AddTraineeLodging.cs" />
-    <Compile Include="Migrations\202004160213525_AddTraineeLodging.designer.cs">
-      <DependentUpon>202004160213525_AddTraineeLodging.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004200549218_AddTraineeCommuting.cs" />
-    <Compile Include="Migrations\202004200549218_AddTraineeCommuting.designer.cs">
-      <DependentUpon>202004200549218_AddTraineeCommuting.cs</DependentUpon>
+    <Compile Include="Migrations\202004210129561_Initial.cs" />
+    <Compile Include="Migrations\202004210129561_Initial.designer.cs">
+      <DependentUpon>202004210129561_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MyDatabaseContext.cs" />
@@ -251,6 +232,7 @@
     <Content Include="Views\TraineeCommuting\Edit.cshtml" />
     <Content Include="Views\TraineeCommuting\List.cshtml" />
     <Content Include="Views\TraineeCommuting\Regist.cshtml" />
+    <Content Include="Views\DailyParameter\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -269,23 +251,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202004030612081_Initial.resx">
-      <DependentUpon>202004030612081_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004060450521_DropForecast.resx">
-      <DependentUpon>202004060450521_DropForecast.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004060648312_AddForeignDailyClasses.resx">
-      <DependentUpon>202004060648312_AddForeignDailyClasses.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004100209303_AddForeignEntGrdCalendar.resx">
-      <DependentUpon>202004100209303_AddForeignEntGrdCalendar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004160213525_AddTraineeLodging.resx">
-      <DependentUpon>202004160213525_AddTraineeLodging.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004200549218_AddTraineeCommuting.resx">
-      <DependentUpon>202004200549218_AddTraineeCommuting.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202004210129561_Initial.resx">
+      <DependentUpon>202004210129561_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

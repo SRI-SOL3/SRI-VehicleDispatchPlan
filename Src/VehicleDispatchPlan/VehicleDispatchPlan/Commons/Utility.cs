@@ -82,34 +82,48 @@ namespace VehicleDispatchPlan.Commons
                 // 対象の日でインスタンスを生成
                 V_ChartData data = new V_ChartData { Date = day };
 
+                // 日別予測条件
+                T_DailyClasses dailyClasses = dailyClassesList.Where(x => ((DateTime)x.Date).Equals(day)).FirstOrDefault();
                 // 教習総コマ数/日
                 double dailySumClasses = trainerList.Where(x => x.Date.Equals(day)).Select(x => x.Classes).Sum();
 
                 // --------------------
                 // 受入可能数/日
                 // --------------------
-                // 教習生一人が卒業までに必要なコマ数（ATの実車教習コマ数×ATの比率[%]÷100 ＋ MTの実車教習コマ数×MTの比率[%]÷100）
-                // ＴＯＤＯ：ATの比率とMTの比率は日次で管理？
-                double atRatio = dailyClassesList.Where(x => ((DateTime)x.Date).Equals(day)).Select(x => x.AtRatio).FirstOrDefault();
-                double traineeReqClasses = (atClassQty * atRatio / 100) + (mtClassQty * (100 - atRatio) / 100);
-                // 受入可能人数/日を加算
-                // ＴＯＤＯ：合宿比率、通学比率は日次で管理？
-                acceptLodgingMaxAmt = acceptLodgingMaxAmt + ((dailySumClasses / traineeReqClasses) * (90.0 / 100));
-                acceptCommutingMaxAmt = acceptCommutingMaxAmt + ((dailySumClasses / traineeReqClasses) * (10.0 / 100));
+                // 【合宿】教習生一人が卒業までに必要なコマ数
+                //   ＝ (合宿生のAT一段階コマ数 ＋ 合宿生のAT二段階コマ数) × (合宿生のAT一段階比率[%] ＋ 合宿生のAT二段階比率[%]) ÷ 100
+                //     ＋ (合宿生のMT一段階コマ数 ＋ 合宿生のMT二段階コマ数) × (合宿生のMT一段階比率[%] ＋ 合宿生のMT二段階比率[%]) ÷ 100
+                double ldgTraineeReqClasses = (dailyClasses.LdgAtFstClass + dailyClasses.LdgAtSndClass) * (dailyClasses.LdgAtFstRatio + dailyClasses.LdgAtSndRatio) / 100
+                    + (dailyClasses.LdgMtFstClass + dailyClasses.LdgMtSndClass) * (dailyClasses.LdgMtFstRatio + dailyClasses.LdgMtSndRatio) / 100;
+                // 【通学】教習生一人が卒業までに必要なコマ数
+                //   ＝ (通学生のAT一段階コマ数 ＋ 通学生のAT二段階コマ数) × (通学生のAT一段階比率[%] ＋ 通学生のAT二段階比率[%]) ÷ 100
+                //     ＋ (通学生のMT一段階コマ数 ＋ 通学生のMT二段階コマ数) × (通学生のMT一段階比率[%] ＋ 通学生のMT二段階比率[%]) ÷ 100
+                double cmtTraineeReqClasses = (dailyClasses.CmtAtFstClass + dailyClasses.CmtAtSndClass) * (dailyClasses.CmtAtFstRatio + dailyClasses.CmtAtSndRatio) / 100
+                    + (dailyClasses.CmtMtFstClass + dailyClasses.CmtMtSndClass) * (dailyClasses.CmtMtFstRatio + dailyClasses.CmtMtSndRatio) / 100;
+
+                // 【合宿】受入可能人数/日を加算
+                acceptLodgingMaxAmt = acceptLodgingMaxAmt + ((dailySumClasses / ldgTraineeReqClasses) * (dailyClasses.LodgingRatio / 100));
+                // 【通学】受入可能人数/日を加算
+                acceptCommutingMaxAmt = acceptCommutingMaxAmt + ((dailySumClasses / cmtTraineeReqClasses) * (dailyClasses.CommutingRatio / 100));
 
                 // --------------------
                 // 在籍可能数/日
                 // --------------------
-                // 教習生一人が実車教習に必要なコマ数/日（2×一段階の比率[%]÷100 ＋ 3×二段階の比率[%]÷100）
-                // ＴＯＤＯ：一段階の比率、二段階の比率は日次で管理？
-                double firstRatio = dailyClassesList.Where(x => ((DateTime)x.Date).Equals(day)).Select(x => x.FirstRatio).FirstOrDefault();
-                double dailyReqClasses = 2 * firstRatio / 100 + 3 * (100 - firstRatio) / 100;
-                // 在籍可能人数
-                // ＴＯＤＯ：合宿比率、通学比率は日次で管理？
-                double lodgingRatio = dailyClassesList.Where(x => ((DateTime)x.Date).Equals(day)).Select(x => x.LodgingRatio).FirstOrDefault();
-                data.DailyLodgingMaxAmt = Math.Round((dailySumClasses / dailyReqClasses) * (lodgingRatio / 100), 1);
-                data.DailyCommutingMaxAmt = Math.Round((dailySumClasses / dailyReqClasses) * ((100 - lodgingRatio) / 100), 1);
-                data.DailyTotalMaxAmt = Math.Round(data.DailyLodgingMaxAmt + data.DailyCommutingMaxAmt, 1);
+                // 【合宿】教習生一人が実車教習に必要なコマ数/日
+                //   ＝ 合宿生のAT一段階コマ数/日 × 合宿生のAT一段階比率[%] ÷ 100 ＋ 合宿生のAT二段階コマ数/日 × 合宿生のAT二段階比率[%] ÷ 100
+                //     ＋ 合宿生のMT一段階コマ数/日 × 合宿生のMT一段階比率[%] ÷ 100 ＋ 合宿生のMT二段階コマ数/日 × 合宿生のMT二段階比率[%] ÷ 100
+                double ldgDailyReqClasses = dailyClasses.LdgAtFstClassDay * dailyClasses.LdgAtFstRatio / 100 + dailyClasses.LdgAtSndClassDay * dailyClasses.LdgAtSndRatio / 100
+                    + dailyClasses.LdgMtFstClassDay * dailyClasses.LdgMtFstRatio / 100 + dailyClasses.LdgMtSndClassDay * dailyClasses.LdgMtSndRatio / 100;
+                // 【通学】教習生一人が実車教習に必要なコマ数/日
+                //   ＝ 通学生のAT一段階コマ数/日 × 通学生のAT一段階比率[%] ÷ 100 ＋ 通学生のAT二段階コマ数/日 × 通学生のAT二段階比率[%] ÷ 100
+                //     ＋ 通学生のMT一段階コマ数/日 × 通学生のMT一段階比率[%] ÷ 100 ＋ 通学生のMT二段階コマ数/日 × 通学生のMT二段階比率[%] ÷ 100
+                double cmtDailyReqClasses = dailyClasses.CmtAtFstClassDay * dailyClasses.CmtAtFstRatio / 100 + dailyClasses.CmtAtSndClassDay * dailyClasses.CmtAtSndRatio / 100
+                    + dailyClasses.CmtMtFstClassDay * dailyClasses.CmtMtFstRatio / 100 + dailyClasses.CmtMtSndClassDay * dailyClasses.CmtMtSndRatio / 100;
+
+                // 【合宿】在籍可能人数/日
+                data.DailyLodgingMaxAmt = Math.Round((dailySumClasses / ldgDailyReqClasses) * (dailyClasses.LodgingRatio / 100), 1);
+                // 【通学】在籍可能人数/日
+                data.DailyCommutingMaxAmt = Math.Round((dailySumClasses / cmtDailyReqClasses) * (dailyClasses.CommutingRatio / 100), 1);
 
                 // --------------------
                 // 受入累積数
