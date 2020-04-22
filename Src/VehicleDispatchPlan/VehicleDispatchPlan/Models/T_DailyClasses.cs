@@ -41,18 +41,6 @@ namespace VehicleDispatchPlan.Models
         public double CommutingRatio { get; set; }
 
         #region 『段階別』による教習生の在籍比率
-        /// <summary>【合宿】AT一段階比率[%]</summary>
-        [Required]
-        [Range(0, 100)]
-        [DisplayName("AT一段階比率[%]")]
-        public double LdgAtFstRatio { get; set; }
-
-        /// <summary>【合宿】AT二段階比率[%]</summary>
-        [Required]
-        [Range(0, 100)]
-        [DisplayName("AT二段階比率[%]")]
-        public double LdgAtSndRatio { get; set; }
-
         /// <summary>【合宿】MT一段階比率[%]</summary>
         [Required]
         [Range(0, 100)]
@@ -65,17 +53,17 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("MT二段階比率[%]")]
         public double LdgMtSndRatio { get; set; }
 
-        /// <summary>【通学】AT一段階比率[%]</summary>
+        /// <summary>【合宿】AT一段階比率[%]</summary>
         [Required]
         [Range(0, 100)]
         [DisplayName("AT一段階比率[%]")]
-        public double CmtAtFstRatio { get; set; }
+        public double LdgAtFstRatio { get; set; }
 
-        /// <summary>【通学】AT二段階比率[%]</summary>
+        /// <summary>【合宿】AT二段階比率[%]</summary>
         [Required]
         [Range(0, 100)]
         [DisplayName("AT二段階比率[%]")]
-        public double CmtAtSndRatio { get; set; }
+        public double LdgAtSndRatio { get; set; }
 
         /// <summary>【通学】MT一段階比率[%]</summary>
         [Required]
@@ -88,19 +76,21 @@ namespace VehicleDispatchPlan.Models
         [Range(0, 100)]
         [DisplayName("MT二段階比率[%]")]
         public double CmtMtSndRatio { get; set; }
+
+        /// <summary>【通学】AT一段階比率[%]</summary>
+        [Required]
+        [Range(0, 100)]
+        [DisplayName("AT一段階比率[%]")]
+        public double CmtAtFstRatio { get; set; }
+
+        /// <summary>【通学】AT二段階比率[%]</summary>
+        [Required]
+        [Range(0, 100)]
+        [DisplayName("AT二段階比率[%]")]
+        public double CmtAtSndRatio { get; set; }
         #endregion
 
         #region 教習生一人が『卒業までに必要な』実車教習のコマ数
-        /// <summary>【合宿】AT一段階コマ数</summary>
-        [Required]
-        [DisplayName("AT一段階コマ数")]
-        public double LdgAtFstClass { get; set; }
-
-        /// <summary>【合宿】AT二段階コマ数</summary>
-        [Required]
-        [DisplayName("AT二段階コマ数")]
-        public double LdgAtSndClass { get; set; }
-
         /// <summary>【合宿】MT一段階コマ数</summary>
         [Required]
         [DisplayName("MT一段階コマ数")]
@@ -111,15 +101,15 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("MT二段階コマ数")]
         public double LdgMtSndClass { get; set; }
 
-        /// <summary>【通学】AT一段階コマ数</summary>
+        /// <summary>【合宿】AT一段階コマ数</summary>
         [Required]
         [DisplayName("AT一段階コマ数")]
-        public double CmtAtFstClass { get; set; }
+        public double LdgAtFstClass { get; set; }
 
-        /// <summary>【通学】AT二段階コマ数</summary>
+        /// <summary>【合宿】AT二段階コマ数</summary>
         [Required]
         [DisplayName("AT二段階コマ数")]
-        public double CmtAtSndClass { get; set; }
+        public double LdgAtSndClass { get; set; }
 
         /// <summary>【通学】MT一段階コマ数</summary>
         [Required]
@@ -130,19 +120,19 @@ namespace VehicleDispatchPlan.Models
         [Required]
         [DisplayName("MT二段階コマ数")]
         public double CmtMtSndClass { get; set; }
+
+        /// <summary>【通学】AT一段階コマ数</summary>
+        [Required]
+        [DisplayName("AT一段階コマ数")]
+        public double CmtAtFstClass { get; set; }
+
+        /// <summary>【通学】AT二段階コマ数</summary>
+        [Required]
+        [DisplayName("AT二段階コマ数")]
+        public double CmtAtSndClass { get; set; }
         #endregion
 
         #region 教習生一人が『一日に受ける』実車教習のコマ数
-        /// <summary>【合宿】AT一段階コマ数/日</summary>
-        [Required]
-        [DisplayName("AT一段階コマ数/日")]
-        public double LdgAtFstClassDay { get; set; }
-
-        /// <summary>【合宿】AT二段階コマ数/日</summary>
-        [Required]
-        [DisplayName("AT二段階コマ数/日")]
-        public double LdgAtSndClassDay { get; set; }
-
         /// <summary>【合宿】MT一段階コマ数/日</summary>
         [Required]
         [DisplayName("MT一段階コマ数/日")]
@@ -153,15 +143,15 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("MT二段階コマ数/日")]
         public double LdgMtSndClassDay { get; set; }
 
-        /// <summary>【通学】AT一段階コマ数/日</summary>
+        /// <summary>【合宿】AT一段階コマ数/日</summary>
         [Required]
         [DisplayName("AT一段階コマ数/日")]
-        public double CmtAtFstClassDay { get; set; }
+        public double LdgAtFstClassDay { get; set; }
 
-        /// <summary>【通学】AT二段階コマ数/日</summary>
+        /// <summary>【合宿】AT二段階コマ数/日</summary>
         [Required]
         [DisplayName("AT二段階コマ数/日")]
-        public double CmtAtSndClassDay { get; set; }
+        public double LdgAtSndClassDay { get; set; }
 
         /// <summary>【通学】MT一段階コマ数/日</summary>
         [Required]
@@ -172,6 +162,16 @@ namespace VehicleDispatchPlan.Models
         [Required]
         [DisplayName("MT二段階コマ数/日")]
         public double CmtMtSndClassDay { get; set; }
+
+        /// <summary>【通学】AT一段階コマ数/日</summary>
+        [Required]
+        [DisplayName("AT一段階コマ数/日")]
+        public double CmtAtFstClassDay { get; set; }
+
+        /// <summary>【通学】AT二段階コマ数/日</summary>
+        [Required]
+        [DisplayName("AT二段階コマ数/日")]
+        public double CmtAtSndClassDay { get; set; }
         #endregion
     }
 }

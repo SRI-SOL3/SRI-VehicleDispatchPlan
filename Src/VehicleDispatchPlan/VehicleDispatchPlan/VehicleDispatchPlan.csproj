@@ -151,19 +151,21 @@
     <Compile Include="Migrations\202004210129561_Initial.designer.cs">
       <DependentUpon>202004210129561_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202004220608150_DropTrainee.cs" />
+    <Compile Include="Migrations\202004220608150_DropTrainee.designer.cs">
+      <DependentUpon>202004220608150_DropTrainee.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MyDatabaseContext.cs" />
-    <Compile Include="Models\M_AttendType.cs" />
     <Compile Include="Models\M_EntGrdCalendar.cs" />
     <Compile Include="Models\M_LodgingFacility.cs" />
     <Compile Include="Models\M_TrainingCourse.cs" />
     <Compile Include="Models\T_DailyClasses.cs" />
     <Compile Include="Models\T_DailyClassesByTrainer.cs" />
-    <Compile Include="Models\T_Trainee.cs" />
     <Compile Include="Models\T_TraineeCommuting.cs" />
     <Compile Include="Models\T_TraineeLodging.cs" />
     <Compile Include="Models\V_ChartData.cs" />
-    <Compile Include="Models\V_CommutingCfm.cs" />
+    <Compile Include="Models\V_DailyParameterEdt.cs" />
     <Compile Include="Models\V_EntGrdCalendarEdt.cs" />
     <Compile Include="Models\V_ForecastCht.cs" />
     <Compile Include="Models\V_LodgingCfm.cs" />
@@ -253,6 +255,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202004210129561_Initial.resx">
       <DependentUpon>202004210129561_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004220608150_DropTrainee.resx">
+      <DependentUpon>202004220608150_DropTrainee.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

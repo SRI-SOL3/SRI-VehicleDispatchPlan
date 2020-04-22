@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using VehicleDispatchPlan.Commons;
 using VehicleDispatchPlan.Constants;
 using VehicleDispatchPlan.Models;
 
@@ -104,6 +105,7 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             M_EntGrdCalendar target = db.EntGrdCalendar.Find(calendar.TrainingCourseCd, calendar.EntrancePlanDate);
                             if (target != null)
                             {
+                                // 削除処理
                                 db.EntGrdCalendar.Remove(target);
                             }
                         }
@@ -123,7 +125,8 @@ namespace VehicleDispatchPlan_Dev.Controllers
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "必須項目（仮免予定日、卒業予定日）を設定してください。";
+                    // エラーメッセージを生成
+                    ViewBag.ErrorMessage = new Utility().getErrorMessage(ModelState);
                 }
             }
 
@@ -203,7 +206,6 @@ namespace VehicleDispatchPlan_Dev.Controllers
                     string filepath = uploadDir + Path.GetFileName(postedFile.FileName);
                     postedFile.SaveAs(filepath);
                     // テキストを全行読み込み
-
                     using (StreamReader sr = new StreamReader(filepath, Encoding.UTF8))
                     {
                         int row = 0;
@@ -352,7 +354,8 @@ namespace VehicleDispatchPlan_Dev.Controllers
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "必須項目（教習コース、入校予定日、仮免予定日、卒業予定日）を設定してください。";
+                    // エラーメッセージを生成
+                    ViewBag.ErrorMessage = new Utility().getErrorMessage(ModelState);
                 }
             }
 

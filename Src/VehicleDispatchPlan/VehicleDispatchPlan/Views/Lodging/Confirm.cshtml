@@ -39,10 +39,10 @@
                 </thead>
                 <tbody>
                     @{
-                        foreach (T_Trainee trainee in Model.Trainee)
+                        foreach (T_TraineeLodging trainee in Model.Trainee)
                         {
                             <tr>
-                                <td style="padding-left:5px;padding-right:5px;">@Html.ActionLink(trainee.TraineeId + " : " + trainee.TraineeName, "../Trainee/Details/" + trainee.TraineeId)</td>
+                                <td style="padding-left:5px;padding-right:5px;">@Html.ActionLink(trainee.TraineeId + " : " + trainee.TraineeName, "../TraineeLodging/Details/" + trainee.TraineeId)</td>
                             </tr>
                         }
                     }
@@ -61,7 +61,7 @@
                     </thead>
                     <tbody>
                         @{
-                            foreach (T_Trainee trainee in Model.Trainee)
+                            foreach (T_TraineeLodging trainee in Model.Trainee)
                             {
                                 <tr>
                                     @for (DateTime date = (DateTime)Model.DateFrom; date <= Model.DateTo; date = date.AddDays(1))

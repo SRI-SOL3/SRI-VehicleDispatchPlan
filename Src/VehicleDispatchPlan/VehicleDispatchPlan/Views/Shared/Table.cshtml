@@ -1,5 +1,6 @@
 ﻿@model List<VehicleDispatchPlan.Models.V_ChartData>
 @using VehicleDispatchPlan.Models;
+@using VehicleDispatchPlan.Constants;
 
 <table border="1" align="left">
     <thead>
@@ -29,7 +30,7 @@
             <th colspan="2" style="text-align: center;">通学</th>
         </tr>
         <tr>
-            <th rowspan="7" style="text-align: center;">在籍見込</th>
+            <th rowspan="9" style="text-align: center;">在籍見込</th>
             <th colspan="2" style="text-align: center;">総数</th>
         </tr>
         <tr>
@@ -46,12 +47,17 @@
             <th style="text-align: center;">AT-2</th>
         </tr>
         <tr>
-            @* ＴＯＤＯ：表の通学の部分にも一段階二段階の人数を出す *@
-            <th rowspan="2" style="text-align: center;">通学</th>
-            <th style="text-align: center;">MT</th>
+            <th rowspan="4" style="text-align: center;">通学</th>
+            <th style="text-align: center;">MT-1</th>
         </tr>
         <tr>
-            <th style="text-align: center;">AT</th>
+            <th style="text-align: center;">MT-2</th>
+        </tr>
+        <tr>
+            <th style="text-align: center;">AT-1</th>
+        </tr>
+        <tr>
+            <th style="text-align: center;">AT-2</th>
         </tr>
     </tbody>
 </table>
@@ -60,9 +66,22 @@
         <thead>
             @* 日付 *@
             <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <th style="width:40px; min-width:40px; text-align: center;">@Html.ActionLink(item.Date.ToString("M/d"),"../DailyParameter/Edit", new V_SearchInstractorViewModel() { Date = item.Date })</th>
+                @{
+                    // TempDataの日付From/Toが設定されている場合はActionLinkで設定
+                    if (TempData.Peek(AppConstant.TEMP_KEY_DATE_FROM) != null && TempData.Peek(AppConstant.TEMP_KEY_DATE_TO) != null)
+                    {
+                        foreach (V_ChartData item in Model)
+                        {
+                            <th style="width:40px; min-width:40px; text-align: center;">@Html.ActionLink(item.Date.ToString("M/d"), "../DailyParameter/Edit", new { Date = item.Date })</th>
+                        }
+                    }
+                    else
+                    {
+                        foreach (V_ChartData item in Model)
+                        {
+                            <th style="width:40px; min-width:40px; text-align: center;">@item.Date.ToString("M/d")</th>
+                        }
+                    }
                 }
             </tr>
         </thead>
@@ -116,46 +135,60 @@
                     <td style="text-align: center;">@item.TotalRegAmt</td>
                 }
             </tr>
-            @* 在籍実績 - 合宿(MT1) *@
+            @* 在籍実績 - 合宿(MT-1) *@
             <tr>
                 @foreach (V_ChartData item in Model)
                 {
                     <td style="text-align: center;">@item.LodgingMtFstRegAmt</td>
                 }
             </tr>
-            @* 在籍実績 - 合宿(MT2) *@
+            @* 在籍実績 - 合宿(MT-2) *@
             <tr>
                 @foreach (V_ChartData item in Model)
                 {
                     <td style="text-align: center;">@item.LodgingMtSndRegAmt</td>
                 }
             </tr>
-            @* 在籍実績 - 合宿(AT1) *@
+            @* 在籍実績 - 合宿(AT-1) *@
             <tr>
                 @foreach (V_ChartData item in Model)
                 {
                     <td style="text-align: center;">@item.LodgingAtFstRegAmt</td>
                 }
             </tr>
-            @* 在籍実績 - 合宿(AT2) *@
+            @* 在籍実績 - 合宿(AT-2) *@
             <tr>
                 @foreach (V_ChartData item in Model)
                 {
                     <td style="text-align: center;">@item.LodgingAtSndRegAmt</td>
                 }
             </tr>
-            @* 在籍実績 - 通学(MT) *@
+            @* 在籍実績 - 通学(MT-1) *@
             <tr>
                 @foreach (V_ChartData item in Model)
                 {
-                    <td style="text-align: center;">@item.CommutingMtRegAmt</td>
+                    <td style="text-align: center;">@item.CommutingMtFstRegAmt</td>
                 }
             </tr>
-            @* 在籍実績 - 通学(AT) *@
+            @* 在籍実績 - 通学(MT-2) *@
             <tr>
                 @foreach (V_ChartData item in Model)
                 {
-                    <td style="text-align: center;">@item.CommutingAtRegAmt</td>
+                    <td style="text-align: center;">@item.CommutingMtSndRegAmt</td>
+                }
+            </tr>
+            @* 在籍実績 - 通学(AT-1) *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.CommutingAtFstRegAmt</td>
+                }
+            </tr>
+            @* 在籍実績 - 通学(AT-2) *@
+            <tr>
+                @foreach (V_ChartData item in Model)
+                {
+                    <td style="text-align: center;">@item.CommutingAtSndRegAmt</td>
                 }
             </tr>
         </tbody>

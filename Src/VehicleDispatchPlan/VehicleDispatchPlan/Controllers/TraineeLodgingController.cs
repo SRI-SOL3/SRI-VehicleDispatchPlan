@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using VehicleDispatchPlan.Commons;
 using VehicleDispatchPlan.Constants;
 using VehicleDispatchPlan.Models;
 
@@ -132,8 +133,8 @@ namespace VehicleDispatchPlan.Controllers
                             break;
                         }
 
-                        // 仮免予定日、卒業予定日の比較
-                        if (trainee.TmpLicencePlanDate >= trainee.GraduatePlanDate)
+                        // 仮免予定日、卒業予定日の比較（ＴＯＤＯ：通学も合わせる）
+                        if (validation == true && trainee.TmpLicencePlanDate >= trainee.GraduatePlanDate)
                         {
                             ViewBag.ErrorMessage = "卒業予定日は仮免予定日より後に設定してください。";
                             validation = false;
@@ -143,7 +144,8 @@ namespace VehicleDispatchPlan.Controllers
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "必須項目（教習者名、性別、教習コース、申込日、入校予定日、仮免予定日、卒業予定日）を設定してください。";
+                    // エラーメッセージを生成（ＴＯＤＯ：通学も合わせる）
+                    ViewBag.ErrorMessage = new Utility().getErrorMessage(ModelState);
                     validation = false;
                 }
 
@@ -336,8 +338,8 @@ namespace VehicleDispatchPlan.Controllers
                         validation = false;
                     }
 
-                    // 仮免予定日、卒業予定日の比較
-                    if (traineeEdt.Trainee.TmpLicencePlanDate >= traineeEdt.Trainee.GraduatePlanDate)
+                    // 仮免予定日、卒業予定日の比較（ＴＯＤＯ：通学も合わせる）
+                    if (validation == true && traineeEdt.Trainee.TmpLicencePlanDate >= traineeEdt.Trainee.GraduatePlanDate)
                     {
                         ViewBag.ErrorMessage = "卒業予定日は仮免予定日より後に設定してください。";
                         validation = false;
@@ -345,7 +347,8 @@ namespace VehicleDispatchPlan.Controllers
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "必須項目（教習者名、性別、教習コース、申込日、入校予定日、仮免予定日、卒業予定日）を設定してください。";
+                    // エラーメッセージを生成（ＴＯＤＯ：通学も合わせる）
+                    ViewBag.ErrorMessage = new Utility().getErrorMessage(ModelState);
                     validation = false;
                 }
 
