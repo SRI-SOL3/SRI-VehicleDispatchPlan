@@ -1,21 +1,27 @@
 ﻿@{
-    ViewBag.Title = "メニュー";
+    ViewBag.Title = "Menu";
 }
 
 <div class="jumbotron">
-    <h1>メニュー</h1>
+    <h1>@ViewBag.Title</h1>
 </div>
 
 <div class="row">
     <div class="col-md-4">
         <h2>管理者</h2>
-        <p>@Html.ActionLink("受入可能人数管理 ≫", "../Forecast/Chart", null, new {@class = "btn btn-default" })</p>
+        <p>@Html.ActionLink("受入可能人数管理 ≫", "../Forecast/Chart", null, new { @class = "btn btn-default" })</p>
     </div>
 
     <div class="col-md-4">
         <h2>配車担当者</h2>
         <p>@Html.ActionLink("合宿教習生管理 ≫", "../TraineeLodging/List", null, new { @class = "btn btn-default" })</p>
         <p>@Html.ActionLink("通学教習生管理 ≫", "../TraineeCommuting/List", null, new { @class = "btn btn-default" })</p>
+    </div>
+
+    <div class="col-md-4">
+        <h2>マスタ管理</h2>
+        <p>@Html.ActionLink("日別予測条件取込 ≫", "../DailyParameter/Import", null, new { @class = "btn btn-default" })</p>
+        <p>@Html.ActionLink("指導員コマ数取込 ≫", "../InstractorImport/Import", null, new { @class = "btn btn-default" })</p>
         <p>@Html.ActionLink("入卒カレンダー ≫", "../Calendar/List", null, new { @class = "btn btn-default" })</p>
         <p>@Html.ActionLink("宿泊施設管理 ≫", "../Lodging/List", null, new { @class = "btn btn-default" })</p>
     </div>

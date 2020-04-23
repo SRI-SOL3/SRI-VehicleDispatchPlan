@@ -2,11 +2,10 @@
 @using VehicleDispatchPlan.Constants;
 
 @{
-    ViewBag.Title = "更新";
+    ViewBag.Title = "合宿教習生更新";
 }
 
 <h2>@ViewBag.Title</h2>
-
 
 @using (Html.BeginForm("Edit", "TraineeLodging", FormMethod.Post))
 {
@@ -38,7 +37,7 @@
         </div>
 
         @* エラーメッセージ *@
-        <div style="color: Red">@ViewBag.ErrorMessage</div>
+        <div style="color: red">@Html.Raw(ViewBag.ErrorMessage)</div>
 
         <hr />
 
@@ -254,6 +253,8 @@
         @{
             if (Model.ChartData != null)
             {
+                // 日別設定への遷移不可
+                TempData[AppConstant.TEMP_KEY_IS_LINK] = false;
                 // 表
                 @Html.Partial("../Shared/Table", Model.ChartData)
             }

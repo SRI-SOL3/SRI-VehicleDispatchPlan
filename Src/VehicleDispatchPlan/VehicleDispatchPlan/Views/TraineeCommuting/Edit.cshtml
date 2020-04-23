@@ -7,7 +7,6 @@
 
 <h2>@ViewBag.Title</h2>
 
-
 @using (Html.BeginForm("Edit", "TraineeCommuting", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
@@ -20,7 +19,6 @@
         Html.EnableClientValidation(false);
     }
     @Html.HiddenFor(model => model.Trainee.TraineeId)
-    @Html.HiddenFor(model => model.Trainee.GroupId)
 
     <div class="form-group">
         @{
@@ -38,7 +36,7 @@
     </div>
 
     @* エラーメッセージ *@
-    <div style="color: Red">@ViewBag.ErrorMessage</div>
+    <div style="color: red">@Html.Raw(ViewBag.ErrorMessage)</div>
 
     <hr />
 
@@ -68,10 +66,7 @@
                 @* 編集モードによりreadonlyの有無を設定 *@
                 if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
                 {
-                    @Html.DropDownListFor(model => model.Trainee.Gender, new SelectListItem[] {
-                        new SelectListItem() { Text = AppConstant.GENDER_MALE, Value=AppConstant.GENDER_MALE },
-                        new SelectListItem() { Text = AppConstant.GENDER_FEMALE, Value=AppConstant.GENDER_FEMALE }
-                    }, "選択してください", new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.DropDownListFor(model => model.Trainee.Gender, Model.Trainee.SelectGender, "選択してください", new { htmlAttributes = new { @class = "form-control" } })
                 }
                 else
                 {
@@ -130,10 +125,6 @@
                     if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
                     {
                         @Html.EditorFor(model => model.Trainee.EntrancePlanDate, new { htmlAttributes = new { @class = "form-control" } })
-                        <input type="submit" name="cmd" value="@AppConstant.CMD_SET_TMP_GRD" class="btn btn-default" style="margin-left: 10px;" />
-                        <div style="margin-left:5px; height:auto; vertical-align:text-bottom;">
-                            <span style="position:absolute; bottom:0; font-size:12px;">入卒カレンダーから仮免予定日・卒業予定日を設定します。</span>
-                        </div>
                     }
                     else
                     {
@@ -256,6 +247,8 @@
     @{
         if (Model.ChartData != null)
         {
+            // 日別設定への遷移不可
+            TempData[AppConstant.TEMP_KEY_IS_LINK] = false;
             // 表
             @Html.Partial("../Shared/Table", Model.ChartData)
         }

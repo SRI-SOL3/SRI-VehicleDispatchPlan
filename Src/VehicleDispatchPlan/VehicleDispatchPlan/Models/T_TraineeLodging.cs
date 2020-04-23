@@ -18,6 +18,7 @@ namespace VehicleDispatchPlan.Models
     /// <summary>
     /// 合宿教習生クラス
     /// </summary>
+    [Table("T_TraineeLodging")]
     public class T_TraineeLodging
     {
         /// <summary>
@@ -36,8 +37,10 @@ namespace VehicleDispatchPlan.Models
             this.GroupId = trainee.GroupId;
             this.TraineeName = trainee.TraineeName;
             this.Gender = trainee.Gender;
+            this.SelectGender = trainee.SelectGender;
             this.TrainingCourseCd = trainee.TrainingCourseCd;
             this.SelectTrainingCourse = trainee.SelectTrainingCourse;
+            this.ReserveDate = trainee.ReserveDate;
             this.EntrancePlanDate = trainee.EntrancePlanDate;
             this.TmpLicencePlanDate = trainee.TmpLicencePlanDate;
             this.GraduatePlanDate = trainee.GraduatePlanDate;

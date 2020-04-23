@@ -18,10 +18,15 @@ namespace VehicleDispatchPlan.Models
     /// </summary>
     public class V_DailyParameterEdt
     {
-        /// <summary>日付</summary>
+        /// <summary>検索日付</summary>
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime? Date { get; set; }
+        public DateTime? SearchDate { get; set; }
+
+        /// <summary>更新日付To</summary>
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime? UpdateTo { get; set; }
 
         /// <summary>日別予測条件</summary>
         public T_DailyClasses DailyClasses { get; set; }

@@ -71,6 +71,8 @@ namespace VehicleDispatchPlan.Constants
         /// <summary>系統_通学在見込籍数</summary>
         public const string SERIES_COMMUTING_REG_AMT = "通学在籍見込数";
 
+        /// <summary>TempDataキー_日別設定遷移有無</summary>
+        public const string TEMP_KEY_IS_LINK = "IsLink";
         /// <summary>TempDataキー_日付From</summary>
         public const string TEMP_KEY_DATE_FROM = "DateFrom";
         /// <summary>TempDataキー_日付To</summary>

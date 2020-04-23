@@ -97,14 +97,14 @@ namespace VehicleDispatchPlan.Controllers
 
             if (validation == true)
             {
-                Utility utility = new Utility();
                 // 日別設定画面から遷移するための日付From/ToをTempDataに設定
                 TempData[AppConstant.TEMP_KEY_DATE_FROM] = forecastCht.PlanDateFrom;
                 TempData[AppConstant.TEMP_KEY_DATE_TO] = forecastCht.PlanDateTo;
+                Utility utility = new Utility();
                 // グラフデータを作成
-                forecastCht.ChartData = utility.getChartData(db, (DateTime)forecastCht.PlanDateFrom, (DateTime)forecastCht.PlanDateTo, null, null);
+                forecastCht.ChartData = utility.GetChartData(db, (DateTime)forecastCht.PlanDateFrom, (DateTime)forecastCht.PlanDateTo, null, null);
                 // グラフを生成（各表示フラグはnullの場合、trueとする）
-                ViewBag.ChartPath = utility.getChartPath(
+                ViewBag.ChartPath = utility.GetChartPath(
                     ((DateTime)forecastCht.PlanDateFrom).Year.ToString(), ((DateTime)forecastCht.PlanDateTo).Month.ToString(), forecastCht.ChartData
                     , forecastCht.TotalRemFlg, forecastCht.LodgingRemFlg, forecastCht.CommutingRemFlg
                     , forecastCht.TotalMaxFlg, forecastCht.LodgingMaxFlg, forecastCht.CommutingMaxFlg

@@ -133,7 +133,7 @@ namespace VehicleDispatchPlan.Controllers
                             break;
                         }
 
-                        // 仮免予定日、卒業予定日の比較（ＴＯＤＯ：通学も合わせる）
+                        // 仮免予定日、卒業予定日の比較
                         if (validation == true && trainee.TmpLicencePlanDate >= trainee.GraduatePlanDate)
                         {
                             ViewBag.ErrorMessage = "卒業予定日は仮免予定日より後に設定してください。";
@@ -144,8 +144,8 @@ namespace VehicleDispatchPlan.Controllers
                 }
                 else
                 {
-                    // エラーメッセージを生成（ＴＯＤＯ：通学も合わせる）
-                    ViewBag.ErrorMessage = new Utility().getErrorMessage(ModelState);
+                    // エラーメッセージを生成
+                    ViewBag.ErrorMessage = new Utility().GetErrorMessage(ModelState);
                     validation = false;
                 }
 
@@ -160,8 +160,7 @@ namespace VehicleDispatchPlan.Controllers
                     DateTime maxGrdDate = (DateTime)traineeReg.TraineeList.Select(x => x.GraduatePlanDate).Max();
                     DateTime dateTo = maxGrdDate.AddDays(10);
                     // 表データを作成
-                    //Utility utility = new Utility();
-                    //traineeReg.ChartData = utility.getChartData(db, dateFrom, dateTo, traineeReg.TraineeList);
+                    traineeReg.ChartData = new Utility().GetChartData(db, dateFrom, dateTo, traineeReg.TraineeList, null);
                 }
                 else
                 {
@@ -183,7 +182,11 @@ namespace VehicleDispatchPlan.Controllers
                 // グループIDを加算
                 int groupId = db.TraineeLodging.Count() > 0 ? db.TraineeLodging.Select(x => x.GroupId).Max() + 1 : 1;
                 // 外部キーマスタのリセット＆グループIDの設定
-                traineeReg.TraineeList.ForEach(x => this.ResetForeignMaster(x, groupId));
+                traineeReg.TraineeList.ForEach(x => {
+                    x.GroupId = groupId;
+                    x.TrainingCourse = null;
+                    x.LodgingFacility = null;
+                });
                 // 登録処理
                 db.TraineeLodging.AddRange(traineeReg.TraineeList);
                 db.SaveChanges();
@@ -241,8 +244,6 @@ namespace VehicleDispatchPlan.Controllers
                 traineeReg.TraineeList.Insert(i + 1, new T_TraineeLodging(traineeReg.TraineeList[i]));
                 // 教習者名をクリア
                 traineeReg.TraineeList[i + 1].TraineeName = "";
-                // 性別をクリア
-                traineeReg.TraineeList[i + 1].Gender = "";
                 // キャンセルフラグをクリア
                 traineeReg.TraineeList[i + 1].CancelFlg = false;
             }
@@ -269,20 +270,6 @@ namespace VehicleDispatchPlan.Controllers
             this.SetSelectItem(traineeReg);
 
             return View(traineeReg);
-        }
-
-        /// <summary>
-        /// 外部キーマスタのリセット
-        /// </summary>
-        /// <param name="trainee">教習生情報</param>
-        /// <param name="groupId">グループID</param>
-        private void ResetForeignMaster(T_TraineeLodging trainee, int groupId)
-        {
-            // グループIDを設定
-            trainee.GroupId = groupId;
-            // 各マスタをリセット
-            trainee.TrainingCourse = null;
-            trainee.LodgingFacility = null;
         }
 
         /// <summary>
@@ -338,7 +325,7 @@ namespace VehicleDispatchPlan.Controllers
                         validation = false;
                     }
 
-                    // 仮免予定日、卒業予定日の比較（ＴＯＤＯ：通学も合わせる）
+                    // 仮免予定日、卒業予定日の比較
                     if (validation == true && traineeEdt.Trainee.TmpLicencePlanDate >= traineeEdt.Trainee.GraduatePlanDate)
                     {
                         ViewBag.ErrorMessage = "卒業予定日は仮免予定日より後に設定してください。";
@@ -347,8 +334,8 @@ namespace VehicleDispatchPlan.Controllers
                 }
                 else
                 {
-                    // エラーメッセージを生成（ＴＯＤＯ：通学も合わせる）
-                    ViewBag.ErrorMessage = new Utility().getErrorMessage(ModelState);
+                    // エラーメッセージを生成
+                    ViewBag.ErrorMessage = new Utility().GetErrorMessage(ModelState);
                     validation = false;
                 }
 
@@ -361,8 +348,7 @@ namespace VehicleDispatchPlan.Controllers
                     // 卒業予定日＋10日（ＴＯＤＯ：いったん＋10日としている）
                     DateTime dateTo = ((DateTime)traineeEdt.Trainee.GraduatePlanDate).AddDays(10);
                     // 表データを作成
-                    //Utility utility = new Utility();
-                    //traineeEdt.ChartData = utility.getChartData(db, dateFrom, dateTo, new List<T_Trainee> { traineeEdt.Trainee });
+                    traineeEdt.ChartData = new Utility().GetChartData(db, dateFrom, dateTo, new List<T_TraineeLodging> { traineeEdt.Trainee }, null);
                 }
                 else
                 {
@@ -479,8 +465,8 @@ namespace VehicleDispatchPlan.Controllers
             {
                 // 削除
                 db.TraineeLodging.Remove(trainee);
+                db.SaveChanges();
             }
-            db.SaveChanges();
 
             // 一覧へリダイレクト
             return RedirectToAction("List");

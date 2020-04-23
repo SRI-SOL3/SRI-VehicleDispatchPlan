@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using VehicleDispatchPlan.Commons;
 using VehicleDispatchPlan.Constants;
 using VehicleDispatchPlan.Models;
 
@@ -79,7 +80,7 @@ namespace VehicleDispatchPlan.Controllers
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "必須項目（宿泊施設コード、宿泊施設名）を設定してください。";
+                    ViewBag.ErrorMessage = new Utility().GetErrorMessage(ModelState);
                     validation = false;
                 }
 
@@ -146,7 +147,7 @@ namespace VehicleDispatchPlan.Controllers
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "必須項目（宿泊施設名）を設定してください。";
+                    ViewBag.ErrorMessage = new Utility().GetErrorMessage(ModelState);
                 }
             }
 
@@ -212,8 +213,8 @@ namespace VehicleDispatchPlan.Controllers
                 }
                 // 宿泊施設情報を削除
                 db.LodgingFacility.Remove(target);
+                db.SaveChanges();
             }
-            db.SaveChanges();
 
             // 一覧へリダイレクト
             return RedirectToAction("List");

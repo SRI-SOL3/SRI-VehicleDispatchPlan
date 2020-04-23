@@ -25,7 +25,7 @@ namespace VehicleDispatchPlan.Commons
     public class Utility
     {
         /// <summary>
-        /// グラフデータ取得
+        /// グラフデータ取得（予測値算出ロジック）
         /// </summary>
         /// <param name="db">DBコンテキスト</param>
         /// <param name="dateFrom">日付From</param>
@@ -33,8 +33,8 @@ namespace VehicleDispatchPlan.Commons
         /// <param name="targetTraineeLodging">合宿教習生情報(登録/更新時)</param>
         /// <param name="targetTraineeCommuting">通学教習生情報(登録/更新時)</param>
         /// <returns></returns>
-        public List<V_ChartData> getChartData(MyDatabaseContext db, DateTime dateFrom, DateTime dateTo
-            , List<T_TraineeLodging> targetTraineeLodging, List<T_TraineeCommuting> targetTraineeCommuting)
+        public List<V_ChartData> GetChartData(MyDatabaseContext db, DateTime dateFrom, DateTime dateTo
+            , List<T_TraineeLodging> targetTraineeLodging, T_TraineeCommuting targetTraineeCommuting)
         {
             List<V_ChartData> chartData = new List<V_ChartData>();
 
@@ -50,9 +50,10 @@ namespace VehicleDispatchPlan.Commons
             {
                 // 対象期間の教習生データを全て取得
                 traineeLodging = db.TraineeLodging.Where(
-                    x => dateFrom <= x.EntrancePlanDate && x.EntrancePlanDate <= dateTo
+                    x => x.CancelFlg == false
+                    && (dateFrom <= x.EntrancePlanDate && x.EntrancePlanDate <= dateTo
                     || dateFrom <= x.GraduatePlanDate && x.GraduatePlanDate <= dateTo
-                    || x.EntrancePlanDate < dateFrom && dateTo < x.GraduatePlanDate).ToList();
+                    || x.EntrancePlanDate < dateFrom && dateTo < x.GraduatePlanDate)).ToList();
             }
             // 引数の教習生がnullでない場合（教習生管理(登録/更新)）
             else
@@ -62,6 +63,7 @@ namespace VehicleDispatchPlan.Commons
                 // 対象教習生ID以外を取得
                 traineeLodging = db.TraineeLodging.Where(
                     x => !traineeIdList.Contains(x.TraineeId)
+                    && x.CancelFlg == false
                     && (dateFrom <= x.EntrancePlanDate && x.EntrancePlanDate <= dateTo
                     || dateFrom <= x.GraduatePlanDate && x.GraduatePlanDate <= dateTo
                     || x.EntrancePlanDate < dateFrom && dateTo < x.GraduatePlanDate)).ToList();
@@ -74,18 +76,20 @@ namespace VehicleDispatchPlan.Commons
             {
                 // 対象期間の教習生データを全て取得
                 traineeCommuting = db.TraineeCommuting.Where(
-                    x => dateFrom <= x.EntrancePlanDate && x.EntrancePlanDate <= dateTo
+                    x => x.CancelFlg == false
+                    && dateFrom <= x.EntrancePlanDate && x.EntrancePlanDate <= dateTo
                     || dateFrom <= x.GraduatePlanDate && x.GraduatePlanDate <= dateTo
                     || x.EntrancePlanDate < dateFrom && dateTo < x.GraduatePlanDate).ToList();
             }
             // 引数の教習生がnullでない場合（教習生管理(登録/更新)）
             else
             {
-                // 0以外の教習生IDを取得
-                List<int> traineeIdList = targetTraineeCommuting.Where(x => !x.TraineeId.Equals(0)).Select(x => x.TraineeId).ToList();
+                // 教習生IDを取得
+               int traineeId = targetTraineeCommuting.TraineeId;
                 // 対象教習生ID以外を取得
                 traineeCommuting = db.TraineeCommuting.Where(
-                    x => !traineeIdList.Contains(x.TraineeId)
+                    x => !x.TraineeId.Equals(traineeId)
+                    && x.CancelFlg == false
                     && (dateFrom <= x.EntrancePlanDate && x.EntrancePlanDate <= dateTo
                     || dateFrom <= x.GraduatePlanDate && x.GraduatePlanDate <= dateTo
                     || x.EntrancePlanDate < dateFrom && dateTo < x.GraduatePlanDate)).ToList();
@@ -209,54 +213,62 @@ namespace VehicleDispatchPlan.Commons
                     x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                     && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
 
-                // 引数の合宿教習生情報が設定されている場合はデータに追加
+                // 引数の合宿教習生情報が設定されている場合は在籍数を加算
                 if (targetTraineeLodging != null)
                 {
                     // 合宿在籍数(MT-一段階)
                     data.LodgingMtFstRegAmt = data.LodgingMtFstRegAmt
                         + targetTraineeLodging.Where(
-                            x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
+                            x => x.CancelFlg == false
+                            && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                             && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
                     // 合宿在籍数(MT-二段階)
                     data.LodgingMtSndRegAmt = data.LodgingMtSndRegAmt
                         + targetTraineeLodging.Where(
-                            x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
+                            x => x.CancelFlg == false
+                            && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                             && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
                     // 合宿在籍数(AT-一段階)
                     data.LodgingAtFstRegAmt = data.LodgingAtFstRegAmt
                         + targetTraineeLodging.Where(
-                            x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
+                            x => x.CancelFlg == false
+                            && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                             && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
                     // 合宿在籍数(AT-二段階)
                     data.LodgingAtSndRegAmt = data.LodgingAtSndRegAmt
                         + targetTraineeLodging.Where(
-                            x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
+                            x => x.CancelFlg == false
+                            && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                             && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
                 }
 
-                // 引数の通学教習生情報が設定されている場合はデータに追加
-                if (targetTraineeCommuting != null)
+                // 引数の通学教習生情報が設定されている、かつキャンセルでない場合は在籍数を加算
+                if (targetTraineeCommuting != null && targetTraineeCommuting.CancelFlg == false)
                 {
                     // 通学在籍数(MT-一段階)
-                    data.CommutingMtFstRegAmt = data.CommutingMtFstRegAmt
-                        + targetTraineeCommuting.Where(
-                            x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                            && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
+                    if (AppConstant.TRAINING_COURSE_CD_MT.Equals(targetTraineeCommuting.TrainingCourseCd)
+                        && targetTraineeCommuting.EntrancePlanDate <= day && day < targetTraineeCommuting.TmpLicencePlanDate)
+                    {
+                        data.CommutingMtFstRegAmt++;
+                    }
                     // 通学在籍数(MT-二段階)
-                    data.CommutingMtSndRegAmt = data.CommutingMtSndRegAmt
-                        + targetTraineeCommuting.Where(
-                            x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                            && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
+                    if (AppConstant.TRAINING_COURSE_CD_MT.Equals(targetTraineeCommuting.TrainingCourseCd)
+                        && targetTraineeCommuting.TmpLicencePlanDate <= day && day <= targetTraineeCommuting.GraduatePlanDate)
+                    {
+                        data.CommutingMtSndRegAmt++;
+                    }
                     // 通学在籍数(AT-一段階)
-                    data.CommutingAtFstRegAmt = data.CommutingAtFstRegAmt
-                        + targetTraineeCommuting.Where(
-                            x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                            && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
+                    if (AppConstant.TRAINING_COURSE_CD_AT.Equals(targetTraineeCommuting.TrainingCourseCd)
+                        && targetTraineeCommuting.EntrancePlanDate <= day && day < targetTraineeCommuting.TmpLicencePlanDate)
+                    {
+                        data.CommutingAtFstRegAmt++;
+                    }
                     // 通学在籍数(AT-二段階)
-                    data.CommutingAtSndRegAmt = data.CommutingAtSndRegAmt
-                        + targetTraineeCommuting.Where(
-                            x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                            && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
+                    if (AppConstant.TRAINING_COURSE_CD_AT.Equals(targetTraineeCommuting.TrainingCourseCd)
+                        && targetTraineeCommuting.TmpLicencePlanDate <= day && day <= targetTraineeCommuting.GraduatePlanDate)
+                    {
+                        data.CommutingAtSndRegAmt++;
+                    }
                 }
 
                 chartData.Add(data);
@@ -287,7 +299,7 @@ namespace VehicleDispatchPlan.Commons
         /// <param name="lodgingRegAmt">合宿在籍見込数</param>
         /// <param name="commutingRegAmt">通学在籍見込数</param>
         /// <returns>画像パス</returns>
-        public string getChartPath(string year, string month, List<V_ChartData> chartData, 
+        public string GetChartPath(string year, string month, List<V_ChartData> chartData, 
             bool totalRemAmt, bool lodgingRemAmt, bool commutingRemAmt, bool totalMaxAmt, bool lodgingMaxAmt, bool commutingMaxAmt, bool totalRegAmt, bool lodgingRegAmt, bool commutingRegAmt)
         {
             // グラフを作成
@@ -508,28 +520,24 @@ namespace VehicleDispatchPlan.Commons
         /// </summary>
         /// <param name="modelState">ステータス</param>
         /// <returns>エラーメッセージ</returns>
-        public string getErrorMessage(ModelStateDictionary modelState)
+        public string GetErrorMessage(ModelStateDictionary modelState)
         {
-            // 改行タグ
-            const string TAG_BR = "<br>";
+            // メッセージリスト
+            List<string> messageList = new List<string>();
 
-            // エラーメッセージを連結
-            string errorMessage = "";
+            // エラーメッセージを追加
             foreach (ModelState state in modelState.Values)
             {
                 foreach (ModelError error in state.Errors)
                 {
-                    errorMessage = errorMessage + error.ErrorMessage + TAG_BR;
+                    messageList.Add(error.ErrorMessage);
                 }
             }
+            // 重複を削除
+            messageList = messageList.Distinct().ToList();
 
-            // 末尾の改行タグを削除
-            if (errorMessage.Length > TAG_BR.Length)
-            {
-                errorMessage = errorMessage.Substring(0, errorMessage.Length - TAG_BR.Length);
-            }
-
-            return errorMessage;
+            // brタグで文字列に連結
+            return string.Join("<br>", messageList);
         }
     }
 }

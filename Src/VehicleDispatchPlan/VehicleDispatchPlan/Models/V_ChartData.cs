@@ -22,7 +22,7 @@ namespace VehicleDispatchPlan.Models
         /// <summary>当日在籍最大数</summary>
         public double DailyTotalMaxAmt { 
             get { 
-                return this.DailyLodgingMaxAmt + this.DailyCommutingMaxAmt; 
+                return Math.Round(this.DailyLodgingMaxAmt + this.DailyCommutingMaxAmt, 1); 
             } }
 
         /// <summary>当日合宿在籍最大数</summary>
@@ -34,7 +34,7 @@ namespace VehicleDispatchPlan.Models
         /// <summary>当期受入最大数</summary>
         public double AcceptTotalMaxAmt {
             get {
-                return this.AcceptLodgingMaxAmt + this.AcceptCommutingMaxAmt;
+                return Math.Round(this.AcceptLodgingMaxAmt + this.AcceptCommutingMaxAmt, 1);
             } }
 
         /// <summary>当期合宿受入最大数</summary>

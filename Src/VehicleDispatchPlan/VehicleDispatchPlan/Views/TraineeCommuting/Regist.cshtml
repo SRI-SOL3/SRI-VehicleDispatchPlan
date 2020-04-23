@@ -1,4 +1,4 @@
-﻿@model VehicleDispatchPlan.Models.V_TraineeCommutingReg
+﻿@model VehicleDispatchPlan.Models.V_TraineeCommutingEdt
 @using VehicleDispatchPlan.Constants;
 
 @{
@@ -11,294 +11,250 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <h4>教習生情報</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="form-horizontal">
+    <h4>教習生情報</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
+    @{
+        Html.EnableClientValidation(false);
+    }
+
+    <div class="form-group">
         @{
-            Html.EnableClientValidation(false);
+            @* 編集モードによりボタンの表示を設定 *@
+            if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
+            {
+                <input type="submit" name="cmd" value="@AppConstant.CMD_CONFIRM" class="btn btn-default" style="margin-left:10px;" />
+            }
+            else
+            {
+                <input type="submit" name="cmd" value="@AppConstant.CMD_RETURN" class="btn btn-default" style="margin-left:10px;" />
+                <input type="submit" name="cmd" value="@AppConstant.CMD_REGIST" class="btn btn-default" style="margin-left:10px;" />
+            }
         }
+    </div>
 
-        <div class="form-group">
+    @* エラーメッセージ *@
+    <div style="color: red">@Html.Raw(ViewBag.ErrorMessage)</div>
+
+    <hr />
+
+    @* 教習者名 *@
+    <div class="form-group">
+        @Html.LabelFor(model => model.Trainee.TraineeName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
             @{
-                @* 編集モードによりボタンの表示を設定 *@
+                @* 編集モードによりreadonlyの有無を設定 *@
                 if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
                 {
-                    <input type="submit" name="cmd" value="@AppConstant.CMD_CONFIRM" class="btn btn-default" style="margin-left:10px;" />
+                    @Html.EditorFor(model => model.Trainee.TraineeName, new { htmlAttributes = new { @class = "form-control" } })
                 }
                 else
                 {
-                    <input type="submit" name="cmd" value="@AppConstant.CMD_RETURN" class="btn btn-default" style="margin-left:10px;" />
-                    <input type="submit" name="cmd" value="@AppConstant.CMD_REGIST" class="btn btn-default" style="margin-left:10px;" />
+                    @Html.EditorFor(model => model.Trainee.TraineeName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 }
             }
         </div>
-
-        @* エラーメッセージ *@
-        <div style="color: Red">@ViewBag.ErrorMessage</div>
-
-        @* 一覧のsubmitにてインデックスを設定 *@
-        @Html.Hidden("index", "")
-
-        <table class="table">
-            @* ヘッダ部 *@
-            <tr>
-                <th>
-                    @* 教習生名 *@
-                    @Html.DisplayNameFor(model => model.TraineeList.FirstOrDefault().TraineeName)
-                </th>
-                <th>
-                    @* 性別 *@
-                    @Html.DisplayNameFor(model => model.TraineeList.FirstOrDefault().Gender)
-                </th>
-                <th>
-                    @* 教習コース *@
-                    @Html.DisplayNameFor(model => model.TraineeList.FirstOrDefault().TrainingCourseCd)
-                </th>
-                <th>
-                    @* 申込日 *@
-                    @Html.DisplayNameFor(model => model.TraineeList.FirstOrDefault().ReserveDate)
-                </th>
-                <th>
-                    @* 入校予定日 *@
-                    @Html.DisplayNameFor(model => model.TraineeList.FirstOrDefault().EntrancePlanDate)
-                </th>
-                <th></th>
-                <th>
-                    @* 仮免予定日 *@
-                    @Html.DisplayNameFor(model => model.TraineeList.FirstOrDefault().TmpLicencePlanDate)
-                </th>
-                <th>
-                    @* 卒業予定日 *@
-                    @Html.DisplayNameFor(model => model.TraineeList.FirstOrDefault().GraduatePlanDate)
-                </th>
-
-                <th>
-                    @* 高校名 *@
-                    @Html.DisplayNameFor(model => model.TraineeList.FirstOrDefault().SchoolName)
-                </th>
-                <th>
-                    @* 中学区 *@
-                    @Html.DisplayNameFor(model => model.TraineeList.FirstOrDefault().MiddleSchoolDistrict)
-                </th>
-                <th>
-                    @* 集客形態 *@
-                    @Html.DisplayNameFor(model => model.TraineeList.FirstOrDefault().FormOfAttractingCustomers)
-                </th>
-                <th>
-                    @* キャンセルフラグ *@
-                    @Html.DisplayNameFor(model => model.TraineeList.FirstOrDefault().CancelFlg)
-                </th>
-                <th></th>
-            </tr>
-
-            @for (int i = 0; i < Model.TraineeList.Count(); i++)
-            {
-                @* データ部 *@
-        <tr>
-            <td>
-                @* 教習生名 *@
-                @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].TraineeName, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;" } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].TraineeName, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;", @readonly = "readonly" } })
-                    }
-                }
-            </td>
-            <td>
-                @* 性別 *@
-                @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                    {
-                        @Html.DropDownListFor(modelitem => Model.TraineeList[i].Gender, new SelectListItem[] {
-                            new SelectListItem() { Text = AppConstant.GENDER_MALE, Value=AppConstant.GENDER_MALE },
-                            new SelectListItem() { Text = AppConstant.GENDER_FEMALE, Value=AppConstant.GENDER_FEMALE }
-                        }, "", new { htmlAttributes = new { @class = "form-control" } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].Gender, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                    }
-                }
-            </td>
-            <td>
-                @* 教習コース *@
-                @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                    {
-                        @Html.DropDownListFor(modelitem => Model.TraineeList[i].TrainingCourseCd, Model.TraineeList[i].SelectTrainingCourse, "", new { htmlAttributes = new { @class = "form-control" } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].TrainingCourse.TrainingCourseName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                        @Html.HiddenFor(modelitem => Model.TraineeList[i].TrainingCourseCd)
-                    }
-                }
-            </td>
-            <td>
-                @* 申込日 *@
-                @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].ReserveDate, new { htmlAttributes = new { @class = "form-control" } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].ReserveDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                    }
-                }
-            </td>
-            <td>
-                @* 入校予定日 *@
-                @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].EntrancePlanDate, new { htmlAttributes = new { @class = "form-control" } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].EntrancePlanDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                    }
-                }
-            </td>
-            <td>
-                @* 日付設定 *@
-                @{
-                    @* 編集の場合に表示 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                    {
-                        <input type="submit" name="cmd" value="@AppConstant.CMD_SET_TMP_GRD" class="btn btn-default" onclick="reflect('@i')" style="font-size: 12px" />
-                    }
-                }
-            </td>
-            <td>
-                @* 仮免予定日 *@
-                @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].TmpLicencePlanDate, new { htmlAttributes = new { @class = "form-control" } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].TmpLicencePlanDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                    }
-                }
-            </td>
-            <td>
-                @* 卒業予定日 *@
-                @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].GraduatePlanDate, new { htmlAttributes = new { @class = "form-control" } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].GraduatePlanDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                    }
-                }
-            </td>
-            <td>
-                @* 高校名 *@
-                @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].SchoolName, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;" } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].SchoolName, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;", @readonly = "readonly" } })
-                    }
-                }
-            </td>
-            <td>
-                @* 中学区   *@
-                @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].MiddleSchoolDistrict, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;" } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].MiddleSchoolDistrict, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;", @readonly = "readonly" } })
-                    }
-                }
-            </td>
-            <td>
-                @* 集客形態  *@
-                @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].FormOfAttractingCustomers, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;" } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].FormOfAttractingCustomers, new { htmlAttributes = new { @class = "form-control", @style = "width: 150px;", @readonly = "readonly" } })
-                    }
-                }
-            </td>
-            <td>
-                @* キャンセルフラグ *@
-                @{
-                    @* 編集モードによりreadonlyの有無を設定 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].CancelFlg, new { htmlAttributes = new { @class = "form-control", @style = "width: 70px;height:20px;" } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(modelitem => Model.TraineeList[i].CancelFlg, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                    }
-                }
-            </td>
-            <td>
-                @* 追加ボタン *@
-                @{
-                    @* 編集の場合に表示 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
-                    {
-                        <input type="submit" name="cmd" value="@AppConstant.CMD_ADD" class="btn btn-default" onclick="reflect('@i')" style="font-size: 12px" />
-                    }
-                }
-            </td>
-            <td>
-                @* 削除ボタン *@
-                @{
-                    @* 編集の場合、かつ先頭の行以外の場合に表示 *@
-                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode) && i != 0)
-                    {
-                        <input type="submit" name="cmd" value="@AppConstant.CMD_REMOVE" class="btn btn-default" onclick="reflect('@i')" style="font-size: 12px" />
-                    }
-                }
-            </td>
-        </tr>
-            }
-
-        </table>
-
-        @{
-            if (Model.ChartData != null)
-            {
-                // 表
-                @Html.Partial("../Shared/Table", Model.ChartData)
-            }
-        }
-
     </div>
+
+    @* 性別 *@
+    <div class="form-group">
+        @Html.LabelFor(model => model.Trainee.Gender, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{
+                @* 編集モードによりreadonlyの有無を設定 *@
+                if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
+                {
+                    @Html.DropDownListFor(model => model.Trainee.Gender, Model.Trainee.SelectGender, "選択してください", new { htmlAttributes = new { @class = "form-control" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Trainee.Gender, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                }
+            }
+        </div>
+    </div>
+
+    @* 教習コース *@
+    <div class="form-group">
+        @Html.LabelFor(model => model.Trainee.TrainingCourseCd, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{
+                @* 編集モードによりreadonlyの有無を設定 *@
+                if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
+                {
+                    @Html.DropDownListFor(model => model.Trainee.TrainingCourseCd, Model.Trainee.SelectTrainingCourse, "選択してください", new { htmlAttributes = new { @class = "form-control" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Trainee.TrainingCourse.TrainingCourseName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.HiddenFor(model => model.Trainee.TrainingCourseCd)
+                }
+            }
+        </div>
+    </div>
+
+    @* 申込日 *@
+    <div class="form-group">
+        @Html.LabelFor(model => model.Trainee.ReserveDate, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div style="display: flex;">
+                @{
+                    @* 編集モードによりreadonlyの有無を設定 *@
+                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
+                    {
+                        @Html.EditorFor(model => model.Trainee.ReserveDate, new { htmlAttributes = new { @class = "form-control" } })
+                    }
+                    else
+                    {
+                        @Html.EditorFor(model => model.Trainee.ReserveDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    @* 入校予定日 *@
+    <div class="form-group">
+        @Html.LabelFor(model => model.Trainee.EntrancePlanDate, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div style="display: flex;">
+                @{
+                    @* 編集モードによりreadonlyの有無を設定 *@
+                    if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
+                    {
+                        @Html.EditorFor(model => model.Trainee.EntrancePlanDate, new { htmlAttributes = new { @class = "form-control" } })
+                    }
+                    else
+                    {
+                        @Html.EditorFor(model => model.Trainee.EntrancePlanDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    @* 仮免予定日 *@
+    <div class="form-group">
+        @Html.LabelFor(model => model.Trainee.TmpLicencePlanDate, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{
+                @* 編集モードによりreadonlyの有無を設定 *@
+                if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
+                {
+                    @Html.EditorFor(model => model.Trainee.TmpLicencePlanDate, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Trainee.TmpLicencePlanDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                }
+            }
+        </div>
+    </div>
+
+    @* 卒業予定日 *@
+    <div class="form-group">
+        @Html.LabelFor(model => model.Trainee.GraduatePlanDate, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{
+                @* 編集モードによりreadonlyの有無を設定 *@
+                if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
+                {
+                    @Html.EditorFor(model => model.Trainee.GraduatePlanDate, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Trainee.GraduatePlanDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                }
+            }
+        </div>
+    </div>
+
+    @* 高校名 *@
+    <div class="form-group">
+        @Html.LabelFor(model => model.Trainee.SchoolName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{
+                @* 編集モードによりreadonlyの有無を設定 *@
+                if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
+                {
+                    @Html.EditorFor(model => model.Trainee.SchoolName, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Trainee.SchoolName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                }
+            }
+        </div>
+    </div>
+
+    @* 中学区 *@
+    <div class="form-group">
+        @Html.LabelFor(model => model.Trainee.MiddleSchoolDistrict, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{
+                @* 編集モードによりreadonlyの有無を設定 *@
+                if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
+                {
+                    @Html.EditorFor(model => model.Trainee.MiddleSchoolDistrict, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Trainee.MiddleSchoolDistrict, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                }
+            }
+        </div>
+    </div>
+
+    @* 集客形態 *@
+    <div class="form-group">
+        @Html.LabelFor(model => model.Trainee.FormOfAttractingCustomers, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{
+                @* 編集モードによりreadonlyの有無を設定 *@
+                if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
+                {
+                    @Html.EditorFor(model => model.Trainee.FormOfAttractingCustomers, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Trainee.FormOfAttractingCustomers, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                }
+            }
+        </div>
+    </div>
+
+    @* キャンセルフラグ *@
+    <div class="form-group">
+        @Html.LabelFor(model => model.Trainee.CancelFlg, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{
+                @* 編集モードによりdisabledの有無を設定 *@
+                if (AppConstant.EditMode.Edit.Equals(Model.EditMode))
+                {
+                    @Html.EditorFor(model => model.Trainee.CancelFlg, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                else
+                {
+                    @Html.HiddenFor(model => model.Trainee.CancelFlg)
+                    @Html.EditorFor(model => model.Trainee.CancelFlg, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                }
+            }
+        </div>
+    </div>
+
+    @{
+        if (Model.ChartData != null)
+        {
+            // 日別設定への遷移不可
+            TempData[AppConstant.TEMP_KEY_IS_LINK] = false;
+            // 表
+            @Html.Partial("../Shared/Table", Model.ChartData)
+        }
+    }
+
+</div>
 }
 
 <div>

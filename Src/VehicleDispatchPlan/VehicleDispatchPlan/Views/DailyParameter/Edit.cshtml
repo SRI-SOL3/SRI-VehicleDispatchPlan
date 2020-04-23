@@ -24,9 +24,9 @@
 {
     <div class="form-inline">
         対象日:
-        @*対象日*@
+        @* 検索日付 *@
         <div class="form-group" style="margin-left:10px;">
-            @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.EditorFor(model => model.SearchDate, new { htmlAttributes = new { @class = "form-control" } })
         </div>
 
         @* 検索ボタン *@
@@ -53,7 +53,7 @@
         <div style="display:flex;margin-left:10px;">
             @* 更新ボタン *@
             <div class="form-group">
-                <input type="submit" value="@AppConstant.CMD_UPDATE" class="btn btn-default" />
+                <input type="submit" name="cmd" value="@AppConstant.CMD_UPDATE" class="btn btn-default" />
             </div>
 
             @* 日付範囲 *@
@@ -62,24 +62,16 @@
             </div>
             <div style="width:30px;text-align:center;">～</div>
             <div>
-                @Html.EditorFor(model => model.DailyClasses.Date, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.UpdateTo, new { htmlAttributes = new { @class = "form-control" } })
             </div>
             <div style="margin-left:10px;">まで一括設定</div>
-            </div>
+        </div>
 
         @* エラーメッセージ *@
         <div style="color: red">@Html.Raw(ViewBag.ErrorMessage)</div>
         @* 完了メッセージ *@
         <div style="color: green">@Html.Raw(ViewBag.CompMessage)</div>
         <br>
-
-        @* 対象日付 *@
-        @*<div class="form-group">
-                @Html.LabelFor(model => model.DailyClasses.Date, htmlAttributes: new { @class = "control-label col-md-1" })
-                <div>
-                    @Html.EditorFor(model => model.DailyClasses.Date, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                </div>
-            </div>*@
 
         @* 合宿比率[%] *@
         <div class="form-group">
@@ -198,7 +190,7 @@
 
             <tr>
                 <th rowspan="2" style=" text-align: center;background-color:#dddddd;border:2px solid white;">AT</th>
-                <th style="text-align:center;background-color:#dddddd;border:2px solid white;;">一段階</th>
+                <th style="text-align:center;background-color:#dddddd;border:2px solid white;">一段階</th>
                 @* 合宿 *@
                 <td>@Html.EditorFor(model => model.DailyClasses.LdgAtFstClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
                 @* 通学 *@
@@ -229,13 +221,12 @@
         }
         else
         {
-            @Html.ActionLink("指導員管理 ≫", "../Instractor/List", new { Date = Model.Date });
+            @Html.ActionLink("指導員管理 ≫", "../Instractor/List", new { Date = Model.SearchDate });
         }
     }
 
     @* 指導員一覧 *@
-    <table class="table" style="        width: 320px;
-        margin-top: 5px;">
+    <table class="table" style="width: 320px;margin-top: 5px;">
         <tr>
             <th>
                 @* No *@

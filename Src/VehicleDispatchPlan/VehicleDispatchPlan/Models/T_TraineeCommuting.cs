@@ -19,6 +19,7 @@ namespace VehicleDispatchPlan.Models
     /// <summary>
     /// 通学教習生クラス
     /// </summary>
+    [Table("T_TraineeCommuting")]
     public class T_TraineeCommuting
     {
         /// <summary>
@@ -34,11 +35,12 @@ namespace VehicleDispatchPlan.Models
         {
             // 各項目の値をコピー
             this.TraineeId = trainee.TraineeId;
-            this.GroupId = trainee.GroupId;
             this.TraineeName = trainee.TraineeName;
             this.Gender = trainee.Gender;
+            this.SelectGender = trainee.SelectGender;
             this.TrainingCourseCd = trainee.TrainingCourseCd;
             this.SelectTrainingCourse = trainee.SelectTrainingCourse;
+            this.ReserveDate = trainee.ReserveDate;
             this.EntrancePlanDate = trainee.EntrancePlanDate;
             this.TmpLicencePlanDate = trainee.TmpLicencePlanDate;
             this.GraduatePlanDate = trainee.GraduatePlanDate;
@@ -55,11 +57,6 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("教習生ID")]
         public int TraineeId { get; set; }
 
-        /// <summary>グループID<summary>
-        [Required]
-        [DisplayName("グループID")]
-        public int GroupId { get; set; }
-
         /// <summary>名前<summary>
         [Required]
         [DisplayName("教習者名")]
@@ -69,6 +66,10 @@ namespace VehicleDispatchPlan.Models
         [Required]
         [DisplayName("性別")]
         public string Gender { get; set; }
+
+        /// <summary>[非DB項目]性別選択肢<summary>
+        [NotMapped]
+        public SelectList SelectGender { get; set; }
 
         /// <summary>教習コース<summary>
         [Required]

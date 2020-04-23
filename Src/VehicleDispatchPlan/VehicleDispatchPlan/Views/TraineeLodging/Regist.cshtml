@@ -2,7 +2,7 @@
 @using VehicleDispatchPlan.Constants;
 
 @{
-    ViewBag.Title = "登録";
+    ViewBag.Title = "合宿教習生登録";
 }
 
 <h2>@ViewBag.Title</h2>
@@ -36,7 +36,7 @@
         </div>
 
         @* エラーメッセージ *@
-        <div style="color: Red">@ViewBag.ErrorMessage</div>
+        <div style="color: red">@Html.Raw(ViewBag.ErrorMessage)</div>
 
         @* 一覧のsubmitにてインデックスを設定 *@
         @Html.Hidden("index", "")
@@ -291,6 +291,8 @@
         @{
             if (Model.ChartData != null)
             {
+                // 日別設定への遷移不可
+                TempData[AppConstant.TEMP_KEY_IS_LINK] = false;
                 // 表
                 @Html.Partial("../Shared/Table", Model.ChartData)
             }
