@@ -59,8 +59,6 @@ namespace VehicleDispatchPlan.Controllers
                 return View(dailyClassesByTrainer);
             }
 
-
-
             ///指導員一覧画面へ遷移
             return BackToList(dailyClassesByTrainer.Date);
         }
@@ -74,6 +72,7 @@ namespace VehicleDispatchPlan.Controllers
         /// <returns>登録画面へ遷移</returns>
         public ActionResult Create(DateTime? Date)
         {
+
             //指導員登録用インスタンス
             var dailyClassesByTrainer = new T_DailyClassesByTrainer();
 
@@ -172,6 +171,8 @@ namespace VehicleDispatchPlan.Controllers
         /// <returns>一覧画面</returns>
         public ActionResult List([Bind(Include = "Date")] V_SearchInstractorViewModel model)
         {
+            
+
             if (model.Date != null)
             {
                 // ----- 追加 -----
@@ -189,8 +190,6 @@ namespace VehicleDispatchPlan.Controllers
                 model.t_DailyClassesByTrainer = new List<T_DailyClassesByTrainer>();
 
             }
-
-
 
             return (View(model));
         }

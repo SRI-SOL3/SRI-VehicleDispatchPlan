@@ -136,6 +136,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Commons\Utility.cs" />
     <Compile Include="Constants\AppConstant.cs" />
+    <Compile Include="Controllers\InstractorImportController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\DailyParameterController.cs" />
     <Compile Include="Controllers\ForecastController.cs" />
@@ -177,6 +178,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\MyDatabaseContext-12.mdf" />
+    <Content Include="App_Data\MyDatabaseContext-12_log.ldf">
+      <DependentUpon>MyDatabaseContext-12.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -235,10 +240,10 @@
     <Content Include="Views\TraineeCommuting\List.cshtml" />
     <Content Include="Views\TraineeCommuting\Regist.cshtml" />
     <Content Include="Views\DailyParameter\Edit.cshtml" />
+    <Content Include="Views\InstractorImport\Import.cshtml" />
+    <Content Include="Views\InstractorImport\List.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
