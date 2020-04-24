@@ -1,10 +1,8 @@
-﻿@using VehicleDispatchPlan.Constants;
-@using VehicleDispatchPlan.Models;
-@model VehicleDispatchPlan.Models.T_DailyClassesByTrainer
+﻿@model VehicleDispatchPlan.Models.T_DailyClassesByTrainer
+@using VehicleDispatchPlan.Constants;
 
 @{
     ViewBag.Title = "指導員登録データ削除";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>@ViewBag.Title</h2>
@@ -15,11 +13,11 @@
     @*指導員データ*@
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.DailyClasses.Date)
+            @Html.DisplayNameFor(model => model.Date)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.DailyClasses.Date)
+            @Html.DisplayFor(model => model.Date)
         </dd>
 
         <dt>
@@ -42,13 +40,13 @@
 
 </div>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Delete", "Instractor", FormMethod.Post))
 {
-
     @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => Model.Date)
+    @Html.HiddenFor(model => Model.No)
 
     <div class="form-actions no-color">
-
         <div class="col-md-offset-2 col-md-10">
             <div class="form-group">
                 <input type="submit" value="@AppConstant.CMD_REMOVE" class="btn btn-default" /> |
@@ -56,15 +54,4 @@
             </div>
         </div>
     </div>
-
 }
-
-
-
-
-
-
-
-
-
-

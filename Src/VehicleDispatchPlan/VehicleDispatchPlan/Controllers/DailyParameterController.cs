@@ -41,29 +41,32 @@ namespace VehicleDispatchPlan.Controllers
 
             // ステータスをクリア
             ModelState.Clear();
+
+            // インスタンスを生成
+            dailyParameterEdt.DailyClasses = new T_DailyClasses();
+            dailyParameterEdt.TrainerList = new List<T_DailyClassesByTrainer>();
+
             // 日付が空の場合、エラー
-            if (dailyParameterEdt.SearchDate == null)
+            if (dailyParameterEdt.SearchDate != null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            // 日別予測条件を取得
-            T_DailyClasses dailyClasses = db.DailyClasses.Find(dailyParameterEdt.SearchDate);
-            // データが存在しない場合はインスタンスを生成
-            if (dailyClasses == null)
-            {
-                dailyClasses = new T_DailyClasses() { Date = dailyParameterEdt.SearchDate };
-                ViewBag.DisableTrainerEdit = true;
+                // 日別予測条件を取得
+                T_DailyClasses dailyClasses = db.DailyClasses.Find(dailyParameterEdt.SearchDate);
+                // データが存在しない場合はインスタンスを生成
+                if (dailyClasses == null)
+                {
+                    dailyClasses = new T_DailyClasses() { Date = dailyParameterEdt.SearchDate };
+                }
+                dailyParameterEdt.DailyClasses = dailyClasses;
+                // 更新日付Toを設定
+                dailyParameterEdt.UpdateTo = dailyClasses.Date;
+
+                // 指導員コマ数を取得
+                dailyParameterEdt.TrainerList = db.DailyClassesByTrainer.Where(x => ((DateTime)x.Date).Equals((DateTime)dailyParameterEdt.SearchDate)).OrderBy(x => x.No).ToList();
             }
             else
             {
-                ViewBag.DisableTrainerEdit = false;
+                ViewBag.SearchErrorMessage = "検索条件を指定してください。";
             }
-            dailyParameterEdt.DailyClasses = dailyClasses;
-            // 更新日付Toを設定
-            dailyParameterEdt.UpdateTo = dailyClasses.Date;
-
-            // 指導員コマ数を取得
-            dailyParameterEdt.TrainerList = db.DailyClassesByTrainer.Where(x => ((DateTime)x.Date).Equals((DateTime)dailyParameterEdt.SearchDate)).OrderBy(x => x.No).ToList();
 
             return View(dailyParameterEdt);
         }
@@ -83,8 +86,6 @@ namespace VehicleDispatchPlan.Controllers
             // 更新ボタンが押下された場合
             if (AppConstant.CMD_UPDATE.Equals(cmd))
             {
-                // 指導員管理の非活性をtrueに設定
-                ViewBag.DisableTrainerEdit = true;
                 // 日付を設定
                 dailyParameterEdt.SearchDate = dailyParameterEdt.DailyClasses.Date;
 
@@ -99,14 +100,14 @@ namespace VehicleDispatchPlan.Controllers
                         validation = false;
                     }
                     // 日付の前後チェック
-                    if (validation == true && 
+                    if (validation == true &&
                         dailyParameterEdt.UpdateTo < dailyParameterEdt.DailyClasses.Date)
                     {
                         ViewBag.ErrorMessage = "更新範囲の日付の前後関係が不正です。";
                         validation = false;
                     }
                     // 合宿比率[%]と通学比率[%]のチェック
-                    if (validation == true && 
+                    if (validation == true &&
                         dailyParameterEdt.DailyClasses.LodgingRatio + dailyParameterEdt.DailyClasses.CommutingRatio != 100)
                     {
                         ViewBag.ErrorMessage = "合宿比率[%]と通学比率[%]は合わせて100になるように設定してください。";
@@ -159,8 +160,6 @@ namespace VehicleDispatchPlan.Controllers
 
                     // 完了メッセージ
                     ViewBag.CompMessage = "データを更新しました。";
-                    // 指導員管理の非活性をfalseに設定
-                    ViewBag.DisableTrainerEdit = false;
                 }
 
                 // 指導員コマ数を取得

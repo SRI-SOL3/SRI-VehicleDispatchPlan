@@ -33,6 +33,9 @@
                 <input type="submit" name="cmd" value="@AppConstant.CMD_SEARCH" class="btn btn-default" />
             </div>
         </div>
+
+        @* エラーメッセージ *@
+        <div style="color: red">@Html.Raw(ViewBag.SearchErrorMessage)</div>
     </div>
 }
 
@@ -51,7 +54,16 @@
         <div style="display:flex;margin-left:10px;">
             @* 更新ボタン *@
             <div class="form-group">
-                <input type="submit" name="cmd" value="@AppConstant.CMD_UPDATE" class="btn btn-default" />
+                @{
+                    if (Model.DailyClasses.Date == null)
+                    {
+                        <input type="submit" name="cmd" value="@AppConstant.CMD_UPDATE" class="btn btn-default" disabled="disabled" />
+                    }
+                    else
+                    {
+                        <input type="submit" name="cmd" value="@AppConstant.CMD_UPDATE" class="btn btn-default" />
+                    }
+                }
             </div>
 
             @* 日付範囲 *@
@@ -210,15 +222,15 @@
 <div style="border:3px double lightgrey;margin-top:30px;padding:10px;display:inline-block;">
 
     <h5><b>指導員コマ数</b></h5>
+    @* 検索していない場合は非活性 *@
     @{
-        if (ViewBag.DisableTrainerEdit == true)
+        if (Model.SearchDate == null)
         {
-            @Html.ActionLink("指導員管理 ≫", "/", "", new { @style = "pointer-events:none;color:grey;" });
-            <p style="color:red;font-size:11px;">※日別予測条件が未登録の場合、指導員管理に遷移できません</p>
+            @Html.ActionLink("指導員管理 ≫", "../Instractor/List", new { Date = Model.SearchDate }, new { @style = "pointer-events:none;color:grey;" })
         }
         else
         {
-            @Html.ActionLink("指導員管理 ≫", "../Instractor/List", new { Date = Model.SearchDate });
+            @Html.ActionLink("指導員管理 ≫", "../Instractor/List", new { Date = Model.SearchDate })
         }
     }
 

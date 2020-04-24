@@ -1,4 +1,5 @@
 ﻿@model VehicleDispatchPlan.Models.T_TraineeLodging
+@using VehicleDispatchPlan.Constants;
 
 @{
     ViewBag.Title = "合宿教習生削除";
@@ -95,12 +96,13 @@
 
     </dl>
 
-    @using (Html.BeginForm("Delete", "TraineeLodging", FormMethod.Post)) {
+    @using (Html.BeginForm("Delete", "TraineeLodging", FormMethod.Post))
+    {
         @Html.AntiForgeryToken()
-        @Html.HiddenFor(model => Model.LodgingCd)
+        @Html.HiddenFor(model => model.TraineeId)
 
         <div class="form-actions no-color">
-            <input type="submit" value="削除" class="btn btn-default" /> |
+            <input type="submit" value="@AppConstant.CMD_REMOVE" class="btn btn-default" /> |
             @Html.ActionLink("一覧", "List")
         </div>
     }
