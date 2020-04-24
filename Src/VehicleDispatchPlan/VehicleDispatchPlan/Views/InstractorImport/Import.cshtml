@@ -63,11 +63,11 @@
                 <tr>
                     <td>
                         @* 対象日 *@
-                        @Html.EditorFor(modelitem => Model[i].Date, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })
+                        @Html.EditorFor(modelitem => Model[i].Date, new { htmlAttributes = new { @class = "form-control",@readonly = "readonly", @style = "width:150px;" } })
                     </td>
                     <td>
                         @* No *@
-                        @Html.EditorFor(modelitem => Model[i].No, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })
+                        @Html.EditorFor(modelitem => Model[i].No, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @style = "width:150px;" } })
                     </td>
                     <td>
                         @* 指導員名 *@
@@ -83,6 +83,3 @@
     </div>
 }
 <hr />
-<p>
-    @Html.ActionLink("一覧", "List")
-</p>
