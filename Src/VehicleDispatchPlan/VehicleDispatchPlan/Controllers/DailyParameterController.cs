@@ -140,20 +140,17 @@ namespace VehicleDispatchPlan.Controllers
                     for (DateTime date = (DateTime)dailyParameterEdt.DailyClasses.Date;
                         date.CompareTo((DateTime)dailyParameterEdt.UpdateTo) <= 0; date = date.AddDays(1))
                     {
+                        // 登録/更新対象を設定
+                        T_DailyClasses dailyClasses = new T_DailyClasses() { Date = date };
+                        this.SetUpdateInfo(dailyClasses, dailyParameterEdt.DailyClasses);
                         // 存在チェック
                         if (db.DailyClasses.Where(x => ((DateTime)x.Date).Equals(date)).Count() == 0)
                         {
-                            // 登録情報を設定
-                            T_DailyClasses dailyClasses = new T_DailyClasses() { Date = date };
-                            this.SetUpdateInfo(dailyClasses, dailyParameterEdt.DailyClasses);
                             // 登録処理
                             db.DailyClasses.Add(dailyClasses);
                         }
                         else
                         {
-                            // 更新対象を設定
-                            T_DailyClasses dailyClasses = db.DailyClasses.Find(date);
-                            this.SetUpdateInfo(dailyClasses, dailyParameterEdt.DailyClasses);
                             // 更新処理
                             db.Entry(dailyClasses).State = EntityState.Modified;
                         }

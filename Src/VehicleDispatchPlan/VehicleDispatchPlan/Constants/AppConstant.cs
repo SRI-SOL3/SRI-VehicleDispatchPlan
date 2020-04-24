@@ -1,6 +1,4 @@
-﻿
-using System.Web.Mvc;
-/**
+﻿/**
 * 共通定数
 *
 * @author t-murayama

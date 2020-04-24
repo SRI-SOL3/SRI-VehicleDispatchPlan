@@ -13,12 +13,10 @@
     @Html.ActionLink("≪ 受入予測", "../Forecast/Chart", new
     {
         PlanDateFrom = TempData.Peek(AppConstant.TEMP_KEY_DATE_FROM)
-        ,
-        PlanDateTo = TempData.Peek(AppConstant.TEMP_KEY_DATE_TO)
+        , PlanDateTo = TempData.Peek(AppConstant.TEMP_KEY_DATE_TO)
     })
 </div>
 <hr />
-
 
 @using (Html.BeginForm("Edit", "DailyParameter", FormMethod.Get))
 {
@@ -212,7 +210,6 @@
 <div style="border:3px double lightgrey;margin-top:30px;padding:10px;display:inline-block;">
 
     <h5><b>指導員コマ数</b></h5>
-
     @{
         if (ViewBag.DisableTrainerEdit == true)
         {
