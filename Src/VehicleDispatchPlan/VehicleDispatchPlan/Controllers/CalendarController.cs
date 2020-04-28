@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using VehicleDispatchPlan.Commons;
 using VehicleDispatchPlan.Constants;
 using VehicleDispatchPlan.Models;
 
@@ -70,7 +71,6 @@ namespace VehicleDispatchPlan_Dev.Controllers
                 }
             }
 
-
             return View(entGrdCalendarEdt);
         }
 
@@ -78,7 +78,8 @@ namespace VehicleDispatchPlan_Dev.Controllers
         /// 更新処理
         /// </summary>
         /// <param name="cmd">コマンド</param>
-        /// <param name="calendarList">カレンダー情報</param>
+        /// <param name="index">インデックス</param>
+        /// <param name="entGrdCalendarEdt">カレンダー情報</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -104,6 +105,7 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             M_EntGrdCalendar target = db.EntGrdCalendar.Find(calendar.TrainingCourseCd, calendar.EntrancePlanDate);
                             if (target != null)
                             {
+                                // 削除処理
                                 db.EntGrdCalendar.Remove(target);
                             }
                         }
@@ -123,7 +125,8 @@ namespace VehicleDispatchPlan_Dev.Controllers
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "必須項目（仮免予定日、卒業予定日）を設定してください。";
+                    // エラーメッセージを生成
+                    ViewBag.ErrorMessage = new Utility().GetErrorMessage(ModelState);
                 }
             }
 
@@ -155,6 +158,8 @@ namespace VehicleDispatchPlan_Dev.Controllers
         /// <returns></returns>
         public ActionResult Import()
         {
+            Trace.WriteLine("GET /Calendar/Import");
+
             return View(new List<M_EntGrdCalendar>());
         }
 
@@ -205,10 +210,17 @@ namespace VehicleDispatchPlan_Dev.Controllers
                     // テキストを全行読み込み
                     using (StreamReader sr = new StreamReader(filepath, Encoding.UTF8))
                     {
+                        int row = 0;
                         while (!sr.EndOfStream)
                         {
+                            row++;
                             // CSVファイルの一行を読み込む
                             string line = sr.ReadLine();
+                            // ヘッダ行はスキップ
+                            if (row == 1)
+                            {
+                                continue;
+                            }
                             // 読み込んだ一行をカンマ毎に分けて配列に格納
                             string[] values = line.Split(',');
 
@@ -224,7 +236,7 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             // CSV項目数チェック
                             if (values.Count() != 4)
                             {
-                                ViewBag.ErrorMessage = "csvの項目数に誤りがあるため、読み込みを途中で終了しました。";
+                                ViewBag.ErrorMessage = "csvの項目数に誤りがあるため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
 
@@ -232,13 +244,13 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             // 必須チェック
                             if (string.IsNullOrEmpty(values[0]))
                             {
-                                ViewBag.ErrorMessage = "入校予定日が未設定のため、読み込みを途中で終了しました。";
+                                ViewBag.ErrorMessage = "入校予定日が未設定のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
                             // 日付整合性チェック
                             if (!DateTime.TryParse(values[0], out entrancePlanDate))
                             {
-                                ViewBag.ErrorMessage = "入校予定日の設定が不正のため、読み込みを途中で終了しました。";
+                                ViewBag.ErrorMessage = "入校予定日の設定が不正のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
 
@@ -246,7 +258,7 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             // 必須チェック
                             if (string.IsNullOrEmpty(values[1]))
                             {
-                                ViewBag.ErrorMessage = "教習コースが未設定のため、読み込みを途中で終了しました。";
+                                ViewBag.ErrorMessage = "教習コースが未設定のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
                             // マスタ存在チェック
@@ -254,7 +266,7 @@ namespace VehicleDispatchPlan_Dev.Controllers
                                 x => x.TrainingCourseCd.Equals(values[1])).Select(x => x.TrainingCourseCd).FirstOrDefault();
                             if (string.IsNullOrEmpty(trainingCourseCd))
                             {
-                                ViewBag.ErrorMessage = "教習コースの設定が不正のため、読み込みを途中で終了しました。";
+                                ViewBag.ErrorMessage = "教習コースの設定が不正のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
 
@@ -262,13 +274,13 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             // 必須チェック
                             if (string.IsNullOrEmpty(values[2]))
                             {
-                                ViewBag.ErrorMessage = "仮免予定日が未設定のため、読み込みを途中で終了しました。";
+                                ViewBag.ErrorMessage = "仮免予定日が未設定のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
                             // 日付整合性チェック
                             if (!DateTime.TryParse(values[2], out tmpLicencePlanDate))
                             {
-                                ViewBag.ErrorMessage = "仮免予定日の設定が不正のため、読み込みを途中で終了しました。";
+                                ViewBag.ErrorMessage = "仮免予定日の設定が不正のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
 
@@ -276,13 +288,13 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             // 必須チェック
                             if (string.IsNullOrEmpty(values[3]))
                             {
-                                ViewBag.ErrorMessage = "卒業予定日が未設定のため、読み込みを途中で終了しました。";
+                                ViewBag.ErrorMessage = "卒業予定日が未設定のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
                             // 日付整合性チェック
                             if (!DateTime.TryParse(values[3], out graduatePlanDate))
                             {
-                                ViewBag.ErrorMessage = "卒業予定日の設定が不正のため、読み込みを途中で終了しました。";
+                                ViewBag.ErrorMessage = "卒業予定日の設定が不正のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
 
@@ -308,43 +320,49 @@ namespace VehicleDispatchPlan_Dev.Controllers
             // 登録ボタンが押下された場合
             else if (AppConstant.CMD_REGIST.Equals(cmd))
             {
+                // 入力チェック
+                bool validation = true;
                 if (ModelState.IsValid)
                 {
                     // 重複チェック
-                    int repeatedNum = calendarList.GroupBy(x => new { x.TrainingCourseCd, x.EntrancePlanDate })
+                    int repeatedNum = calendarList.GroupBy(x => new { x.EntrancePlanDate, x.TrainingCourseCd })
                         .Select(x => new { Count = x.Count() }).Where(x => x.Count != 1).Count();
                     if (repeatedNum > 0)
                     {
-                        ViewBag.ErrorMessage = "教習コース、入校予定日の重複データがあります。";
-                    }
-                    else
-                    {
-                        // データの登録/更新
-                        foreach (M_EntGrdCalendar calendar in calendarList)
-                        {
-                            // 存在チェック
-                            if (db.EntGrdCalendar.Where(x => x.TrainingCourseCd.Equals(calendar.TrainingCourseCd)
-                                && ((DateTime)x.EntrancePlanDate).Equals((DateTime)calendar.EntrancePlanDate)).Count() == 0)
-                            {
-                                // 登録処理
-                                db.EntGrdCalendar.Add(calendar);
-                            }
-                            else
-                            {
-                                // 更新処理
-                                db.Entry(calendar).State = EntityState.Modified;
-                            }
-                        }
-                        db.SaveChanges();
-                        // 完了メッセージ
-                        ViewBag.CompMessage = "インポートが完了しました。";
-                        // 表示データを初期化
-                        calendarList = new List<M_EntGrdCalendar>();
+                        ViewBag.ErrorMessage = "入校予定日、教習コースの重複データがあります。（同じ日に同じ教習コースのデータを登録することはできません。）";
+                        validation = false;
                     }
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "必須項目（教習コース、入校予定日、仮免予定日、卒業予定日）を設定してください。";
+                    // エラーメッセージを生成
+                    ViewBag.ErrorMessage = new Utility().GetErrorMessage(ModelState);
+                    validation = false;
+                }
+
+                if (validation == true)
+                {
+                    // データの登録/更新
+                    foreach (M_EntGrdCalendar calendar in calendarList)
+                    {
+                        // 存在チェック
+                        if (db.EntGrdCalendar.Where(x => x.TrainingCourseCd.Equals(calendar.TrainingCourseCd)
+                            && ((DateTime)x.EntrancePlanDate).Equals((DateTime)calendar.EntrancePlanDate)).Count() == 0)
+                        {
+                            // 登録処理
+                            db.EntGrdCalendar.Add(calendar);
+                        }
+                        else
+                        {
+                            // 更新処理
+                            db.Entry(calendar).State = EntityState.Modified;
+                        }
+                    }
+                    db.SaveChanges();
+                    // 完了メッセージ
+                    ViewBag.CompMessage = "インポートが完了しました。";
+                    // 表示データを初期化
+                    calendarList = new List<M_EntGrdCalendar>();
                 }
             }
 
@@ -363,6 +381,7 @@ namespace VehicleDispatchPlan_Dev.Controllers
         /// <summary>
         /// ドロップダウンリストの選択肢を設定
         /// </summary>
+        /// <param name="calendarList">カレンダー情報</param>
         private void SetSelectItem(List<M_EntGrdCalendar> calendarList)
         {
             // 教習コースマスタ取得
@@ -378,6 +397,7 @@ namespace VehicleDispatchPlan_Dev.Controllers
         /// <summary>
         /// 外部キーのマスターを設定
         /// </summary>
+        /// <param name="calendarList">カレンダー情報</param>
         private void SetForeignMaster(List<M_EntGrdCalendar> calendarList)
         {
             // 教習コースマスタ取得

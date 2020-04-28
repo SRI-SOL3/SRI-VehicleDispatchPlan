@@ -34,8 +34,13 @@ namespace VehicleDispatchPlan.Controllers
         {
             Trace.WriteLine("GET /Forecast/Chart");
 
+            // ステータスをクリア
+            ModelState.Clear();
             // グラフデータを初期化
             forecastCht.ChartData = new List<V_ChartData>();
+
+            // 入力チェック
+            bool validation = true;
 
             // コマンドが空（初回表示）の場合
             if (string.IsNullOrEmpty(cmd))
@@ -50,13 +55,22 @@ namespace VehicleDispatchPlan.Controllers
                 forecastCht.CommutingRemFlg = true;
                 forecastCht.CommutingMaxFlg = true;
                 forecastCht.CommutingRegFlg = true;
+
+                // 入力チェック
+                if (forecastCht.PlanDateFrom == null || forecastCht.PlanDateTo == null)
+                {
+                    validation = false;
+                }
+                // 前後チェック
+                if (validation == true && (forecastCht.PlanDateFrom > forecastCht.PlanDateTo))
+                {
+                    validation = false;
+                }
             }
 
             // コマンドが設定されている場合
             else
             {
-                bool validation = true;
-
                 // 検索ボタンもしくは再表示ボタンが押下された場合
                 if (AppConstant.CMD_SEARCH.Equals(cmd) || AppConstant.CMD_REDISPLAY.Equals(cmd))
                 {
@@ -79,19 +93,22 @@ namespace VehicleDispatchPlan.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
+            }
 
-                if (validation == true)
-                {
-                    Utility utility = new Utility();
-                    // グラフデータを作成
-                    forecastCht.ChartData = utility.getChartData(db, (DateTime)forecastCht.PlanDateFrom, (DateTime)forecastCht.PlanDateTo, null);
-                    // グラフを生成（各表示フラグはnullの場合、trueとする）
-                    ViewBag.ChartPath = utility.getChartPath(
-                        ((DateTime)forecastCht.PlanDateFrom).Year.ToString(), ((DateTime)forecastCht.PlanDateTo).Month.ToString(), forecastCht.ChartData
-                        , forecastCht.TotalRemFlg, forecastCht.LodgingRemFlg, forecastCht.CommutingRemFlg
-                        , forecastCht.TotalMaxFlg, forecastCht.LodgingMaxFlg, forecastCht.CommutingMaxFlg
-                        , forecastCht.TotalRegFlg, forecastCht.LodgingRegFlg, forecastCht.CommutingRegFlg);
-                }
+            if (validation == true)
+            {
+                // 日別設定画面から遷移するための日付From/ToをTempDataに設定
+                TempData[AppConstant.TEMP_KEY_DATE_FROM] = forecastCht.PlanDateFrom;
+                TempData[AppConstant.TEMP_KEY_DATE_TO] = forecastCht.PlanDateTo;
+                Utility utility = new Utility();
+                // グラフデータを作成
+                forecastCht.ChartData = utility.GetChartData(db, (DateTime)forecastCht.PlanDateFrom, (DateTime)forecastCht.PlanDateTo, null, null);
+                // グラフを生成（各表示フラグはnullの場合、trueとする）
+                ViewBag.ChartPath = utility.GetChartPath(
+                    ((DateTime)forecastCht.PlanDateFrom).Year.ToString(), ((DateTime)forecastCht.PlanDateTo).Month.ToString(), forecastCht.ChartData
+                    , forecastCht.TotalRemFlg, forecastCht.LodgingRemFlg, forecastCht.CommutingRemFlg
+                    , forecastCht.TotalMaxFlg, forecastCht.LodgingMaxFlg, forecastCht.CommutingMaxFlg
+                    , forecastCht.TotalRegFlg, forecastCht.LodgingRegFlg, forecastCht.CommutingRegFlg);
             }
 
             return View(forecastCht);

@@ -1,12 +1,12 @@
 ﻿/**
- * 共通定数
- *
- * @author t-murayama
- * @version 1.0
- * ----------------------------------
- * 2020/03/01 t-murayama 新規作成
- *
- */
+* 共通定数
+*
+* @author t-murayama
+* @version 1.0
+* ----------------------------------
+* 2020/03/01 t-murayama 新規作成
+*
+*/
 namespace VehicleDispatchPlan.Constants
 {
     /// <summary>
@@ -23,6 +23,11 @@ namespace VehicleDispatchPlan.Constants
         public const string TRAINING_COURSE_CD_MT = "01";
         /// <summary>教習コースコード_AT</summary>
         public const string TRAINING_COURSE_CD_AT = "02";
+
+        /// <summary>性別_男性</summary>
+        public const string GENDER_MALE = "M";
+        /// <summary>性別_女性</summary>
+        public const string GENDER_FEMALE = "F";
 
         /// <summary>コマンド_確認</summary>
         public const string CMD_CONFIRM = "確認";
@@ -63,6 +68,15 @@ namespace VehicleDispatchPlan.Constants
         public const string SERIES_LODGING_REG_AMT = "合宿在籍見込数";
         /// <summary>系統_通学在見込籍数</summary>
         public const string SERIES_COMMUTING_REG_AMT = "通学在籍見込数";
+
+        /// <summary>TempDataキー_日別設定遷移有無</summary>
+        public const string TEMP_KEY_IS_LINK = "IsLink";
+        /// <summary>TempDataキー_日付From</summary>
+        public const string TEMP_KEY_DATE_FROM = "DateFrom";
+        /// <summary>TempDataキー_日付To</summary>
+        public const string TEMP_KEY_DATE_TO = "DateTo";
+        /// <summary>TempDataキー_検索日付</summary>
+        public const string TEMP_KEY_SEARCH_DATE = "SearchDate";
 
         /// <summary>編集モード</summary>
         public enum EditMode

@@ -1,0 +1,51 @@
+﻿@model VehicleDispatchPlan.Models.T_DailyClassesByTrainer
+@using VehicleDispatchPlan.Constants;
+
+@{
+    ViewBag.Title = "指導員登録（当日）";
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+@using (Html.BeginForm("Create", "Instractor", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <h4>指導員登録</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @{
+            Html.EnableClientValidation(false);
+        }
+
+        @* エラーメッセージ *@
+        <div style="color: red">@Html.Raw(ViewBag.ErrorMessage)</div>
+
+        @Html.HiddenFor(model => model.Date)
+        @Html.HiddenFor(model => model.No)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TrainerName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.TrainerName, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Classes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Classes, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@AppConstant.CMD_REGIST" class="btn btn-default" />
+            </div>
+            <div>
+                @Html.ActionLink("戻る", "List", new { Date = Model.Date })
+            </div>
+        </div>
+    </div>
+}

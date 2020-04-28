@@ -38,7 +38,7 @@ namespace VehicleDispatchPlan.Models
         [Required]
         [Column(Order = 2)]
         [DisplayName("No")]
-        public int No { get; set; }
+        public int? No { get; set; }
 
         /// <summary>指導員名</summary>
         [Required]

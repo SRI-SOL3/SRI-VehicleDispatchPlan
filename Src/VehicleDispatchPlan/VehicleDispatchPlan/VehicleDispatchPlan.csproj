@@ -136,48 +136,47 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Commons\Utility.cs" />
     <Compile Include="Constants\AppConstant.cs" />
+    <Compile Include="Controllers\InstractorImportController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
+    <Compile Include="Controllers\DailyParameterController.cs" />
     <Compile Include="Controllers\ForecastController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InstractorController.cs" />
     <Compile Include="Controllers\LodgingController.cs" />
-    <Compile Include="Controllers\TraineeController.cs" />
+    <Compile Include="Controllers\TraineeCommutingController.cs" />
+    <Compile Include="Controllers\TraineeLodgingController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202004030612081_Initial.cs" />
-    <Compile Include="Migrations\202004030612081_Initial.Designer.cs">
-      <DependentUpon>202004030612081_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004060450521_DropForecast.cs" />
-    <Compile Include="Migrations\202004060450521_DropForecast.Designer.cs">
-      <DependentUpon>202004060450521_DropForecast.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004060648312_AddForeignDailyClasses.cs" />
-    <Compile Include="Migrations\202004060648312_AddForeignDailyClasses.Designer.cs">
-      <DependentUpon>202004060648312_AddForeignDailyClasses.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004100209303_AddForeignEntGrdCalendar.cs" />
-    <Compile Include="Migrations\202004100209303_AddForeignEntGrdCalendar.Designer.cs">
-      <DependentUpon>202004100209303_AddForeignEntGrdCalendar.cs</DependentUpon>
+    <Compile Include="Migrations\202004280051232_Initial.cs" />
+    <Compile Include="Migrations\202004280051232_Initial.designer.cs">
+      <DependentUpon>202004280051232_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MyDatabaseContext.cs" />
-    <Compile Include="Models\M_AttendType.cs" />
     <Compile Include="Models\M_EntGrdCalendar.cs" />
     <Compile Include="Models\M_LodgingFacility.cs" />
     <Compile Include="Models\M_TrainingCourse.cs" />
     <Compile Include="Models\T_DailyClasses.cs" />
     <Compile Include="Models\T_DailyClassesByTrainer.cs" />
-    <Compile Include="Models\T_Trainee.cs" />
+    <Compile Include="Models\T_TraineeCommuting.cs" />
+    <Compile Include="Models\T_TraineeLodging.cs" />
     <Compile Include="Models\V_ChartData.cs" />
+    <Compile Include="Models\V_DailyParameterEdt.cs" />
     <Compile Include="Models\V_EntGrdCalendarEdt.cs" />
     <Compile Include="Models\V_ForecastCht.cs" />
     <Compile Include="Models\V_LodgingCfm.cs" />
-    <Compile Include="Models\V_TraineeEdt.cs" />
-    <Compile Include="Models\V_TraineeReg.cs" />
+    <Compile Include="Models\V_SearchInstractorViewModel.cs" />
+    <Compile Include="Models\V_TraineeCommutingEdt.cs" />
+    <Compile Include="Models\V_TraineeLodgingEdt.cs" />
+    <Compile Include="Models\V_TraineeLodgingReg.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\MyDatabaseContext-12.mdf" />
+    <Content Include="App_Data\MyDatabaseContext-12_log.ldf">
+      <DependentUpon>MyDatabaseContext-12.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -217,19 +216,28 @@
     <Content Include="Views\Forecast\Chart.cshtml" />
     <Content Include="Views\Lodging\List.cshtml" />
     <Content Include="Views\Lodging\Regist.cshtml" />
-    <Content Include="Views\Trainee\Delete.cshtml" />
-    <Content Include="Views\Trainee\Details.cshtml" />
-    <Content Include="Views\Trainee\Edit.cshtml" />
-    <Content Include="Views\Trainee\List.cshtml" />
-    <Content Include="Views\Trainee\Regist.cshtml" />
+    <Content Include="Views\TraineeLodging\Delete.cshtml" />
+    <Content Include="Views\TraineeLodging\Details.cshtml" />
+    <Content Include="Views\TraineeLodging\Edit.cshtml" />
+    <Content Include="Views\TraineeLodging\List.cshtml" />
+    <Content Include="Views\TraineeLodging\Regist.cshtml" />
     <Content Include="Views\Home\Menu.cshtml" />
     <Content Include="Views\Shared\Table.cshtml" />
     <Content Include="Views\Lodging\Edit.cshtml" />
     <Content Include="Views\Lodging\Delete.cshtml" />
     <Content Include="Views\Lodging\Confirm.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
+    <Content Include="Views\Instractor\Create.cshtml" />
+    <Content Include="Views\Instractor\Delete.cshtml" />
+    <Content Include="Views\Instractor\List.cshtml" />
+    <Content Include="Views\TraineeCommuting\Delete.cshtml" />
+    <Content Include="Views\TraineeCommuting\Details.cshtml" />
+    <Content Include="Views\TraineeCommuting\Edit.cshtml" />
+    <Content Include="Views\TraineeCommuting\List.cshtml" />
+    <Content Include="Views\TraineeCommuting\Regist.cshtml" />
+    <Content Include="Views\DailyParameter\Edit.cshtml" />
+    <Content Include="Views\InstractorImport\Import.cshtml" />
+    <Content Include="Views\InstractorImport\List.cshtml" />
+    <Content Include="Views\DailyParameter\Import.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -245,17 +253,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202004030612081_Initial.resx">
-      <DependentUpon>202004030612081_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004060450521_DropForecast.resx">
-      <DependentUpon>202004060450521_DropForecast.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004060648312_AddForeignDailyClasses.resx">
-      <DependentUpon>202004060648312_AddForeignDailyClasses.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004100209303_AddForeignEntGrdCalendar.resx">
-      <DependentUpon>202004100209303_AddForeignEntGrdCalendar.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202004280051232_Initial.resx">
+      <DependentUpon>202004280051232_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -27,7 +27,7 @@ namespace VehicleDispatchPlan.Models
 
         /// <summary>宿泊施設名</summary>
         [Required]
-        [DisplayName("宿泊施設")]
+        [DisplayName("宿泊施設名")]
         public string LodgingName { get; set; }
 
         /// <summary>電話番号</summary>

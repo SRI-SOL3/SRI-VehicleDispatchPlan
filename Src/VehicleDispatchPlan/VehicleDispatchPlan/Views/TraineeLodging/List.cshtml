@@ -1,0 +1,120 @@
+﻿@model PagedList.IPagedList<VehicleDispatchPlan.Models.T_TraineeLodging>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "合宿教習生管理";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("List", "TraineeLodging", FormMethod.Get))
+{
+    <p>
+        入校予定日: @Html.TextBox("planDateFrom", (string)ViewBag.PlanDateFrom, new { type = "date" })
+        ～ @Html.TextBox("planDateTo", (string)ViewBag.PlanDateTo, new { type = "date" })
+        <input type="submit" value="検索" class="btn btn-default" style="margin-left:5px;" />
+    </p>
+}
+
+<p>
+    @Html.ActionLink("新規登録", "Regist", new { id = 0 })
+</p>
+
+<div>@ViewBag.Message</div>
+
+<table class="table">
+    @* ヘッダ部 *@
+    <tr>
+        <th>
+            @* 教習生ID *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().TraineeId)
+        </th>
+        <th>
+            @* 教習生名 *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().TraineeName)
+        </th>
+        <th>
+            @* 性別 *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Gender)
+        </th>
+        <th>
+            @* 教習コース *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().TrainingCourse.TrainingCourseName)
+        </th>
+        <th>
+            @* 申込日 *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ReserveDate)
+        </th>
+        <th>
+            @* 入校予定日 *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().EntrancePlanDate)
+        </th>
+        <th>
+            @* 仮免予定日 *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().TmpLicencePlanDate)
+        </th>
+        <th>
+            @* 卒業予定日 *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().GraduatePlanDate)
+        </th>
+        <th>
+            @* キャンセルフラグ *@
+            @Html.DisplayNameFor(model => model.FirstOrDefault().CancelFlg)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        @* データ部 *@
+        <tr>
+            <td>
+                @* 教習生ID *@
+                @Html.DisplayFor(modelItem => item.TraineeId)
+            </td>
+            <td>
+                @* 教習生名 *@
+                @Html.DisplayFor(modelItem => item.TraineeName)
+            </td>
+            <td>
+                @* 性別 *@
+                @Html.DisplayFor(modelItem => item.Gender)
+            </td>
+            <td>
+                @* 教習コース *@
+                @Html.DisplayFor(modelItem => item.TrainingCourse.TrainingCourseName)
+            </td>
+            <td>
+                @* 申込日 *@
+                @Html.DisplayFor(modelItem => item.ReserveDate)
+            </td>
+            <td>
+                @* 入校予定日 *@
+                @Html.DisplayFor(modelItem => item.EntrancePlanDate)
+            </td>
+            <td>
+                @* 仮免予定日 *@
+                @Html.DisplayFor(modelItem => item.TmpLicencePlanDate)
+            </td>
+            <td>
+                @* 卒業予定日 *@
+                @Html.DisplayFor(modelItem => item.GraduatePlanDate)
+            </td>
+            <td>
+                @* キャンセルフラグ *@
+                @Html.DisplayFor(modelItem => item.CancelFlg)
+            </td>
+            <td>
+                @Html.ActionLink("編集", "Edit", new { id = item.TraineeId }) |
+                @Html.ActionLink("詳細", "Details", new { id = item.TraineeId }) |
+                @Html.ActionLink("削除", "Delete", new { id = item.TraineeId })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("List", "TraineeLodging",
+       new { page, planDateFrom = ViewBag.PlanDateFrom, planDateTo = ViewBag.PlanDateTo }))

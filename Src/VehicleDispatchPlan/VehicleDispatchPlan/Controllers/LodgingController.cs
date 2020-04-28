@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using VehicleDispatchPlan.Commons;
 using VehicleDispatchPlan.Constants;
 using VehicleDispatchPlan.Models;
 
@@ -54,8 +55,8 @@ namespace VehicleDispatchPlan.Controllers
         /// <summary>
         /// 登録処理
         /// </summary>
-        /// <param name="cmd"></param>
-        /// <param name="lodgingFacility"></param>
+        /// <param name="cmd">コマンド</param>
+        /// <param name="lodgingFacility">宿泊施設情報</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -79,7 +80,7 @@ namespace VehicleDispatchPlan.Controllers
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "必須項目（宿泊施設コード、宿泊施設名）を設定してください。";
+                    ViewBag.ErrorMessage = new Utility().GetErrorMessage(ModelState);
                     validation = false;
                 }
 
@@ -146,7 +147,7 @@ namespace VehicleDispatchPlan.Controllers
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "必須項目（宿泊施設名）を設定してください。";
+                    ViewBag.ErrorMessage = new Utility().GetErrorMessage(ModelState);
                 }
             }
 
@@ -200,32 +201,37 @@ namespace VehicleDispatchPlan.Controllers
             if (target != null)
             {
                 // 宿泊施設が設定されている教習生情報を取得
-                List<T_Trainee> traineeList = db.Trainee.Where(x => x.LodgingCd.Equals(target.LodgingCd)).ToList();
-                foreach (T_Trainee trainee in traineeList)
+                List<T_TraineeLodging> traineeList = db.TraineeLodging.Where(x => x.LodgingCd.Equals(target.LodgingCd)).ToList();
+                foreach (T_TraineeLodging trainee in traineeList)
                 {
                     // 宿泊施設コードを空にして更新
                     trainee.LodgingCd = null;
                     // マスタを空に設定
-                    trainee.AttendType = null;
                     trainee.TrainingCourse = null;
                     trainee.LodgingFacility = null;
                     db.Entry(trainee).State = EntityState.Modified;
                 }
                 // 宿泊施設情報を削除
                 db.LodgingFacility.Remove(target);
+                db.SaveChanges();
             }
-            db.SaveChanges();
 
             // 一覧へリダイレクト
             return RedirectToAction("List");
         }
 
+        /// <summary>
+        /// 宿泊状況確認
+        /// </summary>
+        /// <param name="cmd">コマンド</param>
+        /// <param name="lodgingCfm">宿泊状況確認情報</param>
+        /// <returns></returns>
         public ActionResult Confirm(string cmd, [Bind(Include = "DateFrom,DateTo,LodgingCd")] V_LodgingCfm lodgingCfm)
         {
             Trace.WriteLine("GET /Lodging/Confirm");
 
             // 教習生情報を初期化
-            lodgingCfm.Trainee = new List<T_Trainee>();
+            lodgingCfm.Trainee = new List<T_TraineeLodging>();
 
             // コマンドが空（初回表示）でない場合
             if (!string.IsNullOrEmpty(cmd))
@@ -250,12 +256,11 @@ namespace VehicleDispatchPlan.Controllers
 
                     if (validation == true)
                     {
-                        // 合宿生かつ、宿泊施設が一致かつ、対象期間に在籍する教習生を取得
-                        lodgingCfm.Trainee = db.Trainee.Where(
-                            x => x.AttendTypeCd.Equals(AppConstant.ATTEND_TYPE_CD_LODGING)
-                            &&  x.LodgingCd.Equals(lodgingCfm.LodgingCd)
-                            && (x.EntrancePlanDate >= lodgingCfm.DateFrom && x.EntrancePlanDate <= lodgingCfm.DateTo
-                            || x.GraduatePlanDate >= lodgingCfm.DateFrom && x.GraduatePlanDate <= lodgingCfm.DateTo
+                        // 宿泊施設が一致かつ、対象期間に在籍する合宿教習生を取得
+                        lodgingCfm.Trainee = db.TraineeLodging.Where(
+                            x => x.LodgingCd.Equals(lodgingCfm.LodgingCd)
+                            && (lodgingCfm.DateFrom <= x.EntrancePlanDate && x.EntrancePlanDate <= lodgingCfm.DateTo
+                            || lodgingCfm.DateFrom <= x.GraduatePlanDate && x.GraduatePlanDate <= lodgingCfm.DateTo
                             || x.EntrancePlanDate < lodgingCfm.DateFrom && lodgingCfm.DateTo < x.GraduatePlanDate)).ToList();
                     }
                 }

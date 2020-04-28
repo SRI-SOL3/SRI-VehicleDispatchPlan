@@ -18,86 +18,90 @@
     </div>
 
     @* エラーメッセージ *@
-    <div style="color: Red">@ViewBag.ErrorMessage</div>
+    <div style="color: red">@Html.Raw(ViewBag.ErrorMessage)</div>
     <hr />
 
     @* データが0件の場合はhiddenを設定 *@
     string hidden = Model.ChartData.Count() == 0 ? "hidden=hidden" : "";
     <div class="form-horizontal" @hidden>
-                @* 表 *@
-                @Html.Partial("../Shared/Table", Model.ChartData)
+        @{ 
+            // 日別設定への遷移可
+            TempData[AppConstant.TEMP_KEY_IS_LINK] = true;
+        }
+        @* 表 *@
+        @Html.Partial("../Shared/Table", Model.ChartData)
 
-                @* チェックボックス *@
-                <div class="row" style="margin-top:30px; display: flex;">
-                    <div style="margin-left:30px;">
-                        @* 総受入残数 *@
-                        <label for="TotalRemFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.TotalRemFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; border: 2px solid rgb(255, 0, 0); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_TOTAL_REM_AMT
-                        </label>
-                        @* 総在籍可能数 *@
-                        <label for="TotalMaxFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.TotalMaxFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; border: 1.5px dashed rgb(200, 60, 60); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_TOTAL_MAX_AMT
-                        </label>
-                        @* 総在籍見込数 *@
-                        <label for="TotalRegFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.TotalRegFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; height:10px; border: 2px solid rgb(200, 60, 60); background-color:rgba(200, 60, 60, 0.2); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_TOTAL_REG_AMT
-                        </label>
-                    </div>
-                    <div style="margin-left:30px;">
-                        @* 合宿受入残数 *@
-                        <label for="LodgingRemFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.LodgingRemFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; border: 2px solid rgb(0, 0, 255); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_LODGING_REM_AMT
-                        </label>
-                        @* 合宿在籍可能数 *@
-                        <label for="LodgingMaxFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.LodgingMaxFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; border: 1.5px dashed rgb(30, 100, 160);  align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_LODGING_MAX_AMT
-                        </label>
-                        @* 合宿在籍見込数 *@
-                        <label for="LodgingRegFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.LodgingRegFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; height:10px; border: 2px solid rgb(30, 100, 160); background-color:rgba(30, 100, 160, 0.2); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_LODGING_REG_AMT
-                        </label>
-                    </div>
-                    <div style="margin-left:30px;">
-                        @* 通学受入残数 *@
-                        <label for="CommutingRemFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.CommutingRemFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; border: 2px solid rgb(0, 200, 0); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_COMMUTING_REM_AMT
-                        </label>
-                        @* 通学在籍可能数 *@
-                        <label for="CommutingMaxFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.CommutingMaxFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; border: 1.5px dashed rgb(30, 160, 60); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_COMMUTING_MAX_AMT
-                        </label>
-                        @* 通学在籍見込数 *@
-                        <label for="CommutingRegFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.CommutingRegFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; height:10px; border: 2px solid rgb(30, 160, 60); background-color:rgba(30, 160, 60, 0.2); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_COMMUTING_REG_AMT
-                        </label>
-                    </div>
+        @* チェックボックス *@
+        <div class="row" style="margin-top:30px; display: flex;">
+            <div style="margin-left:30px;">
+                @* 総受入残数 *@
+                <label for="TotalRemFlg" style="cursor:pointer; display:flex;">
+                    @Html.CheckBoxFor(model => Model.TotalRemFlg, new { style = "cursor:pointer;" })
+                    <div style="width:20px; border: 2px solid rgb(255, 0, 0); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                    @AppConstant.SERIES_TOTAL_REM_AMT
+                </label>
+                @* 総在籍可能数 *@
+                <label for="TotalMaxFlg" style="cursor:pointer; display:flex;">
+                    @Html.CheckBoxFor(model => Model.TotalMaxFlg, new { style = "cursor:pointer;" })
+                    <div style="width:20px; border: 1.5px dashed rgb(200, 60, 60); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                    @AppConstant.SERIES_TOTAL_MAX_AMT
+                </label>
+                @* 総在籍見込数 *@
+                <label for="TotalRegFlg" style="cursor:pointer; display:flex;">
+                    @Html.CheckBoxFor(model => Model.TotalRegFlg, new { style = "cursor:pointer;" })
+                    <div style="width:20px; height:10px; border: 2px solid rgb(200, 60, 60); background-color:rgba(200, 60, 60, 0.2); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                    @AppConstant.SERIES_TOTAL_REG_AMT
+                </label>
+            </div>
+            <div style="margin-left:30px;">
+                @* 合宿受入残数 *@
+                <label for="LodgingRemFlg" style="cursor:pointer; display:flex;">
+                    @Html.CheckBoxFor(model => Model.LodgingRemFlg, new { style = "cursor:pointer;" })
+                    <div style="width:20px; border: 2px solid rgb(0, 0, 255); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                    @AppConstant.SERIES_LODGING_REM_AMT
+                </label>
+                @* 合宿在籍可能数 *@
+                <label for="LodgingMaxFlg" style="cursor:pointer; display:flex;">
+                    @Html.CheckBoxFor(model => Model.LodgingMaxFlg, new { style = "cursor:pointer;" })
+                    <div style="width:20px; border: 1.5px dashed rgb(30, 100, 160);  align-self:center; margin-left:2px; margin-right:3px;"></div>
+                    @AppConstant.SERIES_LODGING_MAX_AMT
+                </label>
+                @* 合宿在籍見込数 *@
+                <label for="LodgingRegFlg" style="cursor:pointer; display:flex;">
+                    @Html.CheckBoxFor(model => Model.LodgingRegFlg, new { style = "cursor:pointer;" })
+                    <div style="width:20px; height:10px; border: 2px solid rgb(30, 100, 160); background-color:rgba(30, 100, 160, 0.2); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                    @AppConstant.SERIES_LODGING_REG_AMT
+                </label>
+            </div>
+            <div style="margin-left:30px;">
+                @* 通学受入残数 *@
+                <label for="CommutingRemFlg" style="cursor:pointer; display:flex;">
+                    @Html.CheckBoxFor(model => Model.CommutingRemFlg, new { style = "cursor:pointer;" })
+                    <div style="width:20px; border: 2px solid rgb(0, 200, 0); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                    @AppConstant.SERIES_COMMUTING_REM_AMT
+                </label>
+                @* 通学在籍可能数 *@
+                <label for="CommutingMaxFlg" style="cursor:pointer; display:flex;">
+                    @Html.CheckBoxFor(model => Model.CommutingMaxFlg, new { style = "cursor:pointer;" })
+                    <div style="width:20px; border: 1.5px dashed rgb(30, 160, 60); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                    @AppConstant.SERIES_COMMUTING_MAX_AMT
+                </label>
+                @* 通学在籍見込数 *@
+                <label for="CommutingRegFlg" style="cursor:pointer; display:flex;">
+                    @Html.CheckBoxFor(model => Model.CommutingRegFlg, new { style = "cursor:pointer;" })
+                    <div style="width:20px; height:10px; border: 2px solid rgb(30, 160, 60); background-color:rgba(30, 160, 60, 0.2); align-self:center; margin-left:2px; margin-right:3px;"></div>
+                    @AppConstant.SERIES_COMMUTING_REG_AMT
+                </label>
+            </div>
 
-                    @* 再表示 *@
-                    <input type="submit" id="chart" name="cmd" value="@AppConstant.CMD_REDISPLAY" class="btn btn-default" style="margin-left:30px;" />
-                </div>
+            @* 再表示 *@
+            <input type="submit" id="chart" name="cmd" value="@AppConstant.CMD_REDISPLAY" class="btn btn-default" style="margin-left:30px;" />
+        </div>
 
-                @* グラフ *@
-                <div class="row" style="overflow: auto;">
-                    <img src="@ViewBag.ChartPath" />
-                </div>
+        @* グラフ *@
+        <div class="row" style="overflow: auto;">
+            <img src="@ViewBag.ChartPath" />
+        </div>
 
     </div>
 }

@@ -24,14 +24,14 @@ namespace VehicleDispatchPlan.Models
         {
         }
 
-        // 教習生
-        public System.Data.Entity.DbSet<Models.T_Trainee> Trainee { get; set; }
+        // 合宿教習生
+        public System.Data.Entity.DbSet<Models.T_TraineeLodging> TraineeLodging { get; set; }
+        // 通学教習生
+        public System.Data.Entity.DbSet<Models.T_TraineeCommuting> TraineeCommuting { get; set; }
         // 日別コマ数
         public System.Data.Entity.DbSet<Models.T_DailyClasses> DailyClasses { get; set; }
         // 指導員別コマ数
         public System.Data.Entity.DbSet<Models.T_DailyClassesByTrainer> DailyClassesByTrainer { get; set; }
-        // 通学種別
-        public System.Data.Entity.DbSet<Models.M_AttendType> AttendType { get; set; }
         // 教習コース
         public System.Data.Entity.DbSet<Models.M_TrainingCourse> TrainingCourse { get; set; }
         // 宿泊施設
