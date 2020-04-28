@@ -13,7 +13,7 @@ namespace VehicleDispatchPlan.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202004280051232_Initial"; }
+            get { return "202004280531356_Initial"; }
         }
         
         string IMigrationMetadata.Source
