@@ -105,6 +105,7 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             DateTime dailyClassesDate;
                             // No
                             int? dailyClassesNo;
+                            int dailyClassesNoInt;
                             // 指導員名
                             string dailyClassesTrainerName;
                             // コマ数
@@ -140,7 +141,7 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             else
                             {
                                 // 数値整合性チェック
-                                if (!int.TryParse(values[1], out int dailyClassesNoInt))
+                                if (!int.TryParse(values[1], out dailyClassesNoInt))
                                 {
                                     ViewBag.ErrorMessage = "Noの設定が不正のため、読み込みを途中で終了しました。 " + row + "行目";
                                     break;
