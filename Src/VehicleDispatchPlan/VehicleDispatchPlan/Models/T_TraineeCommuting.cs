@@ -44,7 +44,6 @@ namespace VehicleDispatchPlan.Models
             this.EntrancePlanDate = trainee.EntrancePlanDate;
             this.TmpLicencePlanDate = trainee.TmpLicencePlanDate;
             this.GraduatePlanDate = trainee.GraduatePlanDate;
-            this.AgentName = trainee.AgentName;
             this.SchoolName = trainee.SchoolName;
             this.MiddleSchoolDistrict = trainee.MiddleSchoolDistrict;
             this.FormOfAttractingCustomers = trainee.FormOfAttractingCustomers;
@@ -111,10 +110,6 @@ namespace VehicleDispatchPlan.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DisplayName("卒業予定日")]
         public DateTime? GraduatePlanDate { get; set; }
-
-        /// <summary>エージェント<summary>
-        [DisplayName("エージェント")]
-        public string AgentName { get; set; }
 
         /// <summary>高校名<summary>
         [DisplayName("高校名")]

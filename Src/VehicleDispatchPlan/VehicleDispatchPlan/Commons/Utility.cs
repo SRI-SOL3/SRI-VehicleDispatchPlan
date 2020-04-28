@@ -32,7 +32,7 @@ namespace VehicleDispatchPlan.Commons
         /// <param name="dateTo">日付To</param>
         /// <param name="targetTraineeLodging">合宿教習生情報(登録/更新時)</param>
         /// <param name="targetTraineeCommuting">通学教習生情報(登録/更新時)</param>
-        /// <returns></returns>
+        /// <returns>グラフデータ</returns>
         public List<V_ChartData> GetChartData(MyDatabaseContext db, DateTime dateFrom, DateTime dateTo
             , List<T_TraineeLodging> targetTraineeLodging, T_TraineeCommuting targetTraineeCommuting)
         {

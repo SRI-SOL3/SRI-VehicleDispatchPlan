@@ -320,6 +320,8 @@ namespace VehicleDispatchPlan_Dev.Controllers
             // 登録ボタンが押下された場合
             else if (AppConstant.CMD_REGIST.Equals(cmd))
             {
+                // 入力チェック
+                bool validation = true;
                 if (ModelState.IsValid)
                 {
                     // 重複チェック
@@ -328,36 +330,39 @@ namespace VehicleDispatchPlan_Dev.Controllers
                     if (repeatedNum > 0)
                     {
                         ViewBag.ErrorMessage = "入校予定日、教習コースの重複データがあります。（同じ日に同じ教習コースのデータを登録することはできません。）";
-                    }
-                    else
-                    {
-                        // データの登録/更新
-                        foreach (M_EntGrdCalendar calendar in calendarList)
-                        {
-                            // 存在チェック
-                            if (db.EntGrdCalendar.Where(x => x.TrainingCourseCd.Equals(calendar.TrainingCourseCd)
-                                && ((DateTime)x.EntrancePlanDate).Equals((DateTime)calendar.EntrancePlanDate)).Count() == 0)
-                            {
-                                // 登録処理
-                                db.EntGrdCalendar.Add(calendar);
-                            }
-                            else
-                            {
-                                // 更新処理
-                                db.Entry(calendar).State = EntityState.Modified;
-                            }
-                        }
-                        db.SaveChanges();
-                        // 完了メッセージ
-                        ViewBag.CompMessage = "インポートが完了しました。";
-                        // 表示データを初期化
-                        calendarList = new List<M_EntGrdCalendar>();
+                        validation = false;
                     }
                 }
                 else
                 {
                     // エラーメッセージを生成
                     ViewBag.ErrorMessage = new Utility().GetErrorMessage(ModelState);
+                    validation = false;
+                }
+
+                if (validation == true)
+                {
+                    // データの登録/更新
+                    foreach (M_EntGrdCalendar calendar in calendarList)
+                    {
+                        // 存在チェック
+                        if (db.EntGrdCalendar.Where(x => x.TrainingCourseCd.Equals(calendar.TrainingCourseCd)
+                            && ((DateTime)x.EntrancePlanDate).Equals((DateTime)calendar.EntrancePlanDate)).Count() == 0)
+                        {
+                            // 登録処理
+                            db.EntGrdCalendar.Add(calendar);
+                        }
+                        else
+                        {
+                            // 更新処理
+                            db.Entry(calendar).State = EntityState.Modified;
+                        }
+                    }
+                    db.SaveChanges();
+                    // 完了メッセージ
+                    ViewBag.CompMessage = "インポートが完了しました。";
+                    // 表示データを初期化
+                    calendarList = new List<M_EntGrdCalendar>();
                 }
             }
 

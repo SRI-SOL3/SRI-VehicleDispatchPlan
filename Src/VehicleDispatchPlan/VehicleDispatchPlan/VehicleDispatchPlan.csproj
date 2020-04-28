@@ -148,17 +148,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202004210129561_Initial.cs" />
-    <Compile Include="Migrations\202004210129561_Initial.designer.cs">
-      <DependentUpon>202004210129561_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004220608150_DropTrainee.cs" />
-    <Compile Include="Migrations\202004220608150_DropTrainee.designer.cs">
-      <DependentUpon>202004220608150_DropTrainee.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004230629163_DropTraineeCommutingGroupId.cs" />
-    <Compile Include="Migrations\202004230629163_DropTraineeCommutingGroupId.designer.cs">
-      <DependentUpon>202004230629163_DropTraineeCommutingGroupId.cs</DependentUpon>
+    <Compile Include="Migrations\202004280051232_Initial.cs" />
+    <Compile Include="Migrations\202004280051232_Initial.designer.cs">
+      <DependentUpon>202004280051232_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MyDatabaseContext.cs" />
@@ -247,7 +239,6 @@
     <Content Include="Views\InstractorImport\List.cshtml" />
     <Content Include="Views\DailyParameter\Import.cshtml" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -262,14 +253,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202004210129561_Initial.resx">
-      <DependentUpon>202004210129561_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004220608150_DropTrainee.resx">
-      <DependentUpon>202004220608150_DropTrainee.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004230629163_DropTraineeCommutingGroupId.resx">
-      <DependentUpon>202004230629163_DropTraineeCommutingGroupId.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202004280051232_Initial.resx">
+      <DependentUpon>202004280051232_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

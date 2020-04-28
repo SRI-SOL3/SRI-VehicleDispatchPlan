@@ -7,13 +7,13 @@ namespace VehicleDispatchPlan.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.0")]
-    public sealed partial class DropTraineeCommutingGroupId : IMigrationMetadata
+    public sealed partial class Initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(DropTraineeCommutingGroupId));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "202004230629163_DropTraineeCommutingGroupId"; }
+            get { return "202004280051232_Initial"; }
         }
         
         string IMigrationMetadata.Source

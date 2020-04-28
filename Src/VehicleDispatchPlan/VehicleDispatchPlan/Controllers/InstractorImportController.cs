@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using VehicleDispatchPlan.Commons;
 using VehicleDispatchPlan.Constants;
 using VehicleDispatchPlan.Models;
 
@@ -23,13 +24,10 @@ using VehicleDispatchPlan.Models;
  */
 namespace VehicleDispatchPlan_Dev.Controllers
 {
-
-
     public class InstractorImportController : Controller
     {
         // データベースコンテキスト
         private MyDatabaseContext db = new MyDatabaseContext();
-
 
         /// <summary>
         /// インポート表示
@@ -37,17 +35,10 @@ namespace VehicleDispatchPlan_Dev.Controllers
         /// <returns></returns>
         public ActionResult Import([Bind(Include = "Date,No,TrainerName,Classes")] List<T_DailyClassesByTrainer> importList)
         {
-            if (importList != null)
-            {
-                return View(importList);
-            }
+            Trace.WriteLine("GET /InstractorImport/Import");
 
             return View(new List<T_DailyClassesByTrainer>());
         }
-
-        
-
-
 
         /// <summary>
         /// インポート実行
@@ -60,8 +51,7 @@ namespace VehicleDispatchPlan_Dev.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Import(string cmd, HttpPostedFileBase postedFile, [Bind(Include = "Date,No,TrainerName,Classes")] List<T_DailyClassesByTrainer> importList)
         {
-
-            Trace.WriteLine("POST /Calendar/Import");
+            Trace.WriteLine("POST /InstractorImport/Import");
 
             // 読込ボタンが押下された場合
             if (AppConstant.CMD_READ.Equals(cmd))
@@ -83,9 +73,6 @@ namespace VehicleDispatchPlan_Dev.Controllers
                         return View(importList);
                     }
 
-                    // 日別予測条件クラスデータ取得
-                    List<T_DailyClasses> dailyClasses = db.DailyClasses.ToList();
-
                     // アップロード先ディレクトリ
                     string uploadDir = AppDomain.CurrentDomain.BaseDirectory + @"Uploads\";
                     // ディレクトリが存在しない場合は作成
@@ -98,8 +85,6 @@ namespace VehicleDispatchPlan_Dev.Controllers
                     string filepath = uploadDir + Path.GetFileName(postedFile.FileName);
                     postedFile.SaveAs(filepath);
                     // テキストを全行読み込み
-                    
-
                     using (StreamReader sr = new StreamReader(filepath, Encoding.UTF8))
                     {
                         int row = 0;
@@ -116,20 +101,19 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             // 読み込んだ一行をカンマ毎に分けて配列に格納
                             string[] values = line.Split(',');
 
-
                             // 対象日
                             DateTime dailyClassesDate;
                             // No
                             int? dailyClassesNo;
                             // 指導員名
-                            String dailyClassesTrainerName;
+                            string dailyClassesTrainerName;
                             // コマ数
                             double dailyClassesNum;
 
                             // CSV項目数チェック
                             if (values.Count() != 4)
                             {
-                                ViewBag.ErrorMessage = "csvの項目数に誤りがあるため、読み込みを途中で終了しました。 " + row.ToString() + "行目";
+                                ViewBag.ErrorMessage = "csvの項目数に誤りがあるため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
 
@@ -137,54 +121,63 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             // 必須チェック
                             if (string.IsNullOrEmpty(values[0]))
                             {
-                                ViewBag.ErrorMessage = "対象日が未設定のため、読み込みを途中で終了しました。 " + row.ToString() + "行目";
+                                ViewBag.ErrorMessage = "対象日が未設定のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
                             // 日付整合性チェック
                             if (!DateTime.TryParse(values[0], out dailyClassesDate))
                             {
-                                ViewBag.ErrorMessage = "対象日の設定が不正のため、読み込みを途中で終了しました。 " + row.ToString() + "行目";
-                                break;
-                            }
-                            // 対象日存在チェック
-                            dailyClassesDate = dailyClasses
-                                .Where(x => ((DateTime)x.Date).Equals(DateTime.Parse(values[0])))
-                                .Select(x => (DateTime)x.Date).FirstOrDefault();
-
-                            if (string.IsNullOrEmpty(dailyClassesDate.ToString()))
-                            {
-                                ViewBag.ErrorMessage = "対象日の設定が不正のため、読み込みを途中で終了しました。 " + row.ToString() + "行目";
+                                ViewBag.ErrorMessage = "対象日の設定が不正のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
 
                             // ----- No -----
-                            //null許容
-                            dailyClassesNo = int.TryParse(values[1], out var i) ? (int?)i : null;
-
-
-
+                            // null許容
+                            if (string.IsNullOrEmpty(values[1]))
+                            {
+                                dailyClassesNo = null;
+                            }
+                            else
+                            {
+                                // 数値整合性チェック
+                                if (!int.TryParse(values[1], out int dailyClassesNoInt))
+                                {
+                                    ViewBag.ErrorMessage = "Noの設定が不正のため、読み込みを途中で終了しました。 " + row + "行目";
+                                    break;
+                                }
+                                if (dailyClassesNoInt <= 0)
+                                {
+                                    ViewBag.ErrorMessage = "Noの設定が不正のため、読み込みを途中で終了しました。 " + row + "行目";
+                                    break;
+                                }
+                                if (db.DailyClassesByTrainer.Where(x => ((DateTime)x.Date).Equals(dailyClassesDate) && ((int)x.No).Equals(dailyClassesNoInt)).Count() == 0)
+                                {
+                                    ViewBag.ErrorMessage = "Noの設定が不正のため、読み込みを途中で終了しました。Noはすでに登録済の値のみ指定できます。 " + row + "行目";
+                                    break;
+                                }
+                                dailyClassesNo = dailyClassesNoInt;
+                            }
 
                             // ----- 指導員名 -----
                             // 必須チェック
                             if (string.IsNullOrEmpty(values[2]))
                             {
-                                ViewBag.ErrorMessage = "指導員名が未設定のため、読み込みを途中で終了しました。 " + row.ToString() + "行目";
+                                ViewBag.ErrorMessage = "指導員名が未設定のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
-                            dailyClassesTrainerName = values[2].ToString();
-
+                            dailyClassesTrainerName = values[2];
 
                             // ----- コマ数 -----
                             // 必須チェック
                             if (string.IsNullOrEmpty(values[3]))
                             {
-                                ViewBag.ErrorMessage = "コマ数が未設定のため、読み込みを途中で終了しました。 " + row.ToString() + "行目";
+                                ViewBag.ErrorMessage = "コマ数が未設定のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
-                            //数値整合性チェック
+                            // 数値整合性チェック
                             if (!double.TryParse(values[3], out dailyClassesNum))
                             {
-                                ViewBag.ErrorMessage = "コマ数の整合性が不正のため、読み込みを途中で終了しました。 " + row.ToString() + "行目";
+                                ViewBag.ErrorMessage = "コマ数の設定が不正のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
 
@@ -194,11 +187,19 @@ namespace VehicleDispatchPlan_Dev.Controllers
                                 No = dailyClassesNo,
                                 TrainerName = dailyClassesTrainerName,
                                 Classes = dailyClassesNum
-
                             };
                             // リストに追加
                             importList.Add(t_DailyClassesByTrainer);
                         }
+                    }
+
+                    // 重複チェック（Noがnullのものは除く）
+                    int repeatedNum = importList.Where(x => x.No != null).GroupBy(x => new { x.Date, x.No })
+                        .Select(x => new { Count = x.Count() }).Where(x => x.Count != 1).Count();
+                    if (repeatedNum > 0)
+                    {
+                        ViewBag.ErrorMessage = "日付、No.の重複データがあります。（同じ日に同じNoのデータを複数登録することはできません。）ファイルを修正して再度読み込みを行ってください。";
+                        return View(new List<T_DailyClassesByTrainer>());
                     }
                 }
                 else
@@ -210,152 +211,78 @@ namespace VehicleDispatchPlan_Dev.Controllers
             // 登録ボタンが押下された場合
             else if (AppConstant.CMD_REGIST.Equals(cmd))
             {
-
-                // 重複チェック
-                int repeatedNum = importList.GroupBy(x => new { x.Date, x.No })
-                    .Select(x => new { Count = x.Count() }).Where(x => x.Count != 1).Count();
-                if (repeatedNum > 0)
+                // 未採番のデータがある場合（採番処理）
+                if (importList.Where(x => x.No == null).Count() > 0)
                 {
-                    ViewBag.ErrorMessage = "日付、No.の重複データがあります。（同じ日に同じNoのデータを複数登録することはできません。）ファイルを修正して再度読み込みを行ってください。";
-                    return View(new List<T_DailyClassesByTrainer>());
+                    // ステータスをクリア
+                    ModelState.Clear();
+                    // ソート（日付、No(設定済)、No(未設定)）
+                    importList = importList.OrderBy(x => x.Date).ThenBy(x => x.No == null ? 1 : 0).ThenBy(x => x.No).ToList();
+                    // 前レコードの日付
+                    DateTime? beforeDate = null;
+                    // 新規採番No
+                    int nextNum = 0;
+                    // 未設定のNoを採番
+                    foreach (T_DailyClassesByTrainer dailyClassesByTrainer in importList.Where(x => x.No == null))
+                    {
+                        // 前レコードの日付がnullもしくは対象レコードと異なる場合
+                        if (beforeDate == null || beforeDate != dailyClassesByTrainer.Date)
+                        {
+                            // 最大値を取得
+                            int? maxNum = db.DailyClassesByTrainer.Where(x => ((DateTime)x.Date).Equals((DateTime)dailyClassesByTrainer.Date)).Select(x => x.No).Max();
+                            // 最大値を加算（最大値がnullの場合は1）
+                            nextNum = maxNum == null ? 1 : (int)maxNum + 1;
+                        }
+                        else
+                        {
+                            // Noを加算
+                            nextNum++;
+                        }
+
+                        // 採番された番号を設定
+                        dailyClassesByTrainer.No = nextNum;
+                        // 日付を保持
+                        beforeDate = dailyClassesByTrainer.Date;
+                    }
+
+                    ViewBag.CompMessage = "Noの新規採番が完了しました。再度登録ボタンを押してください。";
                 }
 
-
-
-                ////ソート用リスト
-                List<T_DailyClassesByTrainer> sorted = new List<T_DailyClassesByTrainer>();
-
-                ////親テーブルに日付データがない場合は親データに挿入
-                //foreach (T_DailyClassesByTrainer dailyClassesByTrainer in importList)
-                //{ 
-                //    if ((int)db.DailyClasses.Where(item => ((DateTime)item.Date).Equals((DateTime)dailyClassesByTrainer.Date)).Count() == 0)
-                //    {
-                //        //親テーブル
-                //        T_DailyClasses t_DailyClasses = new T_DailyClasses();
-                //        t_DailyClasses.Date = dailyClassesByTrainer.Date;
-                //        db.DailyClasses.Add(t_DailyClasses);
-
-                //        db.SaveChanges();
-
-                //    }
-                //}
-
-                //新規採番(Noに空文字が存在することを想定)
-                if (!ModelState.IsValid)
+                // 未採番のデータがない場合（登録・更新処理）
+                else
                 {
-
-                    //----変数-----
-
-                    //Noに空文字が存在するか
-                    bool ExistNullFlg = false;
-
-                    // データの登録/更新
-                    //新規採番No（DB内にNoが一つ以上存在した場合）
-                    int nextNum = 1;
-
-                    //新規採番No（DB内にNoが存在しなかった場合）
-                    int MaxIntOfTheDay = 1;
-                    
-                    //日付格納用
-                    DateTime? aDay = new DateTime();
-
-
-
-                
-
-
-                    //ソート（日付、No）
-                    sorted = importList.OrderBy(x => x.Date).ThenBy(x => x.No).ToList();
-
-                    //ループ
-                    foreach (T_DailyClassesByTrainer dailyClassesByTrainer in importList)
+                    // 入力チェック
+                    bool validation = true;
+                    if (ModelState.IsValid)
                     {
-
-                        //Noが存在するか
-                        if(db.DailyClassesByTrainer.Where(item => ((DateTime)item.Date).Equals((DateTime)dailyClassesByTrainer.Date)).Select(s => s.No).Count() > 0)
+                        // コマ数チェック
+                        if (importList.Where(x => x.Classes <= 0).Count() > 0)
                         {
-                            //新規採番
-                            nextNum = (int)db.DailyClassesByTrainer.Where(item => ((DateTime)item.Date).Equals((DateTime)dailyClassesByTrainer.Date)).Select(s => s.No).Max() + 1;
-                        }
-
-                        //日付が異なる                        
-                        if (aDay != dailyClassesByTrainer.Date)
-                        {
-                            //初期値に戻す
-                            MaxIntOfTheDay = 1;
-                        }
-
-                        //Nullが存在するか
-                        if (dailyClassesByTrainer.No == null)
-                        {
-                            
-                            if (nextNum > MaxIntOfTheDay)
-                            {
-                                //採番済のデータが存在すれば、次の番号から割り当てる
-                                dailyClassesByTrainer.No = nextNum;
-                                MaxIntOfTheDay = nextNum;
-                                MaxIntOfTheDay++;
-                                ExistNullFlg = true;
-                                //クリア
-                                ModelState.Clear();
-
-                            }
-                            else
-                            {
-                                //採番済の番号がなければ、新規に採番を行う。
-                                dailyClassesByTrainer.No = MaxIntOfTheDay;
-                                MaxIntOfTheDay++;
-                            }
-
-                        }
-
-                        aDay = dailyClassesByTrainer.Date;
-                    }
-
-                    
-
-                    if (ExistNullFlg)
-                    {
-                        ViewBag.CompMessage = "Noの新規採番が完了しました。再度登録ボタンを押してください。";
-                        return View(sorted);
-                    }
-
-                    
-                }
-
-
-
-                if (ModelState.IsValid)
-                {
-
-
-                    //親テーブルに日付データがない場合は親データに挿入
-                    foreach (T_DailyClassesByTrainer dailyClassesByTrainer in importList)
-                    {
-                        if ((int)db.DailyClasses.Where(item => ((DateTime)item.Date).Equals((DateTime)dailyClassesByTrainer.Date)).Count() == 0)
-                        {
-                            //親テーブル
-                            T_DailyClasses t_DailyClasses = new T_DailyClasses();
-                            t_DailyClasses.Date = dailyClassesByTrainer.Date;
-                            db.DailyClasses.Add(t_DailyClasses);
-
-                            db.SaveChanges();
-
+                            ViewBag.ErrorMessage = "コマ数に0以下は設定できません。";
+                            validation = false;
                         }
                     }
+                    else
+                    {
+                        // エラーメッセージ生成
+                        ViewBag.ErrorMessage = new Utility().GetErrorMessage(ModelState);
+                        validation = false;
+                    }
 
-                    // データの登録/更新
-                    foreach (T_DailyClassesByTrainer dailyClassesByTrainer in importList)
+                    if (validation == true)
+                    {
+                        foreach (T_DailyClassesByTrainer dailyClassesByTrainer in importList)
                         {
-
-                            if (dailyClassesByTrainer.No == null)
+                            // 日別予測条件（親データ）の存在チェック
+                            if (db.DailyClasses.Where(x => ((DateTime)x.Date).Equals((DateTime)dailyClassesByTrainer.Date)).Count() == 0)
                             {
-                                // 登録処理(Noがnull)
-                                db.DailyClassesByTrainer.Add(dailyClassesByTrainer);
-
+                                // 日付を指定してデータを登録
+                                db.DailyClasses.Add(new T_DailyClasses() { Date = dailyClassesByTrainer.Date });
                             }
-                            else if ((db.DailyClassesByTrainer.Where(x => ((DateTime)x.Date).Equals((DateTime)dailyClassesByTrainer.Date)
-                                        && ((int)x.No).Equals((int)dailyClassesByTrainer.No)).Count() == 0))
+
+                            // 存在チェック
+                            if (db.DailyClassesByTrainer.Where(x => ((DateTime)x.Date).Equals((DateTime)dailyClassesByTrainer.Date)
+                                && ((int)x.No).Equals((int)dailyClassesByTrainer.No)).Count() == 0)
                             {
                                 // 登録処理
                                 db.DailyClassesByTrainer.Add(dailyClassesByTrainer);
@@ -366,40 +293,23 @@ namespace VehicleDispatchPlan_Dev.Controllers
                                 db.Entry(dailyClassesByTrainer).State = EntityState.Modified;
                             }
                         }
-
                         db.SaveChanges();
-
                         // 完了メッセージ
                         ViewBag.CompMessage = "インポートが完了しました。";
                         // 表示データを初期化
                         importList = new List<T_DailyClassesByTrainer>();
-                    
-                }
-                else
-                {
-                    //var errormsgs = ModelState.SelectMany(x => x.Value.Errors.Select(z => z.ErrorMessage));
-                    //ViewBag.ErrorMessage = errormsgs.ToString();
-                    ViewBag.ErrorMessage = "必須項目(指導員、コマ数)を設定してください。";
+                    }
                 }
             }
 
-
-        
-
-
-            ///その他
+            // その他
             else
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             return View(importList);
-
-
         }
-
-
-
 
         /// <summary>
         /// データベース接続の破棄

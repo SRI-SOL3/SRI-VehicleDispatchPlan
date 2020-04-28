@@ -32,9 +32,9 @@
     </div>
 
     @* エラーメッセージ *@
-    <div style="color: Red">@ViewBag.ErrorMessage</div>
+    <div style="color: red">@Html.Raw(ViewBag.ErrorMessage)</div>
     @* 完了メッセージ *@
-    <div style="color: green">@ViewBag.CompMessage</div>
+    <div style="color: green">@Html.Raw(ViewBag.CompMessage)</div>
 
     <div style="overflow-y: auto; width:800px; height:500px;">
         <table class="table" style="width:600px;">
@@ -63,7 +63,7 @@
                 <tr>
                     <td>
                         @* 対象日 *@
-                        @Html.EditorFor(modelitem => Model[i].Date, new { htmlAttributes = new { @class = "form-control",@readonly = "readonly", @style = "width:150px;" } })
+                        @Html.EditorFor(modelitem => Model[i].Date, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @style = "width:150px;" } })
                     </td>
                     <td>
                         @* No *@
@@ -82,4 +82,3 @@
         </table>
     </div>
 }
-<hr />

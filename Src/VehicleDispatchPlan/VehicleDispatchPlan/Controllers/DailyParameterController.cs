@@ -46,7 +46,6 @@ namespace VehicleDispatchPlan.Controllers
             dailyParameterEdt.DailyClasses = new T_DailyClasses();
             dailyParameterEdt.TrainerList = new List<T_DailyClassesByTrainer>();
 
-            // 日付が空の場合、エラー
             if (dailyParameterEdt.SearchDate != null)
             {
                 // 日別予測条件を取得
@@ -67,6 +66,9 @@ namespace VehicleDispatchPlan.Controllers
             {
                 ViewBag.SearchErrorMessage = "検索条件を指定してください。";
             }
+
+            // 指導員コマ管理画面から遷移するための検索日付をTempDataに設定
+            TempData[AppConstant.TEMP_KEY_SEARCH_DATE] = dailyParameterEdt.SearchDate;
 
             return View(dailyParameterEdt);
         }

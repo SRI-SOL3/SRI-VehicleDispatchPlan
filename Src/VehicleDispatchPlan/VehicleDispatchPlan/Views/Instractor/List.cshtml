@@ -6,6 +6,11 @@
 }
 
 <h2>@ViewBag.Title</h2>
+
+<div>
+    @Html.ActionLink("≪ 日別予測条件", "../DailyParameter/Edit", new { SearchDate = TempData.Peek(AppConstant.TEMP_KEY_SEARCH_DATE) })
+</div>
+
 @using (Html.BeginForm("List", "Instractor", FormMethod.Get))
 {
     @*対象日*@

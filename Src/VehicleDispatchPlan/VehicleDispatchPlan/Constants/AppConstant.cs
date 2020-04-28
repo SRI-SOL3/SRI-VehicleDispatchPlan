@@ -75,6 +75,8 @@ namespace VehicleDispatchPlan.Constants
         public const string TEMP_KEY_DATE_FROM = "DateFrom";
         /// <summary>TempDataキー_日付To</summary>
         public const string TEMP_KEY_DATE_TO = "DateTo";
+        /// <summary>TempDataキー_検索日付</summary>
+        public const string TEMP_KEY_SEARCH_DATE = "SearchDate";
 
         /// <summary>編集モード</summary>
         public enum EditMode
