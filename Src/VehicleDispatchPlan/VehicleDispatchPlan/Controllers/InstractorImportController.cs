@@ -283,13 +283,19 @@ namespace VehicleDispatchPlan_Dev.Controllers
 
                     if (validation == true)
                     {
+                        // 追加済み日別予測条件（親データ）
+                        List<DateTime> addedDailyClasses = new List<DateTime>();
+
                         foreach (T_DailyClassesByTrainer dailyClassesByTrainer in importList)
                         {
-                            // 日別予測条件（親データ）の存在チェック
-                            if (db.DailyClasses.Where(x => ((DateTime)x.Date).Equals((DateTime)dailyClassesByTrainer.Date)).Count() == 0)
+                            // 日別予測条件（親データ）の存在チェック　※すでに追加済の親データは省く
+                            if (db.DailyClasses.Where(x => ((DateTime)x.Date).Equals((DateTime)dailyClassesByTrainer.Date)).Count() == 0
+                                && !addedDailyClasses.Contains((DateTime)dailyClassesByTrainer.Date))
                             {
                                 // 日付を指定してデータを登録
                                 db.DailyClasses.Add(new T_DailyClasses() { Date = dailyClassesByTrainer.Date });
+                                // 追加済みとする
+                                addedDailyClasses.Add((DateTime)dailyClassesByTrainer.Date);
                             }
 
                             // 存在チェック
