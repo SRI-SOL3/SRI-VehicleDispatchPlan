@@ -222,6 +222,8 @@ namespace VehicleDispatchPlan.Controllers
             // 読込ボタンが押下された場合
             if (AppConstant.CMD_READ.Equals(cmd))
             {
+                // ステータスをクリア
+                ModelState.Clear();
                 // 日別条件を初期化
                 dailyClassesList = new List<T_DailyClasses>();
 
@@ -247,8 +249,11 @@ namespace VehicleDispatchPlan.Controllers
                     // ファイルをサーバーに保存
                     string filepath = uploadDir + Path.GetFileName(postedFile.FileName);
                     postedFile.SaveAs(filepath);
+
+                    // 項目数
+                    int itemCnt = 0;
                     // テキストを全行読み込み
-                    using (StreamReader sr = new StreamReader(filepath, Encoding.UTF8))
+                    using (StreamReader sr = new StreamReader(filepath, Encoding.GetEncoding("shift_jis")))
                     {
                         int row = 0;
                         while (!sr.EndOfStream)
@@ -256,26 +261,35 @@ namespace VehicleDispatchPlan.Controllers
                             row++;
                             // CSVファイルの一行を読み込む
                             string line = sr.ReadLine();
-                            // ヘッダ行はスキップ
-                            if (row == 1)
-                            {
-                                continue;
-                            }
                             // 読み込んだ一行をカンマ毎に分けて配列に格納
                             string[] values = line.Split(',');
+
+                            // ヘッダ行
+                            if (row == 1)
+                            {
+                                // 項目数を取得
+                                itemCnt = values.Count();
+                                // スキップ
+                                continue;
+                            }
+
+                            // 空行チェック（全ての項目が空）
+                            if (values.Where(x => string.IsNullOrEmpty(x)).Count() == values.Count())
+                            {
+                                break;
+                            }
+                            // CSV項目数チェック
+                            if (values.Count() != itemCnt)
+                            {
+                                ViewBag.ErrorMessage = "csvの項目数に誤りがあるため、読み込みを途中で終了しました。 " + row + "行目";
+                                break;
+                            }
 
                             T_DailyClasses dailyClasses = new T_DailyClasses();
                             // 日付項目
                             DateTime dateItem;
                             // 数値項目
                             double doubleItem;
-
-                            // CSV項目数チェック
-                            if (values.Count() != 27)
-                            {
-                                ViewBag.ErrorMessage = "csvの項目数に誤りがあるため、読み込みを途中で終了しました。 " + row + "行目";
-                                break;
-                            }
 
                             // ----- 対象日 -----
                             if (!this.ItemCheck(values[0], out dateItem, "対象日", row)) break;
