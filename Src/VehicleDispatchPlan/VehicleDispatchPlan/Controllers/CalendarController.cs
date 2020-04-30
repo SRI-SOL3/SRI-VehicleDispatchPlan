@@ -179,6 +179,8 @@ namespace VehicleDispatchPlan_Dev.Controllers
             // 読込ボタンが押下された場合
             if (AppConstant.CMD_READ.Equals(cmd))
             {
+                // ステータスをクリア
+                ModelState.Clear();
                 // カレンダーを初期化
                 calendarList = new List<M_EntGrdCalendar>();
 
@@ -207,8 +209,11 @@ namespace VehicleDispatchPlan_Dev.Controllers
                     // ファイルをサーバーに保存
                     string filepath = uploadDir + Path.GetFileName(postedFile.FileName);
                     postedFile.SaveAs(filepath);
+
+                    // 項目数
+                    int itemCnt = 0;
                     // テキストを全行読み込み
-                    using (StreamReader sr = new StreamReader(filepath, Encoding.UTF8))
+                    using (StreamReader sr = new StreamReader(filepath, Encoding.GetEncoding("shift_jis")))
                     {
                         int row = 0;
                         while (!sr.EndOfStream)
@@ -216,13 +221,29 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             row++;
                             // CSVファイルの一行を読み込む
                             string line = sr.ReadLine();
-                            // ヘッダ行はスキップ
-                            if (row == 1)
-                            {
-                                continue;
-                            }
                             // 読み込んだ一行をカンマ毎に分けて配列に格納
                             string[] values = line.Split(',');
+
+                            // ヘッダ行
+                            if (row == 1)
+                            {
+                                // 項目数を取得
+                                itemCnt = values.Count();
+                                // スキップ
+                                continue;
+                            }
+
+                            // 空行チェック（全ての項目が空）
+                            if (values.Where(x => string.IsNullOrEmpty(x)).Count() == values.Count())
+                            {
+                                break;
+                            }
+                            // CSV項目数チェック
+                            if (values.Count() != itemCnt)
+                            {
+                                ViewBag.ErrorMessage = "csvの項目数に誤りがあるため、読み込みを途中で終了しました。 " + row + "行目";
+                                break;
+                            }
 
                             // 入校予定日
                             DateTime entrancePlanDate;
@@ -232,13 +253,6 @@ namespace VehicleDispatchPlan_Dev.Controllers
                             DateTime tmpLicencePlanDate;
                             // 卒業予定日
                             DateTime graduatePlanDate;
-
-                            // CSV項目数チェック
-                            if (values.Count() != 4)
-                            {
-                                ViewBag.ErrorMessage = "csvの項目数に誤りがあるため、読み込みを途中で終了しました。 " + row + "行目";
-                                break;
-                            }
 
                             // ----- 入校予定日 -----
                             // 必須チェック
@@ -261,10 +275,10 @@ namespace VehicleDispatchPlan_Dev.Controllers
                                 ViewBag.ErrorMessage = "教習コースが未設定のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
                             }
+                            // 左0埋め
+                            trainingCourseCd = values[1].PadLeft(2, '0');
                             // マスタ存在チェック
-                            trainingCourseCd = trainingCourse.Where(
-                                x => x.TrainingCourseCd.Equals(values[1])).Select(x => x.TrainingCourseCd).FirstOrDefault();
-                            if (string.IsNullOrEmpty(trainingCourseCd))
+                            if (trainingCourse.Where(x => x.TrainingCourseCd.Equals(trainingCourseCd)).Count() == 0)
                             {
                                 ViewBag.ErrorMessage = "教習コースの設定が不正のため、読み込みを途中で終了しました。 " + row + "行目";
                                 break;
