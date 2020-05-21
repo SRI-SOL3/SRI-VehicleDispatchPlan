@@ -67,6 +67,8 @@ namespace VehicleDispatchPlan.Commons
                     && (dateFrom <= x.EntrancePlanDate && x.EntrancePlanDate <= dateTo
                     || dateFrom <= x.GraduatePlanDate && x.GraduatePlanDate <= dateTo
                     || x.EntrancePlanDate < dateFrom && dateTo < x.GraduatePlanDate)).ToList();
+                // 対象教習生を追加
+                traineeLodging.AddRange(targetTraineeLodging.Where(x => x.CancelFlg == false));
             }
 
             // 通学教習生の取得
@@ -84,8 +86,8 @@ namespace VehicleDispatchPlan.Commons
             // 引数の教習生がnullでない場合（教習生管理(登録/更新)）
             else
             {
-                // 教習生IDを取得
-               int traineeId = targetTraineeCommuting.TraineeId;
+                // 対象教習生IDを取得
+                int traineeId = targetTraineeCommuting.TraineeId;
                 // 対象教習生ID以外を取得
                 traineeCommuting = db.TraineeCommuting.Where(
                     x => !x.TraineeId.Equals(traineeId)
@@ -93,6 +95,11 @@ namespace VehicleDispatchPlan.Commons
                     && (dateFrom <= x.EntrancePlanDate && x.EntrancePlanDate <= dateTo
                     || dateFrom <= x.GraduatePlanDate && x.GraduatePlanDate <= dateTo
                     || x.EntrancePlanDate < dateFrom && dateTo < x.GraduatePlanDate)).ToList();
+                // 対象教習生を追加
+                if (targetTraineeCommuting.CancelFlg == false)
+                {
+                    traineeCommuting.Add(targetTraineeCommuting);
+                }
             }
 
             // 受入累積数
@@ -206,7 +213,7 @@ namespace VehicleDispatchPlan.Commons
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                         && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
                 // 通学在籍見込数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
-                data.CommutingMtFstRegAmt = 
+                data.CommutingMtSndRegAmt = 
                     traineeCommuting.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                         && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
@@ -220,64 +227,6 @@ namespace VehicleDispatchPlan.Commons
                     traineeCommuting.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                         && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
-
-                // 引数の合宿教習生情報が設定されている場合は在籍数を加算
-                if (targetTraineeLodging != null)
-                {
-                    // 合宿在籍数(MT-一段階)
-                    data.LodgingMtFstRegAmt +=
-                        targetTraineeLodging.Where(
-                            x => x.CancelFlg == false
-                            && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                            && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
-                    // 合宿在籍数(MT-二段階)
-                    data.LodgingMtSndRegAmt +=
-                        targetTraineeLodging.Where(
-                            x => x.CancelFlg == false
-                            && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                            && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
-                    // 合宿在籍数(AT-一段階)
-                    data.LodgingAtFstRegAmt += 
-                        targetTraineeLodging.Where(
-                            x => x.CancelFlg == false
-                            && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                            && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
-                    // 合宿在籍数(AT-二段階)
-                    data.LodgingAtSndRegAmt +=
-                        targetTraineeLodging.Where(
-                            x => x.CancelFlg == false
-                            && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                            && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
-                }
-
-                // 引数の通学教習生情報が設定されている、かつキャンセルでない場合は在籍数を加算
-                if (targetTraineeCommuting != null && targetTraineeCommuting.CancelFlg == false)
-                {
-                    // 通学在籍数(MT-一段階)
-                    if (AppConstant.TRAINING_COURSE_CD_MT.Equals(targetTraineeCommuting.TrainingCourseCd)
-                        && targetTraineeCommuting.EntrancePlanDate <= day && day < targetTraineeCommuting.TmpLicencePlanDate)
-                    {
-                        data.CommutingMtFstRegAmt++;
-                    }
-                    // 通学在籍数(MT-二段階)
-                    if (AppConstant.TRAINING_COURSE_CD_MT.Equals(targetTraineeCommuting.TrainingCourseCd)
-                        && targetTraineeCommuting.TmpLicencePlanDate <= day && day <= targetTraineeCommuting.GraduatePlanDate)
-                    {
-                        data.CommutingMtSndRegAmt++;
-                    }
-                    // 通学在籍数(AT-一段階)
-                    if (AppConstant.TRAINING_COURSE_CD_AT.Equals(targetTraineeCommuting.TrainingCourseCd)
-                        && targetTraineeCommuting.EntrancePlanDate <= day && day < targetTraineeCommuting.TmpLicencePlanDate)
-                    {
-                        data.CommutingAtFstRegAmt++;
-                    }
-                    // 通学在籍数(AT-二段階)
-                    if (AppConstant.TRAINING_COURSE_CD_AT.Equals(targetTraineeCommuting.TrainingCourseCd)
-                        && targetTraineeCommuting.TmpLicencePlanDate <= day && day <= targetTraineeCommuting.GraduatePlanDate)
-                    {
-                        data.CommutingAtSndRegAmt++;
-                    }
-                }
 
                 chartData.Add(data);
             }
