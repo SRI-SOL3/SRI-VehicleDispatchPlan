@@ -133,12 +133,12 @@ namespace VehicleDispatchPlan.Commons
                 // ②-1.【合宿】受入可能人数/日を加算  ※①-1が0の場合は加算しない
                 if (ldgTraineeReqClasses != 0)
                 {
-                    acceptLodgingMaxAmt = acceptLodgingMaxAmt + ((dailySumClasses / ldgTraineeReqClasses) * (dailyClasses.LodgingRatio / 100));
+                    acceptLodgingMaxAmt += (dailySumClasses / ldgTraineeReqClasses) * (dailyClasses.LodgingRatio / 100);
                 }
                 // ②-2.【通学】受入可能人数/日を加算  ※①-2が0の場合は加算しない
                 if (cmtTraineeReqClasses != 0)
                 {
-                    acceptCommutingMaxAmt = acceptCommutingMaxAmt + ((dailySumClasses / cmtTraineeReqClasses) * (dailyClasses.CommutingRatio / 100));
+                    acceptCommutingMaxAmt += (dailySumClasses / cmtTraineeReqClasses) * (dailyClasses.CommutingRatio / 100);
                 }
 
                 // --------------------
@@ -170,8 +170,8 @@ namespace VehicleDispatchPlan.Commons
                 // ３．受入累積数
                 // --------------------
                 // 受入累積数を加算
-                acceptLodgingSumAmt = acceptLodgingSumAmt + traineeLodging.Where(x => x.EntrancePlanDate.Equals(day)).Count();
-                acceptCommutingSumAmt = acceptCommutingSumAmt + traineeCommuting.Where(x => x.EntrancePlanDate.Equals(day)).Count();
+                acceptLodgingSumAmt += traineeLodging.Where(x => x.EntrancePlanDate.Equals(day)).Count();
+                acceptCommutingSumAmt += traineeCommuting.Where(x => x.EntrancePlanDate.Equals(day)).Count();
                 // グラフデータに設定
                 data.AcceptLodgingSumAmt = acceptLodgingSumAmt;
                 data.AcceptCommutingSumAmt = acceptCommutingSumAmt;
@@ -180,63 +180,71 @@ namespace VehicleDispatchPlan.Commons
                 // 在籍見込数
                 // --------------------
                 // 合宿在籍見込数(MT-一段階)（教習がMTかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
-                data.LodgingMtFstRegAmt = traineeLodging.Where(
-                    x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                    && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
+                data.LodgingMtFstRegAmt = 
+                    traineeLodging.Where(
+                        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
+                        && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
                 // 合宿在籍見込数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
-                data.LodgingMtSndRegAmt = traineeLodging.Where(
-                    x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                    && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
+                data.LodgingMtSndRegAmt = 
+                    traineeLodging.Where(
+                        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
+                        && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
                 // 合宿在籍見込数(AT-一段階)（教習がATかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
-                data.LodgingAtFstRegAmt = traineeLodging.Where(
-                    x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                    && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
+                data.LodgingAtFstRegAmt = 
+                    traineeLodging.Where(
+                        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
+                        && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
                 // 合宿在籍見込数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
-                data.LodgingAtSndRegAmt = traineeLodging.Where(
-                    x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                    && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
+                data.LodgingAtSndRegAmt = 
+                    traineeLodging.Where(
+                        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
+                        && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
 
                 // 通学在籍見込数(MT-一段階)（教習がMTかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
-                data.CommutingMtFstRegAmt = traineeCommuting.Where(
-                    x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                    && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
+                data.CommutingMtFstRegAmt = 
+                    traineeCommuting.Where(
+                        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
+                        && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
                 // 通学在籍見込数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
-                data.CommutingMtFstRegAmt = traineeCommuting.Where(
-                    x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                    && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
+                data.CommutingMtFstRegAmt = 
+                    traineeCommuting.Where(
+                        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
+                        && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
                 // 通学在籍見込数(AT-一段階)（教習がATかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
-                data.CommutingAtFstRegAmt = traineeCommuting.Where(
-                    x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                    && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
+                data.CommutingAtFstRegAmt = 
+                    traineeCommuting.Where(
+                        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
+                        && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
                 // 通学在籍見込数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
-                data.CommutingAtSndRegAmt = traineeCommuting.Where(
-                    x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                    && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
+                data.CommutingAtSndRegAmt = 
+                    traineeCommuting.Where(
+                        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
+                        && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
 
                 // 引数の合宿教習生情報が設定されている場合は在籍数を加算
                 if (targetTraineeLodging != null)
                 {
                     // 合宿在籍数(MT-一段階)
-                    data.LodgingMtFstRegAmt = data.LodgingMtFstRegAmt
-                        + targetTraineeLodging.Where(
+                    data.LodgingMtFstRegAmt +=
+                        targetTraineeLodging.Where(
                             x => x.CancelFlg == false
                             && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                             && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
                     // 合宿在籍数(MT-二段階)
-                    data.LodgingMtSndRegAmt = data.LodgingMtSndRegAmt
-                        + targetTraineeLodging.Where(
+                    data.LodgingMtSndRegAmt +=
+                        targetTraineeLodging.Where(
                             x => x.CancelFlg == false
                             && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                             && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
                     // 合宿在籍数(AT-一段階)
-                    data.LodgingAtFstRegAmt = data.LodgingAtFstRegAmt
-                        + targetTraineeLodging.Where(
+                    data.LodgingAtFstRegAmt += 
+                        targetTraineeLodging.Where(
                             x => x.CancelFlg == false
                             && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                             && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
                     // 合宿在籍数(AT-二段階)
-                    data.LodgingAtSndRegAmt = data.LodgingAtSndRegAmt
-                        + targetTraineeLodging.Where(
+                    data.LodgingAtSndRegAmt +=
+                        targetTraineeLodging.Where(
                             x => x.CancelFlg == false
                             && x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                             && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
