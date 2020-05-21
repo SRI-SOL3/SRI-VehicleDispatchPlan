@@ -179,10 +179,8 @@ namespace VehicleDispatchPlan.Controllers
             // 登録ボタンが押下された場合
             else if (AppConstant.CMD_REGIST.Equals(cmd))
             {
-                // グループIDの最大値を取得
-                int? maxGroupId = db.TraineeLodging.Select(x => x.GroupId).Max();
-                // グループIDを加算
-                int groupId = maxGroupId == null ? 1 : (int)maxGroupId + 1;
+                // グループIDの最大値+1を取得
+                int groupId = db.TraineeLodging.Count() > 0 ? db.TraineeLodging.Select(x => x.GroupId).Max() + 1 : 1;
                 // 外部キーマスタのリセット＆グループIDの設定
                 traineeReg.TraineeList.ForEach(x => {
                     x.GroupId = groupId;
