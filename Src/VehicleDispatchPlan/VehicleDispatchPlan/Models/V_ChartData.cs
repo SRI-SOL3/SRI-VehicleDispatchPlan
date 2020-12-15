@@ -19,11 +19,44 @@ namespace VehicleDispatchPlan.Models
         /// <summary>日付</summary>
         public DateTime Date { get; set; }
 
+        /// <summary>日付(文字列) ※グラフ横軸用</summary>
+        public string DateMd
+        {
+            get
+            {
+                return this.Date.ToString("M/d");
+            }
+        }
+
+        // --------------------
+        // 受入可能残数
+        // --------------------
+        /// <summary>当期受入可能残数</summary>
+        public double AcceptTotalRemAmt
+        {
+            get
+            {
+                return Math.Round(this.AcceptLodgingRemAmt + this.AcceptCommutingRemAmt, 1);
+            }
+        }
+
+        /// <summary>当期合宿受入可能残数</summary>
+        public double AcceptLodgingRemAmt { get; set; }
+
+        /// <summary>当期通学受入可能残数</summary>
+        public double AcceptCommutingRemAmt { get; set; }
+
+        // --------------------
+        // 在籍最大数
+        // --------------------
         /// <summary>当日在籍最大数</summary>
-        public double DailyTotalMaxAmt { 
-            get { 
-                return Math.Round(this.DailyLodgingMaxAmt + this.DailyCommutingMaxAmt, 1); 
-            } }
+        public double DailyTotalMaxAmt
+        {
+            get
+            {
+                return Math.Round(this.DailyLodgingMaxAmt + this.DailyCommutingMaxAmt, 1);
+            }
+        }
 
         /// <summary>当日合宿在籍最大数</summary>
         public double DailyLodgingMaxAmt { get; set; }
@@ -31,56 +64,40 @@ namespace VehicleDispatchPlan.Models
         /// <summary>当日通学在籍最大数</summary>
         public double DailyCommutingMaxAmt { get; set; }
 
-        /// <summary>当期受入最大数</summary>
-        public double AcceptTotalMaxAmt {
-            get {
-                return Math.Round(this.AcceptLodgingMaxAmt + this.AcceptCommutingMaxAmt, 1);
-            } }
-
-        /// <summary>当期合宿受入最大数</summary>
-        public double AcceptLodgingMaxAmt { get; set; }
-
-        /// <summary>当期通学受入最大数</summary>
-        public double AcceptCommutingMaxAmt { get; set; }
-
-        /// <summary>当期受入累積数</summary>
-        public int AcceptTotalSumAmt { 
-            get { 
-                return this.AcceptLodgingSumAmt + this.AcceptCommutingSumAmt; 
-            } }
-
-        /// <summary>当期合宿受入累積数</summary>
-        public int AcceptLodgingSumAmt { get; set; }
-
-        /// <summary>当期通学受入累積数</summary>
-        public int AcceptCommutingSumAmt { get; set; }
-
-        /// <summary>当期受入可能残数</summary>
-        public double AcceptTotalRemAmt { 
-            get { 
-                return Math.Round(this.AcceptTotalMaxAmt - this.AcceptTotalSumAmt, 1); 
-            } }
-
-        /// <summary>当期合宿受入可能残数</summary>
-        public double AcceptLodgingRemAmt {
-            get { 
-                return Math.Round(this.AcceptLodgingMaxAmt - this.AcceptLodgingSumAmt, 1); 
-            } }
-
-        /// <summary>当期合宿受入可能残数</summary>
-        public double AcceptCommutingRemAmt { 
-            get { 
-                return Math.Round(this.AcceptCommutingMaxAmt - this.AcceptCommutingSumAmt, 1);
-            } }
-
+        // --------------------
+        // 在籍数
+        // --------------------
         /// <summary>総在籍数</summary>
-        public int TotalRegAmt { 
-            get { 
-                return this.LodgingMtFstRegAmt + this.LodgingMtSndRegAmt 
+        public int TotalRegAmt
+        {
+            get
+            {
+                return this.LodgingMtFstRegAmt + this.LodgingMtSndRegAmt
                     + this.LodgingAtFstRegAmt + this.LodgingAtSndRegAmt
                     + this.CommutingMtFstRegAmt + this.CommutingMtSndRegAmt
-                    + this.CommutingAtFstRegAmt + this.CommutingAtSndRegAmt; 
-            } }
+                    + this.CommutingAtFstRegAmt + this.CommutingAtSndRegAmt;
+            }
+        }
+
+        /// <summary>合宿在籍数</summary>
+        public int LodgingRegAmt
+        {
+            get
+            {
+                return this.LodgingMtFstRegAmt + this.LodgingMtSndRegAmt
+                    + this.LodgingAtFstRegAmt + this.LodgingAtSndRegAmt;
+            }
+        }
+
+        /// <summary>通学在籍数</summary>
+        public int CommutingRegAmt
+        {
+            get
+            {
+                return this.CommutingMtFstRegAmt + this.CommutingMtSndRegAmt
+                    + this.CommutingAtFstRegAmt + this.CommutingAtSndRegAmt;
+            }
+        }
 
         /// <summary>合宿在籍数(MT-一段階)</summary>
         public int LodgingMtFstRegAmt { get; set; }
@@ -105,5 +122,8 @@ namespace VehicleDispatchPlan.Models
 
         /// <summary>通学在籍数(AT-二段階)</summary>
         public int CommutingAtSndRegAmt { get; set; }
+
+        /// <summary>残コマ数/週</summary>
+        public double WeeklyRemClasses { get; set; }
     }
 }

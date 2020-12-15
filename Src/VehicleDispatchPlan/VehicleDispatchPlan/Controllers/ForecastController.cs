@@ -29,8 +29,7 @@ namespace VehicleDispatchPlan.Controllers
         /// <param name="cmd">コマンド</param>
         /// <param name="forecastCht">受入予測図表</param>
         /// <returns></returns>
-        public ActionResult Chart(string cmd
-            , [Bind(Include = "PlanDateFrom,PlanDateTo,TotalRemFlg,TotalMaxFlg,TotalRegFlg,LodgingRemFlg,LodgingMaxFlg,LodgingRegFlg,CommutingRemFlg,CommutingMaxFlg,CommutingRegFlg,ChartData")] V_ForecastCht forecastCht)
+        public ActionResult Chart(string cmd, [Bind(Include = "PlanDateFrom,PlanDateTo,ChartData")] V_ForecastCht forecastCht)
         {
             Trace.WriteLine("GET /Forecast/Chart");
 
@@ -45,17 +44,6 @@ namespace VehicleDispatchPlan.Controllers
             // コマンドが空（初回表示）の場合
             if (string.IsNullOrEmpty(cmd))
             {
-                // 各グラフ表示フラグをtrueに設定
-                forecastCht.TotalRemFlg = true;
-                forecastCht.TotalMaxFlg = true;
-                forecastCht.TotalRegFlg = true;
-                forecastCht.LodgingRemFlg = true;
-                forecastCht.LodgingMaxFlg = true;
-                forecastCht.LodgingRegFlg = true;
-                forecastCht.CommutingRemFlg = true;
-                forecastCht.CommutingMaxFlg = true;
-                forecastCht.CommutingRegFlg = true;
-
                 // 入力チェック
                 if (forecastCht.PlanDateFrom == null || forecastCht.PlanDateTo == null)
                 {
@@ -100,15 +88,8 @@ namespace VehicleDispatchPlan.Controllers
                 // 日別設定画面から遷移するための日付From/ToをTempDataに設定
                 TempData[AppConstant.TEMP_KEY_DATE_FROM] = forecastCht.PlanDateFrom;
                 TempData[AppConstant.TEMP_KEY_DATE_TO] = forecastCht.PlanDateTo;
-                Utility utility = new Utility();
                 // グラフデータを作成
-                forecastCht.ChartData = utility.GetChartData(db, (DateTime)forecastCht.PlanDateFrom, (DateTime)forecastCht.PlanDateTo, null, null);
-                // グラフを生成（各表示フラグはnullの場合、trueとする）
-                ViewBag.ChartPath = utility.GetChartPath(
-                    ((DateTime)forecastCht.PlanDateFrom).Year.ToString(), ((DateTime)forecastCht.PlanDateTo).Month.ToString(), forecastCht.ChartData
-                    , forecastCht.TotalRemFlg, forecastCht.LodgingRemFlg, forecastCht.CommutingRemFlg
-                    , forecastCht.TotalMaxFlg, forecastCht.LodgingMaxFlg, forecastCht.CommutingMaxFlg
-                    , forecastCht.TotalRegFlg, forecastCht.LodgingRegFlg, forecastCht.CommutingRegFlg);
+                forecastCht.ChartData = new Utility().GetChartData(db, (DateTime)forecastCht.PlanDateFrom, (DateTime)forecastCht.PlanDateTo, null, null);
             }
 
             return View(forecastCht);

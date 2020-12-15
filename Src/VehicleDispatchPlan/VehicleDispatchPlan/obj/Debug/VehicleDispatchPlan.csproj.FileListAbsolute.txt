@@ -93,6 +93,3 @@ C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\Vehi
 C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.pdb
 C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.Migrations.Initial.resources
 C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.csproj.GenerateResource.cache
-C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.Migrations.DropForecast.resources
-C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.Migrations.AddForeignDailyClasses.resources
-C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Debug\VehicleDispatchPlan.Migrations.AddForeignEntGrdCalendar.resources
