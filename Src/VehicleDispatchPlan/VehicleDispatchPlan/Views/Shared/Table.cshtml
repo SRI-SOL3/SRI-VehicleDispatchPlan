@@ -2,61 +2,136 @@
 @using VehicleDispatchPlan.Models;
 @using VehicleDispatchPlan.Constants;
 
+<style>
+    @* ツールチップ *@
+    .tooltip-inner{
+        max-width: 100%;
+        text-align: left;
+        -ms-writing-mode:lr-tb;
+        writing-mode:horizontal-tb;
+        white-space:nowrap;
+    }
+    @* テーブル *@
+    .table-reversed{
+        table-layout: fixed;
+        -ms-writing-mode: tb-lr;
+        writing-mode: vertical-lr;
+    }
+    .table-reversed-head{
+        table-layout: fixed;
+        -ms-writing-mode: tb-lr;
+        writing-mode: vertical-lr;
+    }
+    .table-reversed-head > tbody {
+        background-color: #eeeeee;
+    }
+    .table-reversed > tbody > tr > th {
+        width: 40px;
+        min-width: 40px;
+    }
+    .table-reversed-head > tbody > tr > th,
+    .table-reversed-head > tbody > tr > td {
+        border-color: #bbbbbb;
+    }
+    .table-reversed-head > tbody > tr > th > span,
+    .table-reversed-head > tbody > tr > td > span,
+    .table-reversed > tbody > tr > th > span,
+    .table-reversed > tbody > tr > td > span {
+        -ms-writing-mode: lr-tb;
+        writing-mode: horizontal-tb;
+        white-space: nowrap;
+        display: inline-block;
+    }
+    .table-reversed-head > tbody > tr > th,
+    .table-reversed-head > tbody > tr > td,
+    .table-reversed > tbody > tr > th,
+    .table-reversed > tbody > tr > td {
+        text-align: center;
+    }
+    .span-reversed{
+        -ms-writing-mode:lr-tb;
+        writing-mode:horizontal-tb;
+        white-space:nowrap;
+        display:inline-block;
+    }
+</style>
+
 @* 日付毎に行を生成してから、行列を置換している（表示上は日付が列になる） *@
-<table align="left" style="table-layout: fixed; -ms-writing-mode: tb-lr; writing-mode: vertical-lr;" class="table-bordered">
-    <tbody style="background-color: #eeeeee;">
+<table align="left" class="table-reversed-head table-bordered">
+    <tbody>
         <tr>
-            <th width="200" rowspan="3" style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode: lr-tb; writing-mode: horizontal-tb; white-space: nowrap;">日付</span></th>
-            <th colspan="3" style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">受入残</span></th>
-            <th colspan="3" style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">在籍可能</span></th>
-            <th colspan="9" style="text-align: center; border-color: #bbbbbb; "><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">在籍見込</span></th>
-            <th rowspan="3" style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">週残時間数</span></th>
+            <th width="200" rowspan="3"><span>日付</span></th>
+            <th colspan="3">
+                <span title="<p><b>対象の日における受入（入校）が可能な残人数。</b></p><p>【計算例】</br>実車教習の総コマ数/期間：<b>2000コマ/日</b></br>教習生一人が卒業までに必要な平均コマ数：<b>22コマ</b></p><p>受入可能人数/期間：<b>2000÷22＝90.9人</b>　※この数字から日毎に入校人数が引かれていく</p>" data-toggle="tooltip" data-html="true">受入残人数<sup>※</sup></span>
+            </th>
+            <th colspan="3">
+                <span title="<p><b>対象の日に在籍ができる教習生の人数。</b></p><p>【計算例】</br>実車教習の総コマ数/日：<b>72コマ/日</b></br>教習生一人当たりの実車教習平均コマ数/日：<b>1.8コマ/日</b></p><p><b>72÷1.8＝40人</b></p>" data-toggle="tooltip" data-html="true">在籍可能数<sup>※</sup></span>
+            </th>
+            <th colspan="11">
+                <span title="<p><b>対象の日に在籍している教習生の人数。</b></p><p>【例】合宿教習生管理にて下記の教習生を登録した場合<ul><li>教習コース：MT</li><li>入校予定日：2/1</li><li>仮免予定日：2/9</li><li>卒業予定日：2/17</li></ul></p><p><b>2/1～2/8</b>は<b>MT-1</b>(一段階)</br><b>2/9～2/17</b>は<b>MT-2</b>(二段階)</br>として在籍にカウントされる。</p>" data-toggle="tooltip" data-html="true">在籍数<sup>※</sup></span>
+            </th>
+            <th rowspan="3">
+                <span title="<p>対象の日における実車教習の残コマ数。</p><p>【計算】実車教習の総コマ数/日－合宿教習生が消化するコマ数/日</p>" data-toggle="tooltip" data-html="true">残コマ数/日<sup>※</sup></span>
+            </th>
+            <th rowspan="3">
+                <span title="<p>対象の週における実車教習の総残コマ数。</p><p>【計算】実車教習の総コマ数/週－合宿教習生が消化するコマ数/週</p><p>※検索期間からはみ出している箇所も1週間分の残コマ数を表示している</p>" data-toggle="tooltip" data-html="true">残コマ数/週<sup>※</sup></span>
+            </th>
+            <th rowspan="3">
+                <span title="<p>検索期間内における実車教習の総残コマ数。</p><p>※残コマ数/日の総和</p>" data-toggle="tooltip" data-html="true">残コマ数/期間<sup>※</sup></span>
+            </th>
         </tr>
         <tr>
-            <!--受入残-->
-            <th rowspan="2" style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">総数</span></th>
-            <th rowspan="2" style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">合宿</span></th>
-            <th rowspan="2" style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">通学</span></th>
-            <!--在籍可能-->
-            <th rowspan="2" style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">総数</span></th>
-            <th rowspan="2" style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">合宿</span></th>
-            <th rowspan="2" style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">通学</span></th>
-            <!--在籍見込-->
-            <th rowspan="2" style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">総数</span></th>
-            <th colspan="4" style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">合宿</span></th>
-            <th colspan="4" style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">通学</span></th>
+            <!--受入残人数-->
+            <th rowspan="2"><span>総計</span></th>
+            <th rowspan="2"><span>合宿</span></th>
+            <th rowspan="2"><span>通学</span></th>
+            <!--在籍可能数-->
+            <th rowspan="2"><span>総計</span></th>
+            <th rowspan="2"><span>合宿</span></th>
+            <th rowspan="2"><span>通学</span></th>
+            <!--在籍数-->
+            <th rowspan="2"><span>総計</span></th>
+            <th colspan="5"><span>合宿</span></th>
+            <th colspan="5"><span>通学</span></th>
         </tr>
         <tr>
-            <!--在籍見込(合宿)-->
-            <th style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">MT-1</span></th>
-            <th style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">MT-2</span></th>
-            <th style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">AT-1</span></th>
-            <th style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">AT-2</span></th>
-            <!--在籍見込(通学)-->
-            <th style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">MT-1</span></th>
-            <th style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">MT-2</span></th>
-            <th style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">AT-1</span></th>
-            <th style="text-align: center; border-color: #bbbbbb;"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">AT-2</span></th>
+            <!--在籍数(合宿)-->
+            <th><span>小計</span></th>
+            <td><span>MT-1</span></td>
+            <td><span>MT-2</span></td>
+            <td><span>AT-1</span></td>
+            <td><span>AT-2</span></td>
+            <!--在籍数(通学)-->
+            <th><span>小計</span></th>
+            <td><span>MT-1</span></td>
+            <td><span>MT-2</span></td>
+            <td><span>AT-1</span></td>
+            <td><span>AT-2</span></td>
         </tr>
     </tbody>
 </table>
 
 <div class="row" style="overflow-x: auto;">
-    <table style="table-layout: fixed; -ms-writing-mode: tb-lr; writing-mode: vertical-lr;" class="table-bordered table-hover">
+    <table class="table-reversed table-bordered table-hover">
         <tbody>
             @{
+                int i = 0;
                 foreach (V_ChartData item in Model)
                 {
+                    i++;
+
                     // 枠線
                     string border = "";
                     // 背景色
-                    string background = "";
+                    string background = "background:rgb(245, 245, 245);";
+                    // 曜日
+                    DayOfWeek dayOfWeek = item.Date.DayOfWeek;
                     // 曜日によってスタイルを設定
-                    switch (item.Date.DayOfWeek)
+                    switch (dayOfWeek)
                     {
                         // 日曜の場合
                         case DayOfWeek.Sunday:
-                            border = "border-left:solid 2px;border-left-color:#aaaaaa;";
+                            border = "border-left:solid 2px; border-left-color:#aaaaaa;";
                             background = "background:rgb(255, 190, 220);";
                             break;
                         // 土曜の場合
@@ -68,54 +143,75 @@
                             break;
                     }
 
-                    <tr >
-                        @* 日付 *@
+                    <tr>
                         @{
                             bool isLink = (bool?)TempData.Peek(AppConstant.TEMP_KEY_IS_LINK) ?? false;
                             // TempDataの日付From/Toが設定されている場合はActionLinkで設定
                             if (isLink == true)
                             {
-                                <th style="width:40px; min-width:40px; text-align:center;@border @background"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@Html.ActionLink(item.Date.ToString("M/d"), "../DailyParameter/Edit", new { SearchDate = item.Date })</span></th>
+                                @* 日付 *@
+                                <th style="@border @background"><span>@Html.ActionLink(item.Date.ToString("M/d"), "../DailyParameter/Edit", new { SearchDate = item.Date })</span></th>
                             }
                             else
                             {
-                                <th style="width:40px; min-width:40px; text-align:center;@border @background"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.Date.ToString("M/d")</span></th>
+                                @* 日付 *@
+                                <th style="@border @background"><span>@item.Date.ToString("M/d")</span></th>
                             }
                         }
-                        @* 受入残 - 総数 *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.AcceptTotalRemAmt</span></td>
-                        @* 受入残 - 合宿 *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.AcceptLodgingRemAmt</span></td>
-                        @* 受入残 - 通学 *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.AcceptCommutingRemAmt</span></td>
-                        @* 在籍最大 - 総数 *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.DailyTotalMaxAmt</span></td>
-                        @* 在籍最大 - 合宿 *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.DailyLodgingMaxAmt</span></td>
-                        @* 在籍最大 - 通学 *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.DailyCommutingMaxAmt</span></td>
-                        @* 在籍実績 - 総数 *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.TotalRegAmt</span></td>
-                        @* 在籍実績 - 合宿(MT-1) *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.LodgingMtFstRegAmt</span></td>
-                        @* 在籍実績 - 合宿(MT-2) *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.LodgingMtSndRegAmt</span></td>
-                        @* 在籍実績 - 合宿(AT-1) *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.LodgingAtFstRegAmt</span></td>
-                        @* 在籍実績 - 合宿(AT-2) *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.LodgingAtSndRegAmt</span></td>
-                        @* 在籍実績 - 通学(MT-1) *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.CommutingMtFstRegAmt</span></td>
-                        @* 在籍実績 - 通学(MT-2) *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.CommutingMtSndRegAmt</span></td>
-                        @* 在籍実績 - 通学(AT-1) *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.CommutingAtFstRegAmt</span></td>
-                        @* 在籍実績 - 通学(AT-2) *@
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.CommutingAtSndRegAmt</span></td>
-                        <td style="text-align: center;@border"><span style="-ms-writing-mode:lr-tb;writing-mode:horizontal-tb;white-space:nowrap;">@item.WeeklyRemClasses</span></td>
+                        @* 受入残人数 - 総数 *@
+                        <td style="@border"><span>@item.AcceptTotalRemAmt</span></td>
+                        @* 受入残人数 - 合宿 *@
+                        <td style="@border"><span>@item.AcceptLodgingRemAmt</span></td>
+                        @* 受入残人数 - 通学 *@
+                        <td style="@border"><span>@item.AcceptCommutingRemAmt</span></td>
+                        @* 在籍可能数 - 総数 *@
+                        <td style="@border"><span>@item.DailyTotalMaxAmt</span></td>
+                        @* 在籍可能数 - 合宿 *@
+                        <td style="@border"><span>@item.DailyLodgingMaxAmt</span></td>
+                        @* 在籍可能数 - 通学 *@
+                        <td style="@border"><span>@item.DailyCommutingMaxAmt</span></td>
+                        @* 在籍数 - 総数 *@
+                        <td style="@border"><span>@item.TotalRegAmt</span></td>
+                        @* 在籍数 - 合宿(小計) *@
+                        <td style="@border"><span>@item.LodgingRegAmt</span></td>
+                        @* 在籍数 - 合宿(MT-1) *@
+                        <td style="@border"><span>@item.LodgingMtFstRegAmt</span></td>
+                        @* 在籍数 - 合宿(MT-2) *@
+                        <td style="@border"><span>@item.LodgingMtSndRegAmt</span></td>
+                        @* 在籍数 - 合宿(AT-1) *@
+                        <td style="@border"><span>@item.LodgingAtFstRegAmt</span></td>
+                        @* 在籍数 - 合宿(AT-2) *@
+                        <td style="@border"><span>@item.LodgingAtSndRegAmt</span></td>
+                        @* 在籍数 - 通学(小計) *@
+                        <td style="@border"><span>@item.CommutingRegAmt</span></td>
+                        @* 在籍数 - 通学(MT-1) *@
+                        <td style="@border"><span>@item.CommutingMtFstRegAmt</span></td>
+                        @* 在籍数 - 通学(MT-2) *@
+                        <td style="@border"><span>@item.CommutingMtSndRegAmt</span></td>
+                        @* 在籍数 - 通学(AT-1) *@
+                        <td style="@border"><span>@item.CommutingAtFstRegAmt</span></td>
+                        @* 在籍数 - 通学(AT-2) *@
+                        <td style="@border"><span>@item.CommutingAtSndRegAmt</span></td>
+                        @* 残コマ数/日 *@
+                        <td style="@border"><span>@item.DailyRemClasses</span></td>
+
+                        @{
+                            if (i == 1 || DayOfWeek.Sunday.Equals(dayOfWeek))
+                            {
+                                @* 残コマ数/週 *@
+                                <td rowspan="@(7 - (int)dayOfWeek)" style="@border"><span>@item.WeeklyRemClasses</span></td>
+                            }
+
+                            if (i == 1)
+                            {
+                                @* 残コマ数/期間 *@
+                                <td rowspan="@Model.Count" style="@border"><span>@Model.Sum(x => x.DailyRemClasses)</span></td>
+                            }
+                        }
                     </tr>
                 }
             }
-            </tbody>
+        </tbody>
     </table>
 </div>
+<span style="font-size: smaller;">※ ツールチップにより説明を表示できます。</span>

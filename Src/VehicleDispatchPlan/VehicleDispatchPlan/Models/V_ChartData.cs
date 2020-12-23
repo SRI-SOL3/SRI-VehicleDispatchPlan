@@ -123,6 +123,9 @@ namespace VehicleDispatchPlan.Models
         /// <summary>通学在籍数(AT-二段階)</summary>
         public int CommutingAtSndRegAmt { get; set; }
 
+        /// <summary>残コマ数/日</summary>
+        public double DailyRemClasses { get; set; }
+
         /// <summary>残コマ数/週</summary>
         public double WeeklyRemClasses { get; set; }
     }

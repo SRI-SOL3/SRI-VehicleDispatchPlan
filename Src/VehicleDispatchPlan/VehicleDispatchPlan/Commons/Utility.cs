@@ -124,10 +124,11 @@ namespace VehicleDispatchPlan.Commons
             // 在籍可能数/日（週平均）
             Dictionary<DateTime, double> dailyLodgingMaxAmtDic = new Dictionary<DateTime, double>();
             Dictionary<DateTime, double> dailyCommutingMaxAmtDic = new Dictionary<DateTime, double>();
+            // 残コマ数/日
+            double dailyRemClasses = 0;
             // 残コマ数/週
+            double weeklyRemClasses = 0;
             Dictionary<DateTime, double> weeklyRemClassesDic = new Dictionary<DateTime, double>();
-            // 消化コマ累積数
-            Dictionary<DateTime, double> weeklyCsmClassesDic = new Dictionary<DateTime, double>();
 
             for (DateTime day = sunFrom; day <= satTo; day = day.AddDays(1))
             {
@@ -168,70 +169,75 @@ namespace VehicleDispatchPlan.Commons
                 }
 
                 // --------------------
-                // 在籍見込数
+                // 在籍数
                 // --------------------
-                // 合宿在籍見込数(MT-一段階)（教習がMTかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
+                // 合宿在籍数(MT-一段階)（教習がMTかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
                 int lodgingMtFstRegAmt =
                     traineeLodging.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                         && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
-                // 合宿在籍見込数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
+                // 合宿在籍数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
                 int lodgingMtSndRegAmt =
                     traineeLodging.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                         && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
-                // 合宿在籍見込数(AT-一段階)（教習がATかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
+                // 合宿在籍数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日未満）※卒業予定者を含まない
+                int lodgingMtRegAmtExceptGraduate =
+                    traineeLodging.Where(
+                        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
+                        && x.TmpLicencePlanDate <= day && day < x.GraduatePlanDate).Count();
+                // 合宿在籍数(AT-一段階)（教習がATかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
                 int lodgingAtFstRegAmt =
                     traineeLodging.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                         && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
-                // 合宿在籍見込数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
+                // 合宿在籍数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
                 int lodgingAtSndRegAmt =
                     traineeLodging.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                         && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
-
-                // 通学在籍見込数(MT-一段階)（教習がMTかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
+                // 合宿在籍数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日未満）※卒業予定者を含まない
+                int lodgingAtRegAmtExceptGraduate =
+                    traineeLodging.Where(
+                        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
+                        && x.TmpLicencePlanDate <= day && day < x.GraduatePlanDate).Count();
+                // 通学在籍数(MT-一段階)（教習がMTかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
                 int commutingMtFstRegAmt =
                     traineeCommuting.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                         && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
-                // 通学在籍見込数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
+                // 通学在籍数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
                 int commutingMtSndRegAmt =
                     traineeCommuting.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                         && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
-                // 通学在籍見込数(AT-一段階)（教習がATかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
+                // 通学在籍数(AT-一段階)（教習がATかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
                 int commutingAtFstRegAmt =
                     traineeCommuting.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                         && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
-                // 通学在籍見込数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
+                // 通学在籍数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
                 int commutingAtSndRegAmt =
                     traineeCommuting.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                         && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
 
                 // --------------------
-                // 当日の消化コマ数
+                // 当日の合宿生消化コマ数
                 // --------------------
-                // 合宿生のMT一段階コマ数/日 × 合宿生のMT一段階在籍見込数
-                // ＋ 合宿生のMT二段階コマ数/日 × 合宿生のMT二段階在籍見込数
-                // ＋ 合宿生のAT一段階コマ数/日 × 合宿生のAT一段階在籍見込数
-                // ＋ ・・・
-                // ＋ 通学生のAT二段階コマ数/日 × 通学生のAT二段階在籍見込数
-                double sumClasses = dailyClasses.LdgMtFstClassDay * lodgingMtFstRegAmt
-                    + dailyClasses.LdgMtSndClassDay * lodgingMtSndRegAmt
+                // 合宿生のMT一段階コマ数/日 × 合宿生のMT一段階在籍数
+                // ＋ 合宿生のMT二段階コマ数/日 × 合宿生のMT二段階在籍数（卒業予定者を含まない）
+                // ＋ 合宿生のAT一段階コマ数/日 × 合宿生のAT一段階在籍数
+                // ＋ 合宿生のAT二段階コマ数/日 × 合宿生のAT二段階在籍数（卒業予定者を含まない）
+                double sumClasses =
+                    dailyClasses.LdgMtFstClassDay * lodgingMtFstRegAmt
+                    + dailyClasses.LdgMtSndClassDay * lodgingMtRegAmtExceptGraduate
                     + dailyClasses.LdgAtFstClassDay * lodgingAtFstRegAmt
-                    + dailyClasses.LdgAtSndClassDay * lodgingAtSndRegAmt
-                    + dailyClasses.CmtMtFstClassDay * commutingMtFstRegAmt
-                    + dailyClasses.CmtMtSndClassDay * commutingMtSndRegAmt
-                    + dailyClasses.CmtAtFstClassDay * commutingAtFstRegAmt
-                    + dailyClasses.CmtAtSndClassDay * commutingAtSndRegAmt;
-                // 前日までの消化コマ数
-                double beforeTotalClasses = weeklyCsmClassesDic.ContainsKey(day.AddDays(-1)) ? weeklyCsmClassesDic[day.AddDays(-1)] : 0;
-                // 当日の消化コマ数 + 前日までの消化コマ数
-                weeklyCsmClassesDic.Add(day, sumClasses + beforeTotalClasses);
+                    + dailyClasses.LdgAtSndClassDay * lodgingAtRegAmtExceptGraduate;
+                // 残コマ数/日
+                dailyRemClasses = Math.Round(dailySumClasses - sumClasses, 1);
+                // 残コマ数/週
+                weeklyRemClasses += dailyRemClasses;
 
                 // 土曜の場合
                 if (day.DayOfWeek.Equals(DayOfWeek.Saturday))
@@ -242,16 +248,14 @@ namespace VehicleDispatchPlan.Commons
                         // 週平均の在籍可能数を設定（在籍可能数/週 ÷ 7）
                         dailyLodgingMaxAmtDic.Add(tmpDay, weeklyLodgingSumAmt / 7);
                         dailyCommutingMaxAmtDic.Add(tmpDay, weeklyCommutingSumAmt / 7);
-                        // 対象の日付に残コマ数を設定（週合計総コマ数 － 消化コマ数）
-                        weeklyRemClassesDic.Add(tmpDay,
-                            trainerList.Where(x => day.AddDays(-6) <= x.Date && x.Date <= day).Select(x => x.Classes).Sum()
-                            - weeklyCsmClassesDic[tmpDay]);
+                        // 対象の日付に残コマ数/週を設定
+                        weeklyRemClassesDic.Add(tmpDay, weeklyRemClasses);
                     }
 
                     // 各変数をリセット
+                    weeklyRemClasses = 0; // 残コマ数/週
                     weeklyLodgingSumAmt = 0;  // 合宿在籍可能数/週
                     weeklyCommutingSumAmt = 0;  // 通学在籍可能数/週
-                    weeklyCsmClassesDic.Clear();  // 消化コマ累積数
                 }
 
                 // 日付が検索範囲内の場合、グラフデータを生成
@@ -296,25 +300,30 @@ namespace VehicleDispatchPlan.Commons
                     V_ChartData data = new V_ChartData { Date = day };
 
                     // --------------------
-                    // 在籍見込数
+                    // 在籍数
                     // --------------------
-                    // 合宿在籍見込数(MT-一段階)
+                    // 合宿在籍数(MT-一段階)
                     data.LodgingMtFstRegAmt = lodgingMtFstRegAmt;
-                    // 合宿在籍見込数(MT-二段階)
+                    // 合宿在籍数(MT-二段階)
                     data.LodgingMtSndRegAmt = lodgingMtSndRegAmt;
-                    // 合宿在籍見込数(AT-一段階)
+                    // 合宿在籍数(AT-一段階)
                     data.LodgingAtFstRegAmt = lodgingAtFstRegAmt;
-                    // 合宿在籍見込数(AT-二段階)
+                    // 合宿在籍数(AT-二段階)
                     data.LodgingAtSndRegAmt = lodgingAtSndRegAmt;
-
-                    // 通学在籍見込数(MT-一段階)
+                    // 通学在籍数(MT-一段階)
                     data.CommutingMtFstRegAmt = commutingMtFstRegAmt;
-                    // 通学在籍見込数(MT-二段階)
+                    // 通学在籍数(MT-二段階)
                     data.CommutingMtSndRegAmt = commutingMtSndRegAmt;
-                    // 通学在籍見込数(AT-一段階)
+                    // 通学在籍数(AT-一段階)
                     data.CommutingAtFstRegAmt = commutingAtFstRegAmt;
-                    // 通学在籍見込数(AT-二段階)
+                    // 通学在籍数(AT-二段階)
                     data.CommutingAtSndRegAmt = commutingAtSndRegAmt;
+
+                    // --------------------
+                    // 残コマ数/日
+                    // --------------------
+                    // 教習総コマ数/日 - 消化コマ数/日
+                    data.DailyRemClasses = dailyRemClasses;
 
                     chartData.Add(data);
                 }
