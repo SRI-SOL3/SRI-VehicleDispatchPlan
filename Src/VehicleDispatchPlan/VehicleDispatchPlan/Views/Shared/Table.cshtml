@@ -3,6 +3,7 @@
 @using VehicleDispatchPlan.Constants;
 
 <style>
+    @* TODO: 下記スタイルをbootstrap.cssに記載するか？ *@
     @* ツールチップ *@
     .tooltip-inner{
         max-width: 100%;
@@ -11,28 +12,33 @@
         writing-mode:horizontal-tb;
         white-space:nowrap;
     }
-    @* テーブル *@
+    @* テーブル（行列反転） *@
     .table-reversed{
         table-layout: fixed;
         -ms-writing-mode: tb-lr;
         writing-mode: vertical-lr;
     }
+    @* ヘッダテーブル（行列反転） *@
     .table-reversed-head{
         table-layout: fixed;
         -ms-writing-mode: tb-lr;
         writing-mode: vertical-lr;
     }
+    @* ヘッダテーブル背景色 *@
     .table-reversed-head > tbody {
         background-color: #eeeeee;
     }
+    @* テーブル項目幅 *@
     .table-reversed > tbody > tr > th {
         width: 40px;
         min-width: 40px;
     }
+    @* ヘッダテーブル枠線 *@
     .table-reversed-head > tbody > tr > th,
     .table-reversed-head > tbody > tr > td {
         border-color: #bbbbbb;
     }
+    @* テーブル各要素の文字反転 *@
     .table-reversed-head > tbody > tr > th > span,
     .table-reversed-head > tbody > tr > td > span,
     .table-reversed > tbody > tr > th > span,
@@ -47,12 +53,6 @@
     .table-reversed > tbody > tr > th,
     .table-reversed > tbody > tr > td {
         text-align: center;
-    }
-    .span-reversed{
-        -ms-writing-mode:lr-tb;
-        writing-mode:horizontal-tb;
-        white-space:nowrap;
-        display:inline-block;
     }
 </style>
 
@@ -70,14 +70,8 @@
             <th colspan="11">
                 <span title="<p><b>対象の日に在籍している教習生の人数。</b></p><p>【例】合宿教習生管理にて下記の教習生を登録した場合<ul><li>教習コース：MT</li><li>入校予定日：2/1</li><li>仮免予定日：2/9</li><li>卒業予定日：2/17</li></ul></p><p><b>2/1～2/8</b>は<b>MT-1</b>(一段階)</br><b>2/9～2/17</b>は<b>MT-2</b>(二段階)</br>として在籍にカウントされる。</p>" data-toggle="tooltip" data-html="true">在籍数<sup>※</sup></span>
             </th>
-            <th rowspan="3">
-                <span title="<p>対象の日における実車教習の残コマ数。</p><p>【計算】実車教習の総コマ数/日－合宿教習生が消化するコマ数/日</p>" data-toggle="tooltip" data-html="true">残コマ数/日<sup>※</sup></span>
-            </th>
-            <th rowspan="3">
-                <span title="<p>対象の週における実車教習の総残コマ数。</p><p>【計算】実車教習の総コマ数/週－合宿教習生が消化するコマ数/週</p><p>※検索期間からはみ出している箇所も1週間分の残コマ数を表示している</p>" data-toggle="tooltip" data-html="true">残コマ数/週<sup>※</sup></span>
-            </th>
-            <th rowspan="3">
-                <span title="<p>検索期間内における実車教習の総残コマ数。</p><p>※残コマ数/日の総和</p>" data-toggle="tooltip" data-html="true">残コマ数/期間<sup>※</sup></span>
+            <th colspan="3">
+                <span>残コマ数</span>
             </th>
         </tr>
         <tr>
@@ -93,6 +87,9 @@
             <th rowspan="2"><span>総計</span></th>
             <th colspan="5"><span>合宿</span></th>
             <th colspan="5"><span>通学</span></th>
+            <th rowspan="2"><span title="<p><b>対象の日における実車教習の残コマ数。</b></p><p>【計算】実車教習の総コマ数/日－合宿教習生が消化するコマ数/日</p>" data-toggle="tooltip" data-html="true">日<sup>※</sup></span></th>
+            <th rowspan="2"><span title="<p><b>対象の週における実車教習の総残コマ数。</b></p><p>【計算】実車教習の総コマ数/週－合宿教習生が消化するコマ数/週</p><p>※最初と最後の週は<b>表示されていない曜日も含めた1週間分</b>の残コマ数を表示している</p>" data-toggle="tooltip" data-html="true">週<sup>※</sup></span></th>
+            <th rowspan="2"><span title="<p><b>検索期間内における実車教習の総残コマ数。</b></p><p>※残コマ数/日の総和</p>" data-toggle="tooltip" data-html="true">期間<sup>※</sup></span></th>
         </tr>
         <tr>
             <!--在籍数(合宿)-->
