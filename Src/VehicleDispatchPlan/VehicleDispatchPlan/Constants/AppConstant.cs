@@ -50,24 +50,24 @@ namespace VehicleDispatchPlan.Constants
         /// <summary>コマンド_再表示</summary>
         public const string CMD_REDISPLAY = "再表示";
 
-        /// <summary>系統_総受入残数</summary>
-        public const string SERIES_TOTAL_REM_AMT = "総受入残数";
-        /// <summary>系統_合宿受入残数</summary>
-        public const string SERIES_LODGING_REM_AMT = "合宿受入残数";
-        /// <summary>系統_通学受入残数</summary>
-        public const string SERIES_COMMUTING_REM_AMT = "通学受入残数";
+        /// <summary>系統_総受入残人数</summary>
+        public const string SERIES_TOTAL_REM_AMT = "総受入残人数";
+        /// <summary>系統_合宿受入残人数</summary>
+        public const string SERIES_LODGING_REM_AMT = "合宿受入残人数";
+        /// <summary>系統_通学受入残人数</summary>
+        public const string SERIES_COMMUTING_REM_AMT = "通学受入残人数";
         /// <summary>系統_受入可能数</summary>
         public const string SERIES_TOTAL_MAX_AMT = "総在籍可能数";
         /// <summary>系統_合宿受入可能数</summary>
         public const string SERIES_LODGING_MAX_AMT = "合宿在籍可能数";
         /// <summary>系統_通学受入可能数</summary>
         public const string SERIES_COMMUTING_MAX_AMT = "通学在籍可能数";
-        /// <summary>系統_総在籍見込数</summary>
-        public const string SERIES_TOTAL_REG_AMT = "総在籍見込数";
-        /// <summary>系統_合宿在見込籍数</summary>
-        public const string SERIES_LODGING_REG_AMT = "合宿在籍見込数";
-        /// <summary>系統_通学在見込籍数</summary>
-        public const string SERIES_COMMUTING_REG_AMT = "通学在籍見込数";
+        /// <summary>系統_総在籍数</summary>
+        public const string SERIES_TOTAL_REG_AMT = "総在籍数";
+        /// <summary>系統_合宿在籍数</summary>
+        public const string SERIES_LODGING_REG_AMT = "合宿在籍数";
+        /// <summary>系統_通学在籍数</summary>
+        public const string SERIES_COMMUTING_REG_AMT = "通学在籍数";
 
         /// <summary>TempDataキー_日別設定遷移有無</summary>
         public const string TEMP_KEY_IS_LINK = "IsLink";

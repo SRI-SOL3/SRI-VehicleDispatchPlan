@@ -2,196 +2,222 @@
 @using VehicleDispatchPlan.Models;
 @using VehicleDispatchPlan.Constants;
 
-<table border="1" align="left">
-    <thead>
-        <tr>
-            <th width="200" colspan="3" style="text-align: center;">日付</th>
-        </tr>
-    </thead>
+<style>
+    @* TODO: 下記スタイルをbootstrap.cssに記載するか？ *@
+    @* ツールチップ *@
+    .tooltip-inner{
+        max-width: 100%;
+        text-align: left;
+        -ms-writing-mode:lr-tb;
+        writing-mode:horizontal-tb;
+        white-space:nowrap;
+    }
+    @* テーブル（行列反転） *@
+    .table-reversed{
+        table-layout: fixed;
+        -ms-writing-mode: tb-lr;
+        writing-mode: vertical-lr;
+    }
+    @* ヘッダテーブル（行列反転） *@
+    .table-reversed-head{
+        table-layout: fixed;
+        -ms-writing-mode: tb-lr;
+        writing-mode: vertical-lr;
+    }
+    @* ヘッダテーブル背景色 *@
+    .table-reversed-head > tbody {
+        background-color: #eeeeee;
+    }
+    @* テーブル項目 *@
+    .table-reversed > tbody > tr > th {
+        width: 40px;
+        min-width: 40px;
+        border-bottom: solid 2px;
+        border-bottom-color: #bbbbbb;
+    }
+    @* ヘッダテーブル枠線 *@
+    .table-reversed-head > tbody > tr > th{
+        border-bottom: 2px solid;
+        border-color: #bbbbbb;
+    }
+    .table-reversed-head > tbody > tr > td {
+        border-color: #bbbbbb;
+        font-weight: bold;
+    }
+    @* テーブル各要素の文字反転 *@
+        .table-reversed-head > tbody > tr > th > span,
+        .table-reversed-head > tbody > tr > td > span,
+        .table-reversed > tbody > tr > th > span,
+        .table-reversed > tbody > tr > td > span {
+            -ms-writing-mode: lr-tb;
+            writing-mode: horizontal-tb;
+            white-space: nowrap;
+            display: inline-block;
+        }
+    .table-reversed-head > tbody > tr > th,
+    .table-reversed-head > tbody > tr > td,
+    .table-reversed > tbody > tr > th,
+    .table-reversed > tbody > tr > td {
+        text-align: center;
+    }
+</style>
+
+@* 日付毎に行を生成してから、行列を置換している（表示上は日付が列になる） *@
+<table align="left" class="table-reversed-head table-bordered">
     <tbody>
         <tr>
-            <th rowspan="3" style="text-align: center;">受入残</th>
-            <th colspan="2" style="text-align: center;">総数</th>
+            <th width="200" rowspan="3"><span>日付</span></th>
+            <td colspan="3">
+                <span title="<p><b>対象の日における受入（入校）が可能な残人数。</b></p><p>【計算例】</br>実車教習の総コマ数/期間：<b>2000コマ/日</b></br>教習生一人が卒業までに必要な平均コマ数：<b>22コマ</b></p><p>受入可能人数/期間：<b>2000÷22＝90.9人</b>　※この数字から日毎に入校人数が引かれていく</p>" data-toggle="tooltip" data-html="true">受入残人数<sup>※</sup></span>
+            </td>
+            <td colspan="3">
+                <span title="<p><b>対象の日に在籍ができる教習生の人数。</b></p><p>【計算例】</br>実車教習の総コマ数/日：<b>72コマ/日</b></br>教習生一人当たりの実車教習平均コマ数/日：<b>1.8コマ/日</b></p><p><b>72÷1.8＝40人</b></p>" data-toggle="tooltip" data-html="true">在籍可能数<sup>※</sup></span>
+            </td>
+            <td colspan="11">
+                <span title="<p><b>対象の日に在籍している教習生の人数。</b></p><p>【例】合宿教習生管理にて下記の教習生を登録した場合<ul><li>教習コース：MT</li><li>入校予定日：2/1</li><li>仮免予定日：2/9</li><li>卒業予定日：2/17</li></ul></p><p><b>2/1～2/8</b>は<b>MT-1</b>(一段階)</br><b>2/9～2/17</b>は<b>MT-2</b>(二段階)</br>として在籍にカウントされる。</p>" data-toggle="tooltip" data-html="true">在籍数<sup>※</sup></span>
+            </td>
+            <td colspan="3">
+                <span>残コマ数</span>
+            </td>
         </tr>
         <tr>
-            <th colspan="2" style="text-align: center;">合宿</th>
+            <!--受入残人数-->
+            <td rowspan="2"><span>総計</span></td>
+            <td rowspan="2"><span>合宿</span></td>
+            <td rowspan="2"><span>通学</span></td>
+            <!--在籍可能数-->
+            <td rowspan="2"><span>総計</span></td>
+            <td rowspan="2"><span>合宿</span></td>
+            <td rowspan="2"><span>通学</span></td>
+            <!--在籍数-->
+            <td rowspan="2"><span>総計</span></td>
+            <td colspan="5"><span>合宿</span></td>
+            <td colspan="5"><span>通学</span></td>
+            <td rowspan="2"><span title="<p><b>対象の日における実車教習の残コマ数。</b></p><p>【計算】実車教習の総コマ数/日－合宿教習生が消化するコマ数/日</p>" data-toggle="tooltip" data-html="true">日<sup>※</sup></span></td>
+            <td rowspan="2"><span title="<p><b>対象の週における実車教習の総残コマ数。</b></p><p>【計算】実車教習の総コマ数/週－合宿教習生が消化するコマ数/週</p><p>※最初と最後の週は<b>表示されていない曜日も含めた1週間分</b>の残コマ数を表示している</p>" data-toggle="tooltip" data-html="true">週<sup>※</sup></span></td>
+            <td rowspan="2"><span title="<p><b>検索期間内における実車教習の総残コマ数。</b></p><p>※残コマ数/日の総和</p>" data-toggle="tooltip" data-html="true">期間<sup>※</sup></span></td>
         </tr>
         <tr>
-            <th colspan="2" style="text-align: center;">通学</th>
-        </tr>
-        <tr>
-            <th rowspan="3" style="text-align: center;">在籍可能</th>
-            <th colspan="2" style="text-align: center;">総数</th>
-        </tr>
-        <tr>
-            <th colspan="2" style="text-align: center;">合宿</th>
-        </tr>
-        <tr>
-            <th colspan="2" style="text-align: center;">通学</th>
-        </tr>
-        <tr>
-            <th rowspan="9" style="text-align: center;">在籍見込</th>
-            <th colspan="2" style="text-align: center;">総数</th>
-        </tr>
-        <tr>
-            <th rowspan="4" style="text-align: center;">合宿</th>
-            <th style="text-align: center;">MT-1</th>
-        </tr>
-        <tr>
-            <th style="text-align: center;">MT-2</th>
-        </tr>
-        <tr>
-            <th style="text-align: center;">AT-1</th>
-        </tr>
-        <tr>
-            <th style="text-align: center;">AT-2</th>
-        </tr>
-        <tr>
-            <th rowspan="4" style="text-align: center;">通学</th>
-            <th style="text-align: center;">MT-1</th>
-        </tr>
-        <tr>
-            <th style="text-align: center;">MT-2</th>
-        </tr>
-        <tr>
-            <th style="text-align: center;">AT-1</th>
-        </tr>
-        <tr>
-            <th style="text-align: center;">AT-2</th>
+            <!--在籍数(合宿)-->
+            <td><span>小計</span></td>
+            <td style="font-weight: normal;"><span>MT-1</span></td>
+            <td style="font-weight: normal;"><span>MT-2</span></td>
+            <td style="font-weight: normal;"><span>AT-1</span></td>
+            <td style="font-weight: normal;"><span>AT-2</span></td>
+            <!--在籍数(通学)-->
+            <td><span>小計</span></td>
+            <td style="font-weight: normal;"><span>MT-1</span></td>
+            <td style="font-weight: normal;"><span>MT-2</span></td>
+            <td style="font-weight: normal;"><span>AT-1</span></td>
+            <td style="font-weight: normal;"><span>AT-2</span></td>
         </tr>
     </tbody>
 </table>
-<div class="row" style="overflow: auto;">
-    <table border="1" style="table-layout: fixed;">
-        <thead>
-            @* 日付 *@
-            <tr>
-                @{
-                    bool isLink = (bool?)TempData.Peek(AppConstant.TEMP_KEY_IS_LINK) ?? false;
-                    // TempDataの日付From/Toが設定されている場合はActionLinkで設定
-                    if (isLink == true)
-                    {
-                        foreach (V_ChartData item in Model)
-                        {
-                            <th style="width:40px; min-width:40px; text-align: center;">@Html.ActionLink(item.Date.ToString("M/d"), "../DailyParameter/Edit", new { SearchDate = item.Date })</th>
-                        }
-                    }
-                    else
-                    {
-                        foreach (V_ChartData item in Model)
-                        {
-                            <th style="width:40px; min-width:40px; text-align: center;">@item.Date.ToString("M/d")</th>
-                        }
-                    }
-                }
-            </tr>
-        </thead>
+
+<div class="row" style="overflow-x: auto;">
+    <table class="table-reversed table-bordered table-hover">
         <tbody>
-            @* 受入残 - 総数 *@
-            <tr>
-                @foreach (V_ChartData item in Model)
+            @{
+                int i = 0;
+                foreach (V_ChartData item in Model)
                 {
-                    <td style="text-align: center;">@item.AcceptTotalRemAmt</td>
+                    i++;
+                    // thのスタイル
+                    string thStyle = "";
+                    // tdのスタイル
+                    string tdStyle = "";
+                    string tdTotalStyle = "font-weight: bold;background-color: #f5f5f5;";
+                    string tdSubTotalStyle = "font-weight: bold;";
+                    // 曜日
+                    DayOfWeek dayOfWeek = item.Date.DayOfWeek;
+                    // 曜日によってスタイルを設定
+                    switch (dayOfWeek)
+                    {
+                        // 日曜の場合
+                        case DayOfWeek.Sunday:
+                            thStyle = "background-color: #ffbedc;border-left: 2px solid;border-left-color: #aaaaaa;";
+                            tdStyle = "border-left: 2px solid;border-left-color: #aaaaaa;";
+                            tdTotalStyle += tdStyle;
+                            tdSubTotalStyle += tdStyle;
+                            break;
+                        // 土曜の場合
+                        case DayOfWeek.Saturday:
+                            thStyle = "background-color: #bedcff;";
+                            break;
+                        // その他
+                        default:
+                            break;
+                    }
+
+                    <tr>
+                        @{
+                            bool isLink = (bool?)TempData.Peek(AppConstant.TEMP_KEY_IS_LINK) ?? false;
+                            // TempDataの日付From/Toが設定されている場合はActionLinkで設定
+                            if (isLink == true)
+                            {
+                                @* 日付 *@
+                                <th style="@thStyle"><span>@Html.ActionLink(item.Date.ToString("M/d"), "../DailyParameter/Edit", new { SearchDate = item.Date })</span></th>
+                            }
+                            else
+                            {
+                                @* 日付 *@
+                                <th style="@thStyle"><span>@item.Date.ToString("M/d")</span></th>
+                            }
+                        }
+                        @* 受入残人数 - 総数 *@
+                        <td style="@tdTotalStyle"><span>@item.AcceptTotalRemAmt</span></td>
+                        @* 受入残人数 - 合宿 *@
+                        <td style="@tdStyle"><span>@item.AcceptLodgingRemAmt</span></td>
+                        @* 受入残人数 - 通学 *@
+                        <td style="@tdStyle"><span>@item.AcceptCommutingRemAmt</span></td>
+                        @* 在籍可能数 - 総数 *@
+                        <td style="@tdTotalStyle"><span>@item.DailyTotalMaxAmt</span></td>
+                        @* 在籍可能数 - 合宿 *@
+                        <td style="@tdStyle"><span>@item.DailyLodgingMaxAmt</span></td>
+                        @* 在籍可能数 - 通学 *@
+                        <td style="@tdStyle"><span>@item.DailyCommutingMaxAmt</span></td>
+                        @* 在籍数 - 総数 *@
+                        <td style="@tdTotalStyle"><span>@item.TotalRegAmt</span></td>
+                        @* 在籍数 - 合宿(小計) *@
+                        <td style="@tdSubTotalStyle"><span>@item.LodgingRegAmt</span></td>
+                        @* 在籍数 - 合宿(MT-1) *@
+                        <td style="@tdStyle"><span>@item.LodgingMtFstRegAmt</span></td>
+                        @* 在籍数 - 合宿(MT-2) *@
+                        <td style="@tdStyle"><span>@item.LodgingMtSndRegAmt</span></td>
+                        @* 在籍数 - 合宿(AT-1) *@
+                        <td style="@tdStyle"><span>@item.LodgingAtFstRegAmt</span></td>
+                        @* 在籍数 - 合宿(AT-2) *@
+                        <td style="@tdStyle"><span>@item.LodgingAtSndRegAmt</span></td>
+                        @* 在籍数 - 通学(小計) *@
+                        <td style="@tdSubTotalStyle"><span>@item.CommutingRegAmt</span></td>
+                        @* 在籍数 - 通学(MT-1) *@
+                        <td style="@tdStyle"><span>@item.CommutingMtFstRegAmt</span></td>
+                        @* 在籍数 - 通学(MT-2) *@
+                        <td style="@tdStyle"><span>@item.CommutingMtSndRegAmt</span></td>
+                        @* 在籍数 - 通学(AT-1) *@
+                        <td style="@tdStyle"><span>@item.CommutingAtFstRegAmt</span></td>
+                        @* 在籍数 - 通学(AT-2) *@
+                        <td style="@tdStyle"><span>@item.CommutingAtSndRegAmt</span></td>
+                        @* 残コマ数/日 *@
+                        <td style="@tdStyle"><span>@item.DailyRemClasses</span></td>
+
+                        @{
+                            if (i == 1 || DayOfWeek.Sunday.Equals(dayOfWeek))
+                            {
+                                @* 残コマ数/週 *@
+                                <td rowspan="@(7 - (int)dayOfWeek)" style="@tdStyle"><span>@item.WeeklyRemClasses</span></td>
+                            }
+
+                            if (i == 1)
+                            {
+                                @* 残コマ数/期間 *@
+                                <td rowspan="@Model.Count" style="@tdStyle"><span>@Model.Sum(x => x.DailyRemClasses)</span></td>
+                            }
+                        }
+                    </tr>
                 }
-            </tr>
-            @* 受入残 - 合宿 *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.AcceptLodgingRemAmt</td>
-                }
-            </tr>
-            @* 受入残 - 通学 *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.AcceptCommutingRemAmt</td>
-                }
-            </tr>
-            @* 在籍最大 - 総数 *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.DailyTotalMaxAmt</td>
-                }
-            </tr>
-            @* 在籍最大 - 合宿 *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.DailyLodgingMaxAmt</td>
-                }
-            </tr>
-            @* 在籍最大 - 通学 *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.DailyCommutingMaxAmt</td>
-                }
-            </tr>
-            @* 在籍実績 - 総数 *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.TotalRegAmt</td>
-                }
-            </tr>
-            @* 在籍実績 - 合宿(MT-1) *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.LodgingMtFstRegAmt</td>
-                }
-            </tr>
-            @* 在籍実績 - 合宿(MT-2) *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.LodgingMtSndRegAmt</td>
-                }
-            </tr>
-            @* 在籍実績 - 合宿(AT-1) *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.LodgingAtFstRegAmt</td>
-                }
-            </tr>
-            @* 在籍実績 - 合宿(AT-2) *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.LodgingAtSndRegAmt</td>
-                }
-            </tr>
-            @* 在籍実績 - 通学(MT-1) *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.CommutingMtFstRegAmt</td>
-                }
-            </tr>
-            @* 在籍実績 - 通学(MT-2) *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.CommutingMtSndRegAmt</td>
-                }
-            </tr>
-            @* 在籍実績 - 通学(AT-1) *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.CommutingAtFstRegAmt</td>
-                }
-            </tr>
-            @* 在籍実績 - 通学(AT-2) *@
-            <tr>
-                @foreach (V_ChartData item in Model)
-                {
-                    <td style="text-align: center;">@item.CommutingAtSndRegAmt</td>
-                }
-            </tr>
+            }
         </tbody>
     </table>
 </div>
+<span style="font-size: smaller;">※ ツールチップにより説明を表示できます。</span>
