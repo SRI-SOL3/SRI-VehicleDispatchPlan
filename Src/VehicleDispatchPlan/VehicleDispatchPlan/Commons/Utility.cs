@@ -12,6 +12,7 @@ using VehicleDispatchPlan.Models;
  * @version 1.0
  * ----------------------------------
  * 2020/03/01 t-murayama 新規作成
+ * 2021/01/26 t-murayama 20210205リリース対応(ver.1.1)
  *
  */
 namespace VehicleDispatchPlan.Commons
@@ -176,64 +177,108 @@ namespace VehicleDispatchPlan.Commons
                     traineeLodging.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                         && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
-                // 合宿在籍数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
+                // [20210205リリース対応] Mod Start 卒業日以下を卒業日未満に修正
+                //// 合宿在籍数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
+                //int lodgingMtSndRegAmt =
+                //    traineeLodging.Where(
+                //        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
+                //        && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
+                // 合宿在籍数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日未満）
                 int lodgingMtSndRegAmt =
                     traineeLodging.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                        && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
-                // 合宿在籍数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日未満）※卒業予定者を含まない
-                int lodgingMtRegAmtExceptGraduate =
-                    traineeLodging.Where(
-                        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                         && x.TmpLicencePlanDate <= day && day < x.GraduatePlanDate).Count();
+                // [20210205リリース対応] Mod End
+                // [20210205リリース対応] Del Start
+                //// 合宿在籍数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日未満）※卒業予定者を含まない
+                //int lodgingMtRegAmtExceptGraduate =
+                //    traineeLodging.Where(
+                //        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
+                //        && x.TmpLicencePlanDate <= day && day < x.GraduatePlanDate).Count();
+                // [20210205リリース対応] Del End
                 // 合宿在籍数(AT-一段階)（教習がATかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
                 int lodgingAtFstRegAmt =
                     traineeLodging.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                         && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
-                // 合宿在籍数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
+                // [20210205リリース対応] Mod Start 卒業日以下を卒業日未満に修正
+                //// 合宿在籍数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
+                //int lodgingAtSndRegAmt =
+                //    traineeLodging.Where(
+                //        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
+                //        && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
+                // 合宿在籍数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日未満）
                 int lodgingAtSndRegAmt =
                     traineeLodging.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                        && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
-                // 合宿在籍数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日未満）※卒業予定者を含まない
-                int lodgingAtRegAmtExceptGraduate =
-                    traineeLodging.Where(
-                        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                         && x.TmpLicencePlanDate <= day && day < x.GraduatePlanDate).Count();
+                // [20210205リリース対応] Mod End
+                // [20210205リリース対応] Del Start
+                //// 合宿在籍数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日未満）※卒業予定者を含まない
+                //int lodgingAtRegAmtExceptGraduate =
+                //    traineeLodging.Where(
+                //        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
+                //        && x.TmpLicencePlanDate <= day && day < x.GraduatePlanDate).Count();
+                // [20210205リリース対応] Del End
                 // 通学在籍数(MT-一段階)（教習がMTかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
                 int commutingMtFstRegAmt =
                     traineeCommuting.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
                         && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
-                // 通学在籍数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
+                // [20210205リリース対応] Mod Start 卒業日以下を卒業日未満に修正
+                //// 通学在籍数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
+                //int commutingMtSndRegAmt =
+                //    traineeCommuting.Where(
+                //        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
+                //        && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
+                // 通学在籍数(MT-二段階)（教習がMTかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日未満）
                 int commutingMtSndRegAmt =
                     traineeCommuting.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_MT)
-                        && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
+                        && x.TmpLicencePlanDate <= day && day < x.GraduatePlanDate).Count();
+                // [20210205リリース対応] Mod End
                 // 通学在籍数(AT-一段階)（教習がATかつ、入校予定日が対象日以上かつ、仮免予定日が対象日未満）
                 int commutingAtFstRegAmt =
                     traineeCommuting.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
                         && x.EntrancePlanDate <= day && day < x.TmpLicencePlanDate).Count();
-                // 通学在籍数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
+                // [20210205リリース対応] Mod Start 卒業日以下を卒業日未満に修正
+                //// 通学在籍数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日以下）
+                //int commutingAtSndRegAmt =
+                //    traineeCommuting.Where(
+                //        x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
+                //        && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
+                // 通学在籍数(AT-二段階)（教習がATかつ、仮免予定日が対象日以上かつ、卒業予定日が対象日未満）
                 int commutingAtSndRegAmt =
                     traineeCommuting.Where(
                         x => x.TrainingCourseCd.Equals(AppConstant.TRAINING_COURSE_CD_AT)
-                        && x.TmpLicencePlanDate <= day && day <= x.GraduatePlanDate).Count();
+                        && x.TmpLicencePlanDate <= day && day < x.GraduatePlanDate).Count();
+                // [20210205リリース対応] Mod End
 
                 // --------------------
                 // 当日の合宿生消化コマ数
                 // --------------------
+                // [20210205リリース対応] Mod Start 卒業日以下をlodgingMtSndRegAmt/lodgingAtSndRegAmtに統一
+                //// 合宿生のMT一段階コマ数/日 × 合宿生のMT一段階在籍数
+                //// ＋ 合宿生のMT二段階コマ数/日 × 合宿生のMT二段階在籍数（卒業予定者を含まない）
+                //// ＋ 合宿生のAT一段階コマ数/日 × 合宿生のAT一段階在籍数
+                //// ＋ 合宿生のAT二段階コマ数/日 × 合宿生のAT二段階在籍数（卒業予定者を含まない）
+                //double sumClasses =
+                //    dailyClasses.LdgMtFstClassDay * lodgingMtFstRegAmt
+                //    + dailyClasses.LdgMtSndClassDay * lodgingMtRegAmtExceptGraduate
+                //    + dailyClasses.LdgAtFstClassDay * lodgingAtFstRegAmt
+                //    + dailyClasses.LdgAtSndClassDay * lodgingAtRegAmtExceptGraduate;
+
                 // 合宿生のMT一段階コマ数/日 × 合宿生のMT一段階在籍数
-                // ＋ 合宿生のMT二段階コマ数/日 × 合宿生のMT二段階在籍数（卒業予定者を含まない）
+                // ＋ 合宿生のMT二段階コマ数/日 × 合宿生のMT二段階在籍数
                 // ＋ 合宿生のAT一段階コマ数/日 × 合宿生のAT一段階在籍数
-                // ＋ 合宿生のAT二段階コマ数/日 × 合宿生のAT二段階在籍数（卒業予定者を含まない）
+                // ＋ 合宿生のAT二段階コマ数/日 × 合宿生のAT二段階在籍数
                 double sumClasses =
                     dailyClasses.LdgMtFstClassDay * lodgingMtFstRegAmt
-                    + dailyClasses.LdgMtSndClassDay * lodgingMtRegAmtExceptGraduate
+                    + dailyClasses.LdgMtSndClassDay * lodgingMtSndRegAmt
                     + dailyClasses.LdgAtFstClassDay * lodgingAtFstRegAmt
-                    + dailyClasses.LdgAtSndClassDay * lodgingAtRegAmtExceptGraduate;
+                    + dailyClasses.LdgAtSndClassDay * lodgingAtSndRegAmt;
+                // [20210205リリース対応] Mod End
                 // 残コマ数/日
                 dailyRemClasses = Math.Round(dailySumClasses - sumClasses, 1);
                 // 残コマ数/週
@@ -319,6 +364,13 @@ namespace VehicleDispatchPlan.Commons
                     // 通学在籍数(AT-二段階)
                     data.CommutingAtSndRegAmt = commutingAtSndRegAmt;
 
+                    // [20210205リリース対応] Add Start 総コマ数/日を追加
+                    // --------------------
+                    // 総コマ数/日
+                    // --------------------
+                    // 教習総コマ数/日
+                    data.DailySumClasses = dailySumClasses;
+                    // [20210205リリース対応] Add End
                     // --------------------
                     // 残コマ数/日
                     // --------------------

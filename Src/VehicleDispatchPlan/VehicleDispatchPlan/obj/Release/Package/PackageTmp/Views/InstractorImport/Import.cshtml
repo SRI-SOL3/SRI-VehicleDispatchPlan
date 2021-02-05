@@ -1,0 +1,84 @@
+﻿@model List<VehicleDispatchPlan.Models.T_DailyClassesByTrainer>
+@using VehicleDispatchPlan.Constants;
+
+@{
+    ViewBag.Title = "指導員日次データ取込";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("Import", "InstractorImport", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    Html.EnableClientValidation(false);
+
+    <div style="margin-left:5px; height:50px; align-content:center">
+        <input class="btn btn-default" type="file" name="postedFile" />
+    </div>
+    <div style="margin-left:5px; height:50px; align-content:center">
+        <input class="btn btn-default" type="submit" name="cmd" value="@AppConstant.CMD_READ" />
+        @{
+            if (Model.Count() == 0)
+            {
+                <input class="btn btn-default" type="submit" name="cmd" value="@AppConstant.CMD_REGIST" disabled="disabled" />
+            }
+            else
+            {
+                <input class="btn btn-default" type="submit" name="cmd" value="@AppConstant.CMD_REGIST" />
+            }
+        }
+    </div>
+
+    @* エラーメッセージ *@
+    <div style="color: red">@Html.Raw(ViewBag.ErrorMessage)</div>
+    @* 完了メッセージ *@
+    <div style="color: green">@Html.Raw(ViewBag.CompMessage)</div>
+
+    <div style="overflow-y: auto; width:800px; height:500px;">
+        <table class="table" style="width:600px;">
+            @* ヘッダ部 *@
+            <tr>
+                <th>
+                    @* 対象日 *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Date)
+                </th>
+                <th>
+                    @* No *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().No)
+                </th>
+                <th>
+                    @* 指導員名 *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().TrainerName)
+                </th>
+                <th>
+                    @* コマ数 *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Classes)
+                </th>
+            </tr>
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                @* データ部 *@
+                <tr>
+                    <td>
+                        @* 対象日 *@
+                        @Html.EditorFor(modelitem => Model[i].Date, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @style = "width:150px;" } })
+                    </td>
+                    <td>
+                        @* No *@
+                        @Html.EditorFor(modelitem => Model[i].No, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @style = "width:150px;" } })
+                    </td>
+                    <td>
+                        @* 指導員名 *@
+                        @Html.EditorFor(modelitem => Model[i].TrainerName, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })
+                    </td>
+                    <td>
+                        @* コマ数 *@
+                        @Html.EditorFor(modelitem => Model[i].Classes, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}

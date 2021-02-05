@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations.Schema;
  * @version 1.0
  * ----------------------------------
  * 2020/03/01 t-murayama 新規作成
+ * 2021/02/05 t-murayama 20210205リリース対応(ver.1.1)
  *
  */
 namespace VehicleDispatchPlan.Models
@@ -38,7 +39,10 @@ namespace VehicleDispatchPlan.Models
         [Required]
         [Column(Order = 2)]
         [DisplayName("No")]
-        public int? No { get; set; }
+        // [20210205リリース対応] Mod Start int?→intに変更
+        //public int? No { get; set; }
+        public int No { get; set; }
+        // [20210205リリース対応] Mod End
 
         /// <summary>指導員名</summary>
         [Required]

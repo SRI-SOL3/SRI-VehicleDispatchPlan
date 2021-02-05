@@ -192,6 +192,8 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Properties\PublishProfiles\sri-vehicledispatchplan-dev - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\sri-vehicledispatchplan-dev2 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\sri-vehicledispatchplan-dev3 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\Chart.min.js" />

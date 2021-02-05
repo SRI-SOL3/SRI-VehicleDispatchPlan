@@ -76,6 +76,11 @@
             <td colspan="11">
                 <span title="<p><b>対象の日に在籍している教習生の人数。</b></p><p>【例】合宿教習生管理にて下記の教習生を登録した場合<ul><li>教習コース：MT</li><li>入校予定日：2/1</li><li>仮免予定日：2/9</li><li>卒業予定日：2/17</li></ul></p><p><b>2/1～2/8</b>は<b>MT-1</b>(一段階)</br><b>2/9～2/17</b>は<b>MT-2</b>(二段階)</br>として在籍にカウントされる。</p>" data-toggle="tooltip" data-html="true">在籍数<sup>※</sup></span>
             </td>
+            @* [20210205リリース対応] Add Start 総コマ数の追加 *@
+            <td rowspan="3">
+                <span title="<p><b>対象の日における実車教習の総コマ数。</b></p>" data-toggle="tooltip" data-html="true">総コマ数/日<sup>※</sup></span>
+            </td>
+            @* [20210205リリース対応] Add End *@
             <td colspan="3">
                 <span>残コマ数</span>
             </td>
@@ -198,6 +203,10 @@
                         <td style="@tdStyle"><span>@item.CommutingAtFstRegAmt</span></td>
                         @* 在籍数 - 通学(AT-2) *@
                         <td style="@tdStyle"><span>@item.CommutingAtSndRegAmt</span></td>
+                        @* [20210205リリース対応] Add Start 総コマ数の追加 *@
+                        @* 指導員総コマ数/日 *@
+                        <td style="@tdStyle"><span>@item.DailySumClasses</span></td>
+                        @* [20210205リリース対応] Add End *@
                         @* 残コマ数/日 *@
                         <td style="@tdStyle"><span>@item.DailyRemClasses</span></td>
 
