@@ -13,6 +13,7 @@ using VehicleDispatchPlan.Models;
  * ----------------------------------
  * 2020/03/01 t-murayama 新規作成
  * 2021/01/26 t-murayama 20210205リリース対応(ver.1.1)
+ * 2021/04/12 t-murayama 20210416リリース対応(ver.1.2)
  *
  */
 namespace VehicleDispatchPlan.Commons
@@ -139,8 +140,13 @@ namespace VehicleDispatchPlan.Commons
                 {
                     dailyClasses = new T_DailyClasses() { Date = day };
                 }
-                // 教習総コマ数/日
+                // 総コマ数/日
                 double dailySumClasses = trainerList.Where(x => x.Date.Equals(day)).Select(x => x.Classes).Sum();
+
+                // [20210416リリース対応] Add Start 各業務の割合から実車教習コマ数を算出
+                // 実車教習総コマ数/日の算出
+                dailySumClasses = ((100 - (dailyClasses.DepartExamRatio + dailyClasses.OtherVehicleRatio + dailyClasses.SeminarRatio + dailyClasses.OtherRatio)) / 100) * dailySumClasses;
+                // [20210416リリース対応] Add End
 
                 // --------------------
                 // 在籍可能数/日
@@ -280,7 +286,7 @@ namespace VehicleDispatchPlan.Commons
                     + dailyClasses.LdgAtSndClassDay * lodgingAtSndRegAmt;
                 // [20210205リリース対応] Mod End
                 // 残コマ数/日
-                dailyRemClasses = Math.Round(dailySumClasses - sumClasses, 1);
+                dailyRemClasses = dailySumClasses - sumClasses;
                 // 残コマ数/週
                 weeklyRemClasses += dailyRemClasses;
 
@@ -369,13 +375,13 @@ namespace VehicleDispatchPlan.Commons
                     // 総コマ数/日
                     // --------------------
                     // 教習総コマ数/日
-                    data.DailySumClasses = dailySumClasses;
+                    data.DailySumClasses = Math.Round(dailySumClasses, 1);
                     // [20210205リリース対応] Add End
                     // --------------------
                     // 残コマ数/日
                     // --------------------
                     // 教習総コマ数/日 - 消化コマ数/日
-                    data.DailyRemClasses = dailyRemClasses;
+                    data.DailyRemClasses = Math.Round(dailyRemClasses, 1);
 
                     chartData.Add(data);
                 }

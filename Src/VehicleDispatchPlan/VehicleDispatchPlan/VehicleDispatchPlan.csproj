@@ -152,6 +152,10 @@
     <Compile Include="Migrations\202004280531356_Initial.designer.cs">
       <DependentUpon>202004280531356_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202104120439173_AlterDailyClasses.cs" />
+    <Compile Include="Migrations\202104120439173_AlterDailyClasses.designer.cs">
+      <DependentUpon>202104120439173_AlterDailyClasses.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MyDatabaseContext.cs" />
     <Compile Include="Models\M_EntGrdCalendar.cs" />
@@ -262,6 +266,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202004280531356_Initial.resx">
       <DependentUpon>202004280531356_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104120439173_AlterDailyClasses.resx">
+      <DependentUpon>202104120439173_AlterDailyClasses.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

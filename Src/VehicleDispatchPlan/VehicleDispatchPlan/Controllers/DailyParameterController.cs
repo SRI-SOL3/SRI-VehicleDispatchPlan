@@ -21,7 +21,7 @@ using VehicleDispatchPlan.Models;
  * @version 1.0
  * ----------------------------------
  * 2020/03/01 t-murayama 新規作成
- *
+ * 2021/04/12 t-murayama 20210416リリース対応(ver.1.2)
  */
 namespace VehicleDispatchPlan.Controllers
 {
@@ -108,23 +108,50 @@ namespace VehicleDispatchPlan.Controllers
                         ViewBag.ErrorMessage = "更新範囲の日付の前後関係が不正です。";
                         validation = false;
                     }
-                    // 合宿比率[%]と通学比率[%]のチェック
-                    if (validation == true &&
-                        dailyParameterEdt.DailyClasses.LodgingRatio + dailyParameterEdt.DailyClasses.CommutingRatio != 100)
+
+                    // [20210416リリース対応] Add Start 教習外コマ数比率の追加
+                    double checkValue;
+                    // 教習外コマ数比率のチェック
+                    checkValue = dailyParameterEdt.DailyClasses.DepartExamRatio + dailyParameterEdt.DailyClasses.OtherVehicleRatio
+                        + dailyParameterEdt.DailyClasses.SeminarRatio + dailyParameterEdt.DailyClasses.OtherRatio;
+                    if (validation == true && checkValue > 100)
                     {
-                        ViewBag.ErrorMessage = "合宿比率[%]と通学比率[%]は合わせて100になるように設定してください。";
+                        ViewBag.ErrorMessage = "教習外コマ数比率（学科・検定比率、他車種比率、講習比率、その他）は合わせて100以下になるように設定してください。";
                         validation = false;
                     }
+                    // [20210416リリース対応] Add End
+
+                    // 合宿比率[%]と通学比率[%]のチェック
+                    // [20210416リリース対応] Mod Start 0の許容
+                    //if (validation == true &&
+                    //    dailyParameterEdt.DailyClasses.LodgingRatio + dailyParameterEdt.DailyClasses.CommutingRatio != 100)
+                    checkValue = dailyParameterEdt.DailyClasses.LodgingRatio + dailyParameterEdt.DailyClasses.CommutingRatio;
+                    if (validation == true && checkValue != 0 && checkValue != 100)
+                    // [20210416リリース対応] Mod End
+                    {
+                        ViewBag.ErrorMessage = "合宿・通学比率（合宿比率、通学比率）は合わせて100になるように設定してください。";
+                        validation = false;
+                    }
+
                     // 合宿の在籍比率[%]（AT一段階/二段階、MT一段階/二段階）のチェック
-                    if (validation == true &&
-                        dailyParameterEdt.DailyClasses.LdgAtFstRatio + dailyParameterEdt.DailyClasses.LdgAtSndRatio + dailyParameterEdt.DailyClasses.LdgMtFstRatio + dailyParameterEdt.DailyClasses.LdgMtSndRatio != 100)
+                    // [20210416リリース対応] Mod Start 0の許容
+                    //if (validation == true &&
+                    //    dailyParameterEdt.DailyClasses.LdgAtFstRatio + dailyParameterEdt.DailyClasses.LdgAtSndRatio + dailyParameterEdt.DailyClasses.LdgMtFstRatio + dailyParameterEdt.DailyClasses.LdgMtSndRatio != 100)
+                    checkValue = dailyParameterEdt.DailyClasses.LdgAtFstRatio + dailyParameterEdt.DailyClasses.LdgAtSndRatio + dailyParameterEdt.DailyClasses.LdgMtFstRatio + dailyParameterEdt.DailyClasses.LdgMtSndRatio;
+                    if (validation == true && checkValue != 0 && checkValue != 100)
+                    // [20210416リリース対応] Mod End
                     {
                         ViewBag.ErrorMessage = "合宿の在籍比率[%]（AT一段階/二段階、MT一段階/二段階）は合わせて100になるように設定してください。";
                         validation = false;
                     }
+
                     // 通学の在籍比率[%]（AT一段階/二段階、MT一段階/二段階）のチェック
-                    if (validation == true &&
-                        dailyParameterEdt.DailyClasses.CmtAtFstRatio + dailyParameterEdt.DailyClasses.CmtAtSndRatio + dailyParameterEdt.DailyClasses.CmtMtFstRatio + dailyParameterEdt.DailyClasses.CmtMtSndRatio != 100)
+                    // [20210416リリース対応] Mod Start 0の許容
+                    //if (validation == true &&
+                    //    dailyParameterEdt.DailyClasses.CmtAtFstRatio + dailyParameterEdt.DailyClasses.CmtAtSndRatio + dailyParameterEdt.DailyClasses.CmtMtFstRatio + dailyParameterEdt.DailyClasses.CmtMtSndRatio != 100)
+                    checkValue = dailyParameterEdt.DailyClasses.CmtAtFstRatio + dailyParameterEdt.DailyClasses.CmtAtSndRatio + dailyParameterEdt.DailyClasses.CmtMtFstRatio + dailyParameterEdt.DailyClasses.CmtMtSndRatio;
+                    if (validation == true && checkValue != 0 && checkValue != 100)
+                    // [20210416リリース対応] Mod End
                     {
                         ViewBag.ErrorMessage = "通学の在籍比率[%]（AT一段階/二段階、MT一段階/二段階）は合わせて100になるように設定してください。";
                         validation = false;
@@ -295,108 +322,126 @@ namespace VehicleDispatchPlan.Controllers
                             if (!this.ItemCheck(values[0], out dateItem, "対象日", row)) break;
                             dailyClasses.Date = dateItem;
 
+                            // [20210416リリース対応] Add Start 教習外コマ数比率の追加
+                            // ----- 学科・検定比率[%] -----
+                            if (!this.ItemCheck(values[1], out doubleItem, "学科・検定比率[%]", row)) break;
+                            dailyClasses.DepartExamRatio = doubleItem;
+
+                            // ----- 他車種比率[%] -----
+                            if (!this.ItemCheck(values[2], out doubleItem, "他車種比率[%]", row)) break;
+                            dailyClasses.OtherVehicleRatio = doubleItem;
+
+                            // ----- 講習比率[%] -----
+                            if (!this.ItemCheck(values[3], out doubleItem, "講習比率[%]", row)) break;
+                            dailyClasses.SeminarRatio = doubleItem;
+
+                            // ----- その他[%] -----
+                            if (!this.ItemCheck(values[4], out doubleItem, "その他[%]", row)) break;
+                            dailyClasses.OtherRatio = doubleItem;
+                            // [20210416リリース対応] Add End
+
                             // ----- 合宿比率[%] -----
-                            if (!this.ItemCheck(values[1], out doubleItem, "合宿比率[%]", row)) break;
+                            if (!this.ItemCheck(values[5], out doubleItem, "合宿比率[%]", row)) break;
                             dailyClasses.LodgingRatio = doubleItem;
 
                             // ----- 通学比率[%] -----
-                            if (!this.ItemCheck(values[2], out doubleItem, "通学比率[%]", row)) break;
+                            if (!this.ItemCheck(values[6], out doubleItem, "通学比率[%]", row)) break;
                             dailyClasses.CommutingRatio = doubleItem;
 
                             // ----- 【合宿】MT一段階比率[%] -----
-                            if (!this.ItemCheck(values[3], out doubleItem, "【合宿】MT一段階比率[%]", row)) break;
+                            if (!this.ItemCheck(values[7], out doubleItem, "【合宿】MT一段階比率[%]", row)) break;
                             dailyClasses.LdgMtFstRatio = doubleItem;
 
                             // ----- 【合宿】MT二段階比率[%] -----
-                            if (!this.ItemCheck(values[4], out doubleItem, "【合宿】MT二段階比率[%]", row)) break;
+                            if (!this.ItemCheck(values[8], out doubleItem, "【合宿】MT二段階比率[%]", row)) break;
                             dailyClasses.LdgMtSndRatio = doubleItem;
 
                             // ----- 【合宿】AT一段階比率[%] -----
-                            if (!this.ItemCheck(values[5], out doubleItem, "【合宿】AT一段階比率[%] ", row)) break;
+                            if (!this.ItemCheck(values[9], out doubleItem, "【合宿】AT一段階比率[%] ", row)) break;
                             dailyClasses.LdgAtFstRatio = doubleItem;
 
                             // ----- 【合宿】AT二段階比率[%] -----
-                            if (!this.ItemCheck(values[6], out doubleItem, "【合宿】AT二段階比率[%]", row)) break;
+                            if (!this.ItemCheck(values[10], out doubleItem, "【合宿】AT二段階比率[%]", row)) break;
                             dailyClasses.LdgAtSndRatio = doubleItem;
 
                             // ----- 【合宿】MT一段階コマ数 -----
-                            if (!this.ItemCheck(values[7], out doubleItem, "【合宿】MT一段階コマ数", row)) break;
+                            if (!this.ItemCheck(values[11], out doubleItem, "【合宿】MT一段階コマ数", row)) break;
                             dailyClasses.LdgMtFstClass = doubleItem;
 
                             // ----- 【合宿】MT二段階コマ数 -----
-                            if (!this.ItemCheck(values[8], out doubleItem, "【合宿】MT二段階コマ数", row)) break;
+                            if (!this.ItemCheck(values[12], out doubleItem, "【合宿】MT二段階コマ数", row)) break;
                             dailyClasses.LdgMtSndClass = doubleItem;
 
                             // ----- 【合宿】AT一段階コマ数 -----
-                            if (!this.ItemCheck(values[9], out doubleItem, "【合宿】AT一段階コマ数", row)) break;
+                            if (!this.ItemCheck(values[13], out doubleItem, "【合宿】AT一段階コマ数", row)) break;
                             dailyClasses.LdgAtFstClass = doubleItem;
 
                             // ----- 【合宿】AT二段階コマ数 -----
-                            if (!this.ItemCheck(values[10], out doubleItem, "【合宿】AT二段階コマ数", row)) break;
+                            if (!this.ItemCheck(values[14], out doubleItem, "【合宿】AT二段階コマ数", row)) break;
                             dailyClasses.LdgAtSndClass = doubleItem;
 
                             // ----- 【合宿】MT一段階コマ数/日 -----
-                            if (!this.ItemCheck(values[11], out doubleItem, "【合宿】MT一段階コマ数/日", row)) break;
+                            if (!this.ItemCheck(values[15], out doubleItem, "【合宿】MT一段階コマ数/日", row)) break;
                             dailyClasses.LdgMtFstClassDay = doubleItem;
 
                             // ----- 【合宿】MT二段階コマ数/日 -----
-                            if (!this.ItemCheck(values[12], out doubleItem, "【合宿】MT二段階コマ数/日", row)) break;
+                            if (!this.ItemCheck(values[16], out doubleItem, "【合宿】MT二段階コマ数/日", row)) break;
                             dailyClasses.LdgMtSndClassDay = doubleItem;
 
                             // ----- 【合宿】AT一段階コマ数/日 -----
-                            if (!this.ItemCheck(values[13], out doubleItem, "【合宿】AT一段階コマ数/日", row)) break;
+                            if (!this.ItemCheck(values[17], out doubleItem, "【合宿】AT一段階コマ数/日", row)) break;
                             dailyClasses.LdgAtFstClassDay = doubleItem;
 
                             // ----- 【合宿】AT二段階コマ数/日 -----
-                            if (!this.ItemCheck(values[14], out doubleItem, "【合宿】AT二段階コマ数/日", row)) break;
+                            if (!this.ItemCheck(values[18], out doubleItem, "【合宿】AT二段階コマ数/日", row)) break;
                             dailyClasses.LdgAtSndClassDay = doubleItem;
 
                             // ----- 【通学】MT一段階比率[%] -----
-                            if (!this.ItemCheck(values[15], out doubleItem, "【通学】MT一段階比率[%]", row)) break;
+                            if (!this.ItemCheck(values[19], out doubleItem, "【通学】MT一段階比率[%]", row)) break;
                             dailyClasses.CmtMtFstRatio = doubleItem;
 
                             // ----- 【通学】MT二段階比率[%] -----
-                            if (!this.ItemCheck(values[16], out doubleItem, "【通学】MT二段階比率[%]", row)) break;
+                            if (!this.ItemCheck(values[20], out doubleItem, "【通学】MT二段階比率[%]", row)) break;
                             dailyClasses.CmtMtSndRatio = doubleItem;
 
                             // ----- 【通学】AT一段階比率[%] -----
-                            if (!this.ItemCheck(values[17], out doubleItem, "【通学】AT一段階比率[%]", row)) break;
+                            if (!this.ItemCheck(values[21], out doubleItem, "【通学】AT一段階比率[%]", row)) break;
                             dailyClasses.CmtAtFstRatio = doubleItem;
 
                             // ----- 【通学】AT二段階比率[%] -----
-                            if (!this.ItemCheck(values[18], out doubleItem, "【通学】AT二段階比率[%]", row)) break;
+                            if (!this.ItemCheck(values[22], out doubleItem, "【通学】AT二段階比率[%]", row)) break;
                             dailyClasses.CmtAtSndRatio = doubleItem;
 
                             // ----- 【通学】MT一段階コマ数 -----
-                            if (!this.ItemCheck(values[19], out doubleItem, "【通学】MT一段階コマ数", row)) break;
+                            if (!this.ItemCheck(values[23], out doubleItem, "【通学】MT一段階コマ数", row)) break;
                             dailyClasses.CmtMtFstClass = doubleItem;
 
                             // ----- 【通学】MT二段階コマ数 -----
-                            if (!this.ItemCheck(values[20], out doubleItem, "【通学】MT二段階コマ数", row)) break;
+                            if (!this.ItemCheck(values[24], out doubleItem, "【通学】MT二段階コマ数", row)) break;
                             dailyClasses.CmtMtSndClass = doubleItem;
 
                             // ----- 【通学】AT一段階コマ数 -----
-                            if (!this.ItemCheck(values[21], out doubleItem, "【通学】AT一段階コマ数", row)) break;
+                            if (!this.ItemCheck(values[25], out doubleItem, "【通学】AT一段階コマ数", row)) break;
                             dailyClasses.CmtAtFstClass = doubleItem;
 
                             // ----- 【通学】AT二段階コマ数 -----
-                            if (!this.ItemCheck(values[22], out doubleItem, "【通学】AT二段階コマ数", row)) break;
+                            if (!this.ItemCheck(values[26], out doubleItem, "【通学】AT二段階コマ数", row)) break;
                             dailyClasses.CmtAtSndClass = doubleItem;
 
                             // ----- 【通学】MT一段階コマ数/日 -----
-                            if (!this.ItemCheck(values[23], out doubleItem, "【通学】MT一段階コマ数/日", row)) break;
+                            if (!this.ItemCheck(values[27], out doubleItem, "【通学】MT一段階コマ数/日", row)) break;
                             dailyClasses.CmtMtFstClassDay = doubleItem;
 
                             // ----- 【通学】MT二段階コマ数/日 -----
-                            if (!this.ItemCheck(values[24], out doubleItem, "【通学】MT二段階コマ数/日", row)) break;
+                            if (!this.ItemCheck(values[28], out doubleItem, "【通学】MT二段階コマ数/日", row)) break;
                             dailyClasses.CmtMtSndClassDay = doubleItem;
 
                             // ----- 【通学】AT一段階コマ数/日 -----
-                            if (!this.ItemCheck(values[25], out doubleItem, "【通学】AT一段階コマ数/日", row)) break;
+                            if (!this.ItemCheck(values[29], out doubleItem, "【通学】AT一段階コマ数/日", row)) break;
                             dailyClasses.CmtAtFstClassDay = doubleItem;
 
                             // ----- 【通学】AT二段階コマ数/日 -----
-                            if (!this.ItemCheck(values[26], out doubleItem, "【通学】AT二段階コマ数/日", row)) break;
+                            if (!this.ItemCheck(values[30], out doubleItem, "【通学】AT二段階コマ数/日", row)) break;
                             dailyClasses.CmtAtSndClassDay = doubleItem;
 
                             dailyClassesList.Add(dailyClasses);
@@ -427,24 +472,48 @@ namespace VehicleDispatchPlan.Controllers
                     // 各行の不整合チェック
                     if (validation == true)
                     {
+                        double checkValue;
                         foreach (T_DailyClasses dailyClasses in dailyClassesList)
                         {
-                            // 合宿比率と通学比率のチェック
-                            if (dailyClasses.LodgingRatio + dailyClasses.CommutingRatio != 100)
+                            // [20210416リリース対応] Add Start 教習外コマ数比率の追加
+                            // 教習外コマ数比率のチェック
+                            checkValue = dailyClasses.DepartExamRatio + dailyClasses.OtherVehicleRatio + dailyClasses.SeminarRatio + dailyClasses.OtherRatio;
+                            if (checkValue > 100)
                             {
-                                ViewBag.ErrorMessage = "合宿比率[%]と通学比率[%]は合わせて100になるように設定してください。";
+                                ViewBag.ErrorMessage = "教習外コマ数比率（学科・検定比率、他車種比率、講習比率、その他）は合わせて100以下になるように設定してください。";
+                                validation = false;
+                                break;
+                            }
+                            // [20210416リリース対応] Add End
+
+                            // 合宿比率と通学比率のチェック
+                            // [20210416リリース対応] Mod Start 合計値0の許容
+                            //if (dailyClasses.LodgingRatio + dailyClasses.CommutingRatio != 100)
+                            checkValue = dailyClasses.LodgingRatio + dailyClasses.CommutingRatio;
+                            if (checkValue < 0 && checkValue != 100)
+                            // [20210416リリース対応] Mod End
+                            {
+                                ViewBag.ErrorMessage = "合宿・通学比率（合宿比率、通学比率）は合わせて100になるように設定してください。";
                                 validation = false;
                                 break;
                             }
                             // 合宿の在籍比率[%]（AT一段階/二段階、MT一段階/二段階）のチェック
-                            if (dailyClasses.LdgAtFstRatio + dailyClasses.LdgAtSndRatio + dailyClasses.LdgMtFstRatio + dailyClasses.LdgMtSndRatio != 100)
+                            // [20210416リリース対応] Mod Start 合計値0の許容
+                            //if (dailyClasses.LdgAtFstRatio + dailyClasses.LdgAtSndRatio + dailyClasses.LdgMtFstRatio + dailyClasses.LdgMtSndRatio != 100)
+                            checkValue = dailyClasses.LdgAtFstRatio + dailyClasses.LdgAtSndRatio + dailyClasses.LdgMtFstRatio + dailyClasses.LdgMtSndRatio;
+                            if (checkValue < 0 && checkValue != 100)
+                            // [20210416リリース対応] Mod End
                             {
                                 ViewBag.ErrorMessage = "合宿の在籍比率[%]（AT一段階/二段階、MT一段階/二段階）は合わせて100になるように設定してください。";
                                 validation = false;
                                 break;
                             }
                             // 通学の在籍比率[%]（AT一段階/二段階、MT一段階/二段階）のチェック
-                            if (dailyClasses.CmtAtFstRatio + dailyClasses.CmtAtSndRatio + dailyClasses.CmtMtFstRatio + dailyClasses.CmtMtSndRatio != 100)
+                            // [20210416リリース対応] Mod Start 合計値0の許容
+                            //if (dailyClasses.CmtAtFstRatio + dailyClasses.CmtAtSndRatio + dailyClasses.CmtMtFstRatio + dailyClasses.CmtMtSndRatio != 100)
+                            checkValue = dailyClasses.CmtAtFstRatio + dailyClasses.CmtAtSndRatio + dailyClasses.CmtMtFstRatio + dailyClasses.CmtMtSndRatio;
+                            if (checkValue < 0 && checkValue != 100)
+                            // [20210416リリース対応] Mod End
                             {
                                 ViewBag.ErrorMessage = "通学の在籍比率[%]（AT一段階/二段階、MT一段階/二段階）は合わせて100になるように設定してください。";
                                 validation = false;
@@ -530,13 +599,20 @@ namespace VehicleDispatchPlan.Controllers
         /// <returns>評価結果(true/false)</returns>
         private bool ItemCheck(string value, out double item, string itemName, int row)
         {
-            item = 0;
-            // 必須チェック
+            // [20210416リリース対応] Mod Start 未設定の許容
+            //item = 0;
+            //// 必須チェック
+            //if (string.IsNullOrEmpty(value))
+            //{
+                //ViewBag.ErrorMessage = itemName + "が未設定のため、読み込みを途中で終了しました。 " + row + "行目";
+                //return false;
+            //}
             if (string.IsNullOrEmpty(value))
             {
-                ViewBag.ErrorMessage = itemName + "が未設定のため、読み込みを途中で終了しました。 " + row + "行目";
-                return false;
+                // 未設定の場合は0とする
+                value = "0";
             }
+            // [20210416リリース対応] Mod End
             // 型整合性チェック
             if (!double.TryParse(value, out item))
             {

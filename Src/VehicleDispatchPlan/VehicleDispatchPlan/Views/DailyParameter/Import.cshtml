@@ -44,18 +44,40 @@
                     @* 対象日 *@
                     @Html.DisplayNameFor(model => model.FirstOrDefault().Date)
                 </th>
-                <th rowspan="3" style="vertical-align:middle;">
-                    @* 合宿比率[%] *@
-                    @Html.DisplayNameFor(model => model.FirstOrDefault().LodgingRatio)
-                </th>
-                <th rowspan="3" style="vertical-align:middle;">
-                    @* 通学比率[%] *@
-                    @Html.DisplayNameFor(model => model.FirstOrDefault().CommutingRatio)
-                </th>
+                @* [20210416リリース対応] Add Start 教習外コマ数比率の追加 *@
+                <th colspan="4">教習外コマ数比率比率</th>
+                @* [20210416リリース対応] Add End *@
+                <th colspan="2">合宿・通学比率</th>
                 <th colspan="12">合宿</th>
                 <th colspan="12">通学</th>
             </tr>
             <tr>
+                @* [20210416リリース対応] Add Start 教習外コマ数比率の追加 *@
+                <th rowspan="2" style="vertical-align:middle;">
+                    @* 学科・検定比率[%] *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().DepartExamRatio)
+                </th>
+                <th rowspan="2" style="vertical-align:middle;">
+                    @* 他車種比率[%] *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().OtherVehicleRatio)
+                </th>
+                <th rowspan="2" style="vertical-align:middle;">
+                    @* 講習比率[%] *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().SeminarRatio)
+                </th>
+                <th rowspan="2" style="vertical-align:middle;">
+                    @* その他[%] *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().OtherRatio)
+                </th>
+                @* [20210416リリース対応] Add End *@
+                <th rowspan="2" style="vertical-align:middle;">
+                    @* 合宿比率[%] *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().LodgingRatio)
+                </th>
+                <th rowspan="2" style="vertical-align:middle;">
+                    @* 通学比率[%] *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().CommutingRatio)
+                </th>
                 <th colspan="4">在籍比率[%]</th>
                 <th colspan="4">コマ数</th>
                 <th colspan="4">コマ数/日</th>
@@ -97,6 +119,24 @@
                         @* 対象日 *@
                         @Html.EditorFor(modelitem => Model[i].Date, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })
                     </td>
+                    @* [20210416リリース対応] Add Start 教習外コマ数比率の追加 *@
+                    <td>
+                        @* 学科・検定比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].DepartExamRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 他車種比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].OtherVehicleRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 講習比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].SeminarRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* その他[%] *@
+                        @Html.EditorFor(modelitem => Model[i].OtherRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    @* [20210416リリース対応] Add End *@
                     <td>
                         @* 合宿比率[%] *@
                         @Html.EditorFor(modelitem => Model[i].LodgingRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
