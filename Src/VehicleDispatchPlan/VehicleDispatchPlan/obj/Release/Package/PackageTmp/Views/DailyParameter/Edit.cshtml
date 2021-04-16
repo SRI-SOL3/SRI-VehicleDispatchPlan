@@ -6,6 +6,27 @@
     ViewBag.Title = "更新";
 }
 
+<style>
+    .sub-title {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    .sub-title:before, .sub-title:after {
+        border-top: 1px solid lightgrey;
+        content: "";
+        width: 3em;
+    }
+    .sub-title:before {
+        margin-right: 1em;
+    }
+    .sub-title:after {
+        margin-left: 1em;
+    }
+</style>
+
 <h2>@ViewBag.Title</h2>
 
 <h4>日別予測条件</h4>
@@ -83,23 +104,66 @@
         <div style="color: green">@Html.Raw(ViewBag.CompMessage)</div>
         <br>
 
-        @* 合宿比率[%] *@
-        <div class="form-group">
-            @Html.LabelFor(model => model.DailyClasses.LodgingRatio, htmlAttributes: new { @class = "control-label col-md-1" })
-            <div>
-                @Html.EditorFor(model => model.DailyClasses.LodgingRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+        @* [20210416リリース対応] Add Start 教習外コマ数比率の追加 *@
+        <div>
+            <div class="sub-title">教習外コマ数比率</div>
+
+            @* 学科・検定比率[%] *@
+            <div class="form-group">
+                @Html.LabelFor(model => model.DailyClasses.DepartExamRatio, htmlAttributes: new { @class = "control-label col-md-1" })
+                <div>
+                    @Html.EditorFor(model => model.DailyClasses.DepartExamRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+                </div>
+            </div>
+
+            @* 他車種比率[%] *@
+            <div class="form-group">
+                @Html.LabelFor(model => model.DailyClasses.OtherVehicleRatio, htmlAttributes: new { @class = "control-label col-md-1" })
+                <div>
+                    @Html.EditorFor(model => model.DailyClasses.OtherVehicleRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+                </div>
+            </div>
+
+            @* 講習比率[%] *@
+            <div class="form-group">
+                @Html.LabelFor(model => model.DailyClasses.SeminarRatio, htmlAttributes: new { @class = "control-label col-md-1" })
+                <div>
+                    @Html.EditorFor(model => model.DailyClasses.SeminarRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+                </div>
+            </div>
+
+            @* その他[%] *@
+            <div class="form-group">
+                @Html.LabelFor(model => model.DailyClasses.OtherRatio, htmlAttributes: new { @class = "control-label col-md-1" })
+                <div>
+                    @Html.EditorFor(model => model.DailyClasses.OtherRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+                </div>
             </div>
         </div>
+        @* [20210416リリース対応] Add End *@
 
-        @* 通学比率[%] *@
-        <div class="form-group">
-            @Html.LabelFor(model => model.DailyClasses.CommutingRatio, htmlAttributes: new { @class = "control-label col-md-1" })
-            <div>
-                @Html.EditorFor(model => model.DailyClasses.CommutingRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
-            </div>
+        <div style="margin-top:30px">
+            <div class="sub-title">合宿通学比率</div>
+
+                @* 合宿比率[%] *@
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DailyClasses.LodgingRatio, htmlAttributes: new { @class = "control-label col-md-1" })
+                    <div>
+                        @Html.EditorFor(model => model.DailyClasses.LodgingRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+                    </div>
+                </div>
+
+                @* 通学比率[%] *@
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DailyClasses.CommutingRatio, htmlAttributes: new { @class = "control-label col-md-1" })
+                    <div>
+                        @Html.EditorFor(model => model.DailyClasses.CommutingRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+                    </div>
+                </div>
         </div>
 
-        <table style="border-top:1px solid lightgrey;margin-top:20px;">
+        <div style="margin-top:30px" class="sub-title">合宿・通学別パラメーター</div>
+        <table>
             <tr height="40px">
                 <th colspan="3"></th>
                 <th style="text-align:center;font-size:18px;">合宿</th>
@@ -219,7 +283,7 @@
     </div>
 }
 
-<div style="border:3px double lightgrey;margin-top:30px;padding:10px;display:inline-block;">
+<div style="border:3px double lightgrey;margin-top:40px;padding:10px;display:inline-block;">
 
     <h5><b>指導員コマ数</b></h5>
     @* 検索していない場合は非活性 *@
