@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations.Schema;
  * @version 1.0
  * ----------------------------------
  * 2020/03/01 t-murayama 新規作成
- *
+ * 2021/04/12 t-murayama 20210416リリース対応(ver.1.2)
  */
 namespace VehicleDispatchPlan.Models
 {
@@ -28,6 +28,35 @@ namespace VehicleDispatchPlan.Models
         [DisplayName("対象日")]
         public DateTime? Date { get; set; }
 
+        // [20210416リリース対応] Add Start 教習外コマ数比率の追加
+        #region 教習外コマ数比率
+        /// <summary>学科・検定比率[%]</summary>
+        [Required]
+        [Range(0, 100)]
+        [DisplayName("学科・検定比率[%]")]
+        public double DepartExamRatio { get; set; }
+
+        /// <summary>他車種比率[%]</summary>
+        [Required]
+        [Range(0, 100)]
+        [DisplayName("他車種比率[%]")]
+        public double OtherVehicleRatio { get; set; }
+
+        /// <summary>講習比率[%]</summary>
+        [Required]
+        [Range(0, 100)]
+        [DisplayName("講習比率[%]")]
+        public double SeminarRatio { get; set; }
+
+        /// <summary>その他[%]</summary>
+        [Required]
+        [Range(0, 100)]
+        [DisplayName("その他[%]")]
+        public double OtherRatio { get; set; }
+        #endregion
+        // [20210416リリース対応] Add End
+
+        #region 合宿／通学比率
         /// <summary>合宿比率[%]</summary>
         [Required]
         [Range(0, 100)]
@@ -39,6 +68,7 @@ namespace VehicleDispatchPlan.Models
         [Range(0, 100)]
         [DisplayName("通学比率[%]")]
         public double CommutingRatio { get; set; }
+        #endregion
 
         #region 『段階別』による教習生の在籍比率
         /// <summary>【合宿】MT一段階比率[%]</summary>

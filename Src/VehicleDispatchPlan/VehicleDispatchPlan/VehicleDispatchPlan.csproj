@@ -148,9 +148,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202004280531356_Initial.cs" />
-    <Compile Include="Migrations\202004280531356_Initial.designer.cs">
-      <DependentUpon>202004280531356_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\202104160107438_Initial.cs" />
+    <Compile Include="Migrations\202104160107438_Initial.designer.cs">
+      <DependentUpon>202104160107438_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MyDatabaseContext.cs" />
@@ -192,6 +192,8 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Properties\PublishProfiles\sri-vehicledispatchplan-dev - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\sri-vehicledispatchplan-dev2 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\sri-vehicledispatchplan-dev3 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\Chart.min.js" />
@@ -258,8 +260,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202004280531356_Initial.resx">
-      <DependentUpon>202004280531356_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202104160107438_Initial.resx">
+      <DependentUpon>202104160107438_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

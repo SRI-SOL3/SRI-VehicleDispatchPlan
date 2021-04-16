@@ -1,10 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using System.Configuration;
+
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - 配車計画</title>
+    <title>@ViewBag.Title - 配車計画(仮)</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -17,7 +19,9 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("配車計画", "Menu", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("配車計画(仮)", "Menu", "Home", new { area = "" }, new { @class = "navbar-brand" })
+
+            <span class="navbar-text">Ver.@ConfigurationManager.AppSettings["webpages:Version"]</span>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">

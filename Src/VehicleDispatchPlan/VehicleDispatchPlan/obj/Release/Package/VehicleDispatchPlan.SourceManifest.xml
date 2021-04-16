@@ -3,4 +3,5 @@
   <IisApp path="C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Release\Package\PackageTmp" />
   <setAcl path="C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Release\Package\PackageTmp" setAclResourceType="Directory" />
   <setAcl path="C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Release\Package\PackageTmp" setAclUser="anonymousAuthenticationUser" setAclResourceType="Directory" />
+  <setAcl path="C:\プロジェクト別\自動車教習所\project\VehicleDispatchPlan\Src\VehicleDispatchPlan\VehicleDispatchPlan\obj\Release\Package\PackageTmp\App_Data" setAclResourceType="Directory" setAclAccess="Write" />
 </sitemanifest>

@@ -1,0 +1,57 @@
+﻿@model VehicleDispatchPlan.Models.T_DailyClassesByTrainer
+@using VehicleDispatchPlan.Constants;
+
+@{
+    ViewBag.Title = "指導員登録データ削除";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<h3>この情報を削除してよろしいでしょうか？</h3>
+<div>
+    <hr />
+    @*指導員データ*@
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TrainerName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TrainerName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Classes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Classes)
+        </dd>
+
+    </dl>
+
+</div>
+
+@using (Html.BeginForm("Delete", "Instractor", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => Model.Date)
+    @Html.HiddenFor(model => Model.No)
+
+    <div class="form-actions no-color">
+        <div class="col-md-offset-2 col-md-10">
+            <div class="form-group">
+                <input type="submit" value="@AppConstant.CMD_REMOVE" class="btn btn-default" /> |
+                @Html.ActionLink("戻る", "List", new { Date = Model.Date })
+            </div>
+        </div>
+    </div>
+}

@@ -18,7 +18,7 @@
         <input class="btn btn-default" type="file" name="postedFile" />
     </div>
     <div style="margin-left:5px; height:50px; align-content:center">
-        <input class="btn btn-default" type="submit" name="cmd" value="@AppConstant.CMD_READ" />
+        <input class="btn btn-default" type="submit" name="cmd" value="@AppConstant.CMD_READ" onclick="document.body.style.cursor = 'wait';" />
         @{
             if (Model.Count() == 0)
             {
@@ -26,7 +26,7 @@
             }
             else
             {
-                <input class="btn btn-default" type="submit" name="cmd" value="@AppConstant.CMD_REGIST" />
+                <input class="btn btn-default" type="submit" name="cmd" value="@AppConstant.CMD_REGIST" onclick="document.body.style.cursor = 'wait';" />
             }
         }
     </div>

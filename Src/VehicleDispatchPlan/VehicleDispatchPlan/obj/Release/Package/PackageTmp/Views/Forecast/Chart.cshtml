@@ -7,6 +7,26 @@
 
 <h2>@ViewBag.Title</h2>
 
+<style>
+    .div-checkbox{
+        margin-top: 30px;
+        display: flex;
+    }
+    .div-checkbox > div {
+        margin-left: 30px;
+    }
+    .div-checkbox > div > label {
+        cursor: pointer;
+        display: flex;
+    }
+    .div-checkbox > div > label > div {
+        width: 20px;
+        margin-left: 2px;
+        margin-right: 3px;
+        align-self:center;
+    }
+</style>
+
 @using (Html.BeginForm("Chart", "Forecast", FormMethod.Get))
 {
     <div class="form-inline">
@@ -18,90 +38,318 @@
     </div>
 
     @* エラーメッセージ *@
-    <div style="color: Red">@ViewBag.ErrorMessage</div>
+    <div style="color: red">@Html.Raw(ViewBag.ErrorMessage)</div>
     <hr />
 
     @* データが0件の場合はhiddenを設定 *@
     string hidden = Model.ChartData.Count() == 0 ? "hidden=hidden" : "";
     <div class="form-horizontal" @hidden>
-                @* 表 *@
-                @Html.Partial("../Shared/Table", Model.ChartData)
+        @{
+            // 日別設定への遷移可
+            TempData[AppConstant.TEMP_KEY_IS_LINK] = true;
+        }
+        @* 表 *@
+        @Html.Partial("../Shared/Table", Model.ChartData)
 
-                @* チェックボックス *@
-                <div class="row" style="margin-top:30px; display: flex;">
-                    <div style="margin-left:30px;">
-                        @* 総受入残数 *@
-                        <label for="TotalRemFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.TotalRemFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; border: 2px solid rgb(255, 0, 0); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_TOTAL_REM_AMT
-                        </label>
-                        @* 総在籍可能数 *@
-                        <label for="TotalMaxFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.TotalMaxFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; border: 1.5px dashed rgb(200, 60, 60); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_TOTAL_MAX_AMT
-                        </label>
-                        @* 総在籍見込数 *@
-                        <label for="TotalRegFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.TotalRegFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; height:10px; border: 2px solid rgb(200, 60, 60); background-color:rgba(200, 60, 60, 0.2); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_TOTAL_REG_AMT
-                        </label>
-                    </div>
-                    <div style="margin-left:30px;">
-                        @* 合宿受入残数 *@
-                        <label for="LodgingRemFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.LodgingRemFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; border: 2px solid rgb(0, 0, 255); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_LODGING_REM_AMT
-                        </label>
-                        @* 合宿在籍可能数 *@
-                        <label for="LodgingMaxFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.LodgingMaxFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; border: 1.5px dashed rgb(30, 100, 160);  align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_LODGING_MAX_AMT
-                        </label>
-                        @* 合宿在籍見込数 *@
-                        <label for="LodgingRegFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.LodgingRegFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; height:10px; border: 2px solid rgb(30, 100, 160); background-color:rgba(30, 100, 160, 0.2); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_LODGING_REG_AMT
-                        </label>
-                    </div>
-                    <div style="margin-left:30px;">
-                        @* 通学受入残数 *@
-                        <label for="CommutingRemFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.CommutingRemFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; border: 2px solid rgb(0, 200, 0); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_COMMUTING_REM_AMT
-                        </label>
-                        @* 通学在籍可能数 *@
-                        <label for="CommutingMaxFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.CommutingMaxFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; border: 1.5px dashed rgb(30, 160, 60); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_COMMUTING_MAX_AMT
-                        </label>
-                        @* 通学在籍見込数 *@
-                        <label for="CommutingRegFlg" style="cursor:pointer; display:flex;">
-                            @Html.CheckBoxFor(model => Model.CommutingRegFlg, new { style = "cursor:pointer;" })
-                            <div style="width:20px; height:10px; border: 2px solid rgb(30, 160, 60); background-color:rgba(30, 160, 60, 0.2); align-self:center; margin-left:2px; margin-right:3px;"></div>
-                            @AppConstant.SERIES_COMMUTING_REG_AMT
-                        </label>
-                    </div>
+        @* チェックボックス *@
+        <div class="row div-checkbox">
+            <div>
+                @* 総受入残数 *@
+                <label for="TotalRemFlg">
+                    <input type="checkbox" id="TotalRemFlg" onclick="drawChart()" checked />
+                    <div style=" border-top:3px solid rgb(255, 0, 0);"></div>
+                    @AppConstant.SERIES_TOTAL_REM_AMT
+                </label>
+                @* 総在籍可能数 *@
+                <label for="TotalMaxFlg">
+                    <input type="checkbox" id="TotalMaxFlg" onclick="drawChart()" checked />
+                    <div style=" border-top:3px dashed rgb(200, 60, 60);"></div>
+                    @AppConstant.SERIES_TOTAL_MAX_AMT
+                </label>
+                @* 総在籍見込数 *@
+                <label for="TotalRegFlg">
+                    <input type="checkbox" id="TotalRegFlg" onclick="drawChart()" checked />
+                    <div style="height:10px; border:2px solid rgb(200, 60, 60); background-color:rgba(200, 60, 60, 0.2);"></div>
+                    @AppConstant.SERIES_TOTAL_REG_AMT
+                </label>
+            </div>
+            <div>
+                @* 合宿受入残数 *@
+                <label for="LodgingRemFlg">
+                    <input type="checkbox" id="LodgingRemFlg" onclick="drawChart()" checked />
+                    <div style="border-top:3px solid rgb(0, 0, 255);"></div>
+                    @AppConstant.SERIES_LODGING_REM_AMT
+                </label>
+                @* 合宿在籍可能数 *@
+                <label for="LodgingMaxFlg">
+                    <input type="checkbox" id="LodgingMaxFlg" onclick="drawChart()" checked />
+                    <div style="border-top:3px dashed rgb(30, 100, 160);"></div>
+                    @AppConstant.SERIES_LODGING_MAX_AMT
+                </label>
+                @* 合宿在籍見込数 *@
+                <label for="LodgingRegFlg">
+                    <input type="checkbox" id="LodgingRegFlg" onclick="drawChart()" checked />
+                    <div style="height:10px; border:2px solid rgb(30, 100, 160); background-color:rgba(30, 100, 160, 0.2);"></div>
+                    @AppConstant.SERIES_LODGING_REG_AMT
+                </label>
+            </div>
+            <div>
+                @* 通学受入残数 *@
+                <label for="CommutingRemFlg">
+                    <input type="checkbox" id="CommutingRemFlg" onclick="drawChart()" checked />
+                    <div style="border-top:3px solid rgb(0, 200, 0);"></div>
+                    @AppConstant.SERIES_COMMUTING_REM_AMT
+                </label>
+                @* 通学在籍可能数 *@
+                <label for="CommutingMaxFlg">
+                    <input type="checkbox" id="CommutingMaxFlg" onclick="drawChart()" checked />
+                    <div style="border-top:3px dashed rgb(30, 160, 60);"></div>
+                    @AppConstant.SERIES_COMMUTING_MAX_AMT
+                </label>
+                @* 通学在籍見込数 *@
+                <label for="CommutingRegFlg">
+                    <input type="checkbox" id="CommutingRegFlg" onclick="drawChart()" checked />
+                    <div style="height:10px; border:2px solid rgb(30, 160, 60); background-color:rgba(30, 160, 60, 0.2);"></div>
+                    @AppConstant.SERIES_COMMUTING_REG_AMT
+                </label>
+            </div>
+        </div>
 
-                    @* 再表示 *@
-                    <input type="submit" id="chart" name="cmd" value="@AppConstant.CMD_REDISPLAY" class="btn btn-default" style="margin-left:30px;" />
-                </div>
-
-                @* グラフ *@
-                <div class="row" style="overflow: auto;">
-                    <img src="@ViewBag.ChartPath" />
-                </div>
-
+        @* グラフ *@
+        <div class="row" style="height:500px">
+            <canvas id="myChart"></canvas>
+        </div>
     </div>
 }
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/chart")
+
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+
+        // グラフデータ
+        let chartDataList = @Html.Raw(Json.Encode(Model.ChartData));
+        // Chartオブジェクト
+        var chart = null;
+
+        // 日付(横軸)
+        var date = [];
+        // 総受入残数
+        var totalRemAmt = [];
+        // 合宿受入残数
+        var lodgingRemAmt = [];
+        // 通学受入残数
+        var commutingRemAmt = [];
+        // 総在籍最大数
+        var totalMaxAmt = [];
+        // 合宿在籍最大数
+        var lodgingMaxAmt = [];
+        // 通学在籍最大数
+        var commutingMaxAmt = [];
+        // 総在籍数
+        var totalRegAmt = [];
+        // 合宿在籍数
+        var lodgingRegAmt = [];
+        // 通学在籍数
+        var commutingRegAmt = [];
+        for (let i = 0; i < chartDataList.length; i++) {
+            chartData = chartDataList[i];
+           // 日付
+           date.push(chartData["DateMd"]);
+           // 総受入残数
+           totalRemAmt.push(chartData["AcceptTotalRemAmt"]);
+           // 合宿受入残数
+           lodgingRemAmt.push(chartData["AcceptLodgingRemAmt"]);
+           // 通学受入残数
+           commutingRemAmt.push(chartData["AcceptCommutingRemAmt"]);
+           // 総在籍最大数
+           totalMaxAmt.push(chartData["DailyTotalMaxAmt"]);
+           // 合宿在籍最大数
+           lodgingMaxAmt.push(chartData["DailyLodgingMaxAmt"]);
+           // 通学在籍最大数
+           commutingMaxAmt.push(chartData["DailyCommutingMaxAmt"]);
+           // 総在籍数
+           totalRegAmt.push(chartData["TotalRegAmt"]);
+           // 合宿在籍数
+           lodgingRegAmt.push(chartData["LodgingRegAmt"]);
+           // 通学在籍数
+            commutingRegAmt.push(chartData["CommutingRegAmt"]);
+        }
+        // グラフ描画
+        drawChart();
+
+        /*
+         グラフ描画関数
+         チェックボックスのチェック有無により、系列を変えて表示する。
+         */
+        function drawChart() {
+            // 対象データ
+            var targetData = [];
+            // 表示有無（選択されている系列が無い場合は表示しない）
+            var drawFlg = false;
+            // 総受入残数
+            if (document.getElementById('TotalRemFlg').checked) {
+                drawFlg = true;
+                targetData.push(
+                    {
+                        label: '@(AppConstant.SERIES_TOTAL_REM_AMT)',
+                        data: totalRemAmt,
+                        borderColor: ['rgba(255, 0, 0)'],
+                        borderWidth: 3,
+                        lineTension: 0,
+                        fill: false
+                    }
+                );
+            }
+            // 合宿受入残数
+            if (document.getElementById('LodgingRemFlg').checked) {
+                drawFlg = true;
+                targetData.push(
+                    {
+                        label: '@(AppConstant.SERIES_LODGING_REM_AMT)',
+                        data: lodgingRemAmt,
+                        borderColor: ['rgba(0, 0, 255)'],
+                        borderWidth: 3,
+                        lineTension: 0,
+                        fill: false
+                    }
+                );
+            }
+            // 通学受入残数
+            if (document.getElementById('CommutingRemFlg').checked) {
+                drawFlg = true;
+                targetData.push(
+                    {
+                        label: '@(AppConstant.SERIES_COMMUTING_REM_AMT)',
+                        data: commutingRemAmt,
+                        borderColor: ['rgba(0, 255, 0)'],
+                        borderWidth: 3,
+                        lineTension: 0,
+                        fill: false
+                    }
+                );
+            }
+
+            // 総在籍可能数
+            if (document.getElementById('TotalMaxFlg').checked) {
+                drawFlg = true;
+                targetData.push(
+                    {
+                        label: '@(AppConstant.SERIES_TOTAL_MAX_AMT)',
+                        data: totalMaxAmt,
+                        borderColor: ['rgba(200, 60, 60)'],
+                        borderWidth: 2,
+                        borderDash: [5, 3],
+                        lineTension: 0,
+                        fill: false
+                    }
+                );
+            }
+            // 合宿在籍可能数
+            if (document.getElementById('LodgingMaxFlg').checked) {
+                drawFlg = true;
+                targetData.push(
+                    {
+                        label: '@(AppConstant.SERIES_LODGING_MAX_AMT)',
+                        data: lodgingMaxAmt,
+                        borderColor: ['rgba(30, 100, 160)'],
+                        borderWidth: 2,
+                        borderDash: [5, 3],
+                        lineTension: 0,
+                        fill: false
+                    }
+                );
+            }
+            // 通学在籍可能数
+            if (document.getElementById('CommutingMaxFlg').checked) {
+                drawFlg = true;
+                targetData.push(
+                    {
+                        label: '@(AppConstant.SERIES_COMMUTING_MAX_AMT)',
+                        data: commutingMaxAmt,
+                        borderColor: ['rgba(30, 160, 60)'],
+                        borderWidth: 2,
+                        borderDash: [5, 3],
+                        lineTension: 0,
+                        fill: false
+                    }
+                );
+            }
+
+            // 総在籍見込数
+            if (document.getElementById('TotalRegFlg').checked) {
+                drawFlg = true;
+                targetData.push(
+                    {
+                        label: '@(AppConstant.SERIES_TOTAL_REG_AMT)',
+                        data: totalRegAmt,
+                        backgroundColor: ['rgba(200, 60, 60, 0.2)'],
+                        borderColor: ['rgba(200, 60, 60)'],
+                        borderWidth: 2,
+                        lineTension: 0
+                    }
+                );
+            }
+            // 合宿在籍見込数
+            if (document.getElementById('LodgingRegFlg').checked) {
+                drawFlg = true;
+                targetData.push(
+                    {
+                        label: '@(AppConstant.SERIES_LODGING_REG_AMT)',
+                        data: lodgingRegAmt,
+                        backgroundColor: ['rgba(30, 100, 160, 0.2)'],
+                        borderColor: ['rgba(30, 100, 160)'],
+                        borderWidth: 2,
+                        lineTension: 0
+                    }
+                );
+            }
+            // 通学在籍見込数
+            if (document.getElementById('CommutingRegFlg').checked) {
+                drawFlg = true;
+                targetData.push(
+                    {
+                        label: '@(AppConstant.SERIES_COMMUTING_REG_AMT)',
+                        data: commutingRegAmt,
+                        backgroundColor: ['rgba(30, 160, 60, 0.2)'],
+                        borderColor: ['rgba(30, 160, 60)'],
+                        borderWidth: 2,
+                        lineTension: 0
+                    }
+                );
+            }
+
+            if (chart) {
+                chart.destroy();
+            }
+            if (drawFlg) {
+                var ctx = document.getElementById('myChart').getContext('2d');
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: date,
+                        datasets: targetData,
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        legend: {
+                            display: false
+                        },
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            }
+        }
+    </script>
 }

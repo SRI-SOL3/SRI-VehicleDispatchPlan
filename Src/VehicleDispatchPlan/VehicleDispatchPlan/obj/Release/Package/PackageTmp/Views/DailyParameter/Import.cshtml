@@ -1,0 +1,249 @@
+﻿@model List<VehicleDispatchPlan.Models.T_DailyClasses>
+@using VehicleDispatchPlan.Constants;
+
+@{
+    ViewBag.Title = "日別予測条件取込";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("Import", "DailyParameter", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    Html.EnableClientValidation(false);
+
+    <div style="margin-left:5px; height:50px; align-content:center">
+        <input class="btn btn-default" type="file" name="postedFile" />
+    </div>
+    <div style="margin-left:5px; height:50px; align-content:center">
+        <input class="btn btn-default" type="submit" name="cmd" value="@AppConstant.CMD_READ" />
+        @{
+            if (Model.Count() == 0)
+            {
+                <input class="btn btn-default" type="submit" name="cmd" value="@AppConstant.CMD_REGIST" disabled="disabled" />
+            }
+            else
+            {
+                <input class="btn btn-default" type="submit" name="cmd" value="@AppConstant.CMD_REGIST" />
+            }
+        }
+    </div>
+
+    @* エラーメッセージ *@
+    <div style="color: red">@Html.Raw(ViewBag.ErrorMessage)</div>
+    @* 完了メッセージ *@
+    <div style="color: green">@Html.Raw(ViewBag.CompMessage)</div>
+
+    <div>
+        <table class="table">
+            @* ヘッダ部 *@
+            <tr>
+                <th rowspan="3" style="vertical-align:middle;">
+                    @* 対象日 *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Date)
+                </th>
+                @* [20210416リリース対応] Add Start 教習外コマ数比率の追加 *@
+                <th colspan="4">教習外コマ数比率比率</th>
+                @* [20210416リリース対応] Add End *@
+                <th colspan="2">合宿・通学比率</th>
+                <th colspan="12">合宿</th>
+                <th colspan="12">通学</th>
+            </tr>
+            <tr>
+                @* [20210416リリース対応] Add Start 教習外コマ数比率の追加 *@
+                <th rowspan="2" style="vertical-align:middle;">
+                    @* 学科・検定比率[%] *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().DepartExamRatio)
+                </th>
+                <th rowspan="2" style="vertical-align:middle;">
+                    @* 他車種比率[%] *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().OtherVehicleRatio)
+                </th>
+                <th rowspan="2" style="vertical-align:middle;">
+                    @* 講習比率[%] *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().SeminarRatio)
+                </th>
+                <th rowspan="2" style="vertical-align:middle;">
+                    @* その他[%] *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().OtherRatio)
+                </th>
+                @* [20210416リリース対応] Add End *@
+                <th rowspan="2" style="vertical-align:middle;">
+                    @* 合宿比率[%] *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().LodgingRatio)
+                </th>
+                <th rowspan="2" style="vertical-align:middle;">
+                    @* 通学比率[%] *@
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().CommutingRatio)
+                </th>
+                <th colspan="4">在籍比率[%]</th>
+                <th colspan="4">コマ数</th>
+                <th colspan="4">コマ数/日</th>
+                <th colspan="4">在籍比率[%]</th>
+                <th colspan="4">コマ数</th>
+                <th colspan="4">コマ数/日</th>
+            </tr>
+            <tr>
+                <th>MT-1</th>
+                <th>MT-2</th>
+                <th>AT-1</th>
+                <th>AT-2</th>
+                <th>MT-1</th>
+                <th>MT-2</th>
+                <th>AT-1</th>
+                <th>AT-2</th>
+                <th>MT-1</th>
+                <th>MT-2</th>
+                <th>AT-1</th>
+                <th>AT-2</th>
+                <th>MT-1</th>
+                <th>MT-2</th>
+                <th>AT-1</th>
+                <th>AT-2</th>
+                <th>MT-1</th>
+                <th>MT-2</th>
+                <th>AT-1</th>
+                <th>AT-2</th>
+                <th>MT-1</th>
+                <th>MT-2</th>
+                <th>AT-1</th>
+                <th>AT-2</th>
+            </tr>
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                @* データ部 *@
+                <tr>
+                    <td>
+                        @* 対象日 *@
+                        @Html.EditorFor(modelitem => Model[i].Date, new { htmlAttributes = new { @class = "form-control", @style = "width:150px;" } })
+                    </td>
+                    @* [20210416リリース対応] Add Start 教習外コマ数比率の追加 *@
+                    <td>
+                        @* 学科・検定比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].DepartExamRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 他車種比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].OtherVehicleRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 講習比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].SeminarRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* その他[%] *@
+                        @Html.EditorFor(modelitem => Model[i].OtherRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    @* [20210416リリース対応] Add End *@
+                    <td>
+                        @* 合宿比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].LodgingRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 通学比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].CommutingRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【合宿】MT一段階比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].LdgMtFstRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【合宿】MT二段階比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].LdgMtSndRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【合宿】AT一段階比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].LdgAtFstRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【合宿】AT二段階比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].LdgAtSndRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【合宿】MT一段階コマ数 *@
+                        @Html.EditorFor(modelitem => Model[i].LdgMtFstClass, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【合宿】MT二段階コマ数 *@
+                        @Html.EditorFor(modelitem => Model[i].LdgMtSndClass, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【合宿】AT一段階コマ数 *@
+                        @Html.EditorFor(modelitem => Model[i].LdgAtFstClass, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【合宿】AT二段階コマ数 *@
+                        @Html.EditorFor(modelitem => Model[i].LdgAtSndClass, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【合宿】MT一段階コマ数/日 *@
+                        @Html.EditorFor(modelitem => Model[i].LdgMtFstClassDay, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【合宿】MT二段階コマ数/日 *@
+                        @Html.EditorFor(modelitem => Model[i].LdgMtSndClassDay, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【合宿】AT一段階コマ数/日 *@
+                        @Html.EditorFor(modelitem => Model[i].LdgAtFstClassDay, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【合宿】AT二段階コマ数/日 *@
+                        @Html.EditorFor(modelitem => Model[i].LdgAtSndClassDay, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【通学】MT一段階比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].CmtMtFstRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【通学】MT二段階比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].CmtMtSndRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【通学】AT一段階比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].CmtAtFstRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【通学】AT二段階比率[%] *@
+                        @Html.EditorFor(modelitem => Model[i].CmtAtSndRatio, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【通学】MT一段階コマ数 *@
+                        @Html.EditorFor(modelitem => Model[i].CmtMtFstClass, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【通学】MT二段階コマ数 *@
+                        @Html.EditorFor(modelitem => Model[i].CmtMtSndClass, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【通学】AT一段階コマ数 *@
+                        @Html.EditorFor(modelitem => Model[i].CmtAtFstClass, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【通学】AT二段階コマ数 *@
+                        @Html.EditorFor(modelitem => Model[i].CmtAtSndClass, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【通学】MT一段階コマ数/日 *@
+                        @Html.EditorFor(modelitem => Model[i].CmtMtFstClassDay, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【通学】MT二段階コマ数/日 *@
+                        @Html.EditorFor(modelitem => Model[i].CmtMtSndClassDay, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【通学】AT一段階コマ数/日 *@
+                        @Html.EditorFor(modelitem => Model[i].CmtAtFstClassDay, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                    <td>
+                        @* 【通学】AT二段階コマ数/日 *@
+                        @Html.EditorFor(modelitem => Model[i].CmtAtSndClassDay, new { htmlAttributes = new { @class = "form-control", @style = "width:50px;" } })
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+
+}

@@ -7,6 +7,7 @@
  * @version 1.0
  * ----------------------------------
  * 2020/03/01 t-murayama 新規作成
+ * 2021/02/05 t-murayama 20210205リリース対応(ver.1.1)
  *
  */
 namespace VehicleDispatchPlan.Models
@@ -122,6 +123,11 @@ namespace VehicleDispatchPlan.Models
 
         /// <summary>通学在籍数(AT-二段階)</summary>
         public int CommutingAtSndRegAmt { get; set; }
+
+        // [20210205リリース対応] Add Start 総コマ数の追加
+        /// <summary>総コマ数/日</summary>
+        public double DailySumClasses { get; set; }
+        // [20210205リリース対応] Add End
 
         /// <summary>残コマ数/日</summary>
         public double DailyRemClasses { get; set; }

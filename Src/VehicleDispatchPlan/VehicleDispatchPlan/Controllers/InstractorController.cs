@@ -8,6 +8,16 @@ using System.Web.Mvc;
 using VehicleDispatchPlan.Commons;
 using VehicleDispatchPlan.Models;
 
+/**
+ * 指導員管理コントローラ
+ *
+ * @author t-murayama
+ * @version 1.0
+ * ----------------------------------
+ * 2020/03/01 t-murayama 新規作成
+ * 2021/02/05 t-murayama 20210205リリース対応(ver.1.1)
+ *
+ */
 namespace VehicleDispatchPlan.Controllers
 {
     public class InstractorController : Controller
@@ -56,12 +66,20 @@ namespace VehicleDispatchPlan.Controllers
                 foreach (T_DailyClassesByTrainer dailyClassesByTrainer in model.t_DailyClassesByTrainer)
                 {
                     // コマ数のチェック
-                    if (dailyClassesByTrainer.Classes <= 0)
+                    // [20210205リリース対応] Mod Start コマ数の0許容
+                    //if (dailyClassesByTrainer.Classes <= 0)
+                    //{
+                    //    ViewBag.ErrorMessage = "コマ数に0以下は設定できません。";
+                    //    validation = false;
+                    //    break;
+                    //}
+                    if (dailyClassesByTrainer.Classes < 0)
                     {
-                        ViewBag.ErrorMessage = "コマ数に0以下は設定できません。";
+                        ViewBag.ErrorMessage = "コマ数に0未満は設定できません。";
                         validation = false;
                         break;
                     }
+                    // [20210205リリース対応] Mod End
                 }
             }
             else
@@ -127,11 +145,18 @@ namespace VehicleDispatchPlan.Controllers
             if (ModelState.IsValid)
             {
                 // コマ数入力チェック
-                if (dailyClassesByTrainer.Classes <= 0)
+                // [20210205リリース対応] Mod Start コマ数の0許容
+                //if (dailyClassesByTrainer.Classes <= 0)
+                //{
+                //    ViewBag.ErrorMessage = "コマ数に0以下は設定できません。";
+                //    validation = false;
+                //}
+                if (dailyClassesByTrainer.Classes < 0)
                 {
-                    ViewBag.ErrorMessage = "コマ数に0以下は設定できません。";
+                    ViewBag.ErrorMessage = "コマ数に0未満は設定できません。";
                     validation = false;
                 }
+                // [20210205リリース対応] Mod End
             }
             else
             {
@@ -150,7 +175,7 @@ namespace VehicleDispatchPlan.Controllers
                 }
                 // データ追加のため対象日のNoを取得してインクリメント（データが0件の場合は１を設定）
                 List<T_DailyClassesByTrainer> trainerList = db.DailyClassesByTrainer.Where(item => ((DateTime)item.Date).Equals((DateTime)dailyClassesByTrainer.Date)).ToList();
-                int nextNum = trainerList.Count() > 0 ? (int)trainerList.Select(s => s.No).Max() + 1 : 1;
+                int nextNum = trainerList.Count() > 0 ? trainerList.Select(s => s.No).Max() + 1 : 1;
                 // 追加するデータ（No）
                 dailyClassesByTrainer.No = nextNum;
 
@@ -169,7 +194,7 @@ namespace VehicleDispatchPlan.Controllers
         /// 削除画面表示
         /// </summary>
         /// <param name="Date">指定日付</param>
-        /// <param name="No">指導員別コマ数クラスのNO</param>
+        /// <param name="No">指導員別コマ数クラスのNo</param>
         /// <returns></returns>
         public ActionResult Delete(DateTime? Date, int? No)
         {
@@ -189,11 +214,11 @@ namespace VehicleDispatchPlan.Controllers
             return View(t_DailyClassesByTrainer);
         }
 
-
         /// <summary>
         /// 削除実施
         /// </summary>
-        /// <param name="No"></param>
+        /// <param name="Date">指定日付</param>
+        /// <param name="No">指導員別コマ数クラスのNo</param>
         /// <returns>指導員一覧画面</returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

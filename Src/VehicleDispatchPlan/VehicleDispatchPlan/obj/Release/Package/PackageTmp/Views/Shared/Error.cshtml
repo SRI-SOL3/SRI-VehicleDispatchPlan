@@ -1,14 +1,30 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width" />
-    <title>エラー</title>
-</head>
-<body>
-    <hgroup>
-        <h1>エラー。</h1>
-        <h2>要求の処理中にエラーが発生しました。</h2>
-    </hgroup>
-</body>
-</html>
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{ 
+    ViewBag.Title = "エラー";
+}
+
+
+<h2 class="text-danger">お手数ですが、再度システムへアクセスしてください。</h2>
+<h4 class="text-danger">再度アクセスしてもエラーが発生する場合はお問い合わせください</h4>
+
+    <table class="table">
+        <tr>
+            <th>発生元</th>
+            <td>@Model.ControllerName|@Model.ActionName</td>
+        </tr>
+
+        <tr>
+            <th>
+                例外
+            </th>
+            <td>
+                @Model.Exception.GetType().Name
+            </td>
+        </tr>
+        <tr>
+            <th>メッセージ</th>
+            <td>@Model.Exception.Message</td>
+        </tr>
+        
+    </table>

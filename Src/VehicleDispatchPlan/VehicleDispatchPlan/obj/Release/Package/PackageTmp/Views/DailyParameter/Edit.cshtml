@@ -1,0 +1,335 @@
+﻿@model VehicleDispatchPlan.Models.V_DailyParameterEdt
+@using VehicleDispatchPlan.Constants;
+@using VehicleDispatchPlan.Models;
+
+@{
+    ViewBag.Title = "更新";
+}
+
+<style>
+    .sub-title {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    .sub-title:before, .sub-title:after {
+        border-top: 1px solid lightgrey;
+        content: "";
+        width: 3em;
+    }
+    .sub-title:before {
+        margin-right: 1em;
+    }
+    .sub-title:after {
+        margin-left: 1em;
+    }
+</style>
+
+<h2>@ViewBag.Title</h2>
+
+<h4>日別予測条件</h4>
+<div>
+    @Html.ActionLink("≪ 受入予測", "../Forecast/Chart", new
+    {
+        PlanDateFrom = TempData.Peek(AppConstant.TEMP_KEY_DATE_FROM)
+        , PlanDateTo = TempData.Peek(AppConstant.TEMP_KEY_DATE_TO)
+    })
+</div>
+<hr />
+
+@using (Html.BeginForm("Edit", "DailyParameter", FormMethod.Get))
+{
+    <div class="form-inline">
+        対象日:
+        @* 検索日付 *@
+        <div class="form-group" style="margin-left:10px;">
+            @Html.EditorFor(model => model.SearchDate, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+
+        @* 検索ボタン *@
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" name="cmd" value="@AppConstant.CMD_SEARCH" class="btn btn-default" />
+            </div>
+        </div>
+
+        @* エラーメッセージ *@
+        <div style="color: red">@Html.Raw(ViewBag.SearchErrorMessage)</div>
+    </div>
+}
+
+<hr />
+
+@using (Html.BeginForm("Edit", "DailyParameter", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @{
+            Html.EnableClientValidation(false);
+        }
+
+        <div style="display:flex;margin-left:10px;">
+            @* 更新ボタン *@
+            <div class="form-group">
+                @{
+                    if (Model.DailyClasses.Date == null)
+                    {
+                        <input type="submit" name="cmd" value="@AppConstant.CMD_UPDATE" class="btn btn-default" disabled="disabled" />
+                    }
+                    else
+                    {
+                        <input type="submit" name="cmd" value="@AppConstant.CMD_UPDATE" class="btn btn-default" />
+                    }
+                }
+            </div>
+
+            @* 日付範囲 *@
+            <div style="margin-left:30px;">
+                @Html.EditorFor(model => model.DailyClasses.Date, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+            </div>
+            <div style="width:30px;text-align:center;">～</div>
+            <div>
+                @Html.EditorFor(model => model.UpdateTo, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <div style="margin-left:10px;">まで一括設定</div>
+        </div>
+
+        @* エラーメッセージ *@
+        <div style="color: red">@Html.Raw(ViewBag.ErrorMessage)</div>
+        @* 完了メッセージ *@
+        <div style="color: green">@Html.Raw(ViewBag.CompMessage)</div>
+        <br>
+
+        @* [20210416リリース対応] Add Start 教習外コマ数比率の追加 *@
+        <div>
+            <div class="sub-title">教習外コマ数比率</div>
+
+            @* 学科・検定比率[%] *@
+            <div class="form-group">
+                @Html.LabelFor(model => model.DailyClasses.DepartExamRatio, htmlAttributes: new { @class = "control-label col-md-1" })
+                <div>
+                    @Html.EditorFor(model => model.DailyClasses.DepartExamRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+                </div>
+            </div>
+
+            @* 他車種比率[%] *@
+            <div class="form-group">
+                @Html.LabelFor(model => model.DailyClasses.OtherVehicleRatio, htmlAttributes: new { @class = "control-label col-md-1" })
+                <div>
+                    @Html.EditorFor(model => model.DailyClasses.OtherVehicleRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+                </div>
+            </div>
+
+            @* 講習比率[%] *@
+            <div class="form-group">
+                @Html.LabelFor(model => model.DailyClasses.SeminarRatio, htmlAttributes: new { @class = "control-label col-md-1" })
+                <div>
+                    @Html.EditorFor(model => model.DailyClasses.SeminarRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+                </div>
+            </div>
+
+            @* その他[%] *@
+            <div class="form-group">
+                @Html.LabelFor(model => model.DailyClasses.OtherRatio, htmlAttributes: new { @class = "control-label col-md-1" })
+                <div>
+                    @Html.EditorFor(model => model.DailyClasses.OtherRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+                </div>
+            </div>
+        </div>
+        @* [20210416リリース対応] Add End *@
+
+        <div style="margin-top:30px">
+            <div class="sub-title">合宿通学比率</div>
+
+                @* 合宿比率[%] *@
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DailyClasses.LodgingRatio, htmlAttributes: new { @class = "control-label col-md-1" })
+                    <div>
+                        @Html.EditorFor(model => model.DailyClasses.LodgingRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+                    </div>
+                </div>
+
+                @* 通学比率[%] *@
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DailyClasses.CommutingRatio, htmlAttributes: new { @class = "control-label col-md-1" })
+                    <div>
+                        @Html.EditorFor(model => model.DailyClasses.CommutingRatio, new { htmlAttributes = new { @class = "form-control", @onInput = "setRatio(this)" } })
+                    </div>
+                </div>
+        </div>
+
+        <div style="margin-top:30px" class="sub-title">合宿・通学別パラメーター</div>
+        <table>
+            <tr height="40px">
+                <th colspan="3"></th>
+                <th style="text-align:center;font-size:18px;">合宿</th>
+                <th style="text-align: center;font-size: 18px;">通学</th>
+            </tr>
+
+            <tr>
+                <th rowspan="4" width="90px" style="text-align:center;background-color:#dddddd;border:2px solid white;">在籍比率[%]</th>
+                <th rowspan="2" width="30px" style="text-align:center;background-color:#dddddd;border:2px solid white;">MT</th>
+                <th width="60px" style="text-align:center;background-color:#dddddd;border:2px solid white;">一段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.LdgMtFstRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.CmtMtFstRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th style="text-align:center;background-color:#dddddd;border:2px solid white;">二段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.LdgMtSndRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.CmtMtSndRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th rowspan="2" style="text-align:center;background-color:#dddddd;border:2px solid white;">AT</th>
+                <th style="text-align:center;background-color:#dddddd;border:2px solid white;">一段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.LdgAtFstRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.CmtAtFstRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th style="text-align:center;background-color:#dddddd;border:2px solid white;">二段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.LdgAtSndRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.CmtAtSndRatio, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr style="height: 5px;"></tr>
+
+            <tr>
+                <th rowspan="4" style="text-align:center;background-color:#dddddd;border:2px solid white;">コマ数</th>
+                <th rowspan="2" style="text-align:center;background-color:#dddddd;border:2px solid white;">MT</th>
+                <th style="text-align:center;background-color:#dddddd;border:2px solid white;">一段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.LdgMtFstClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.CmtMtFstClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th style="text-align:center;background-color:#dddddd;border:2px solid white;">二段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.LdgMtSndClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.CmtMtSndClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th rowspan="2" style="text-align:center;background-color:#dddddd;border:2px solid white;">AT</th>
+                <th style="text-align:center;background-color:#dddddd;border:2px solid white;">一段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.LdgAtFstClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.CmtAtFstClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th style="text-align:center;background-color:#dddddd;border:2px solid white;">二段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.LdgAtSndClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.CmtAtSndClass, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr style="height:5px;"></tr>
+
+            <tr>
+                <th rowspan="4" style="text-align:center;background-color:#dddddd;border:2px solid white;">コマ数/日</th>
+                <th rowspan="2" style="text-align: center;background-color:#dddddd;border:2px solid white;">MT</th>
+                <th style="text-align:center;background-color:#dddddd;border:2px solid white;">一段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.LdgMtFstClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.CmtMtFstClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th style=" text-align:center;background-color:#dddddd;border:2px solid white;">二段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.LdgMtSndClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.CmtMtSndClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th rowspan="2" style=" text-align: center;background-color:#dddddd;border:2px solid white;">AT</th>
+                <th style="text-align:center;background-color:#dddddd;border:2px solid white;">一段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.LdgAtFstClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.CmtAtFstClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+
+            <tr>
+                <th style="text-align:center;background-color:#dddddd;border:2px solid white;">二段階</th>
+                @* 合宿 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.LdgAtSndClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+                @* 通学 *@
+                <td>@Html.EditorFor(model => model.DailyClasses.CmtAtSndClassDay, new { htmlAttributes = new { @class = "form-control" } })</td>
+            </tr>
+        </table>
+
+    </div>
+}
+
+<div style="border:3px double lightgrey;margin-top:40px;padding:10px;display:inline-block;">
+
+    <h5><b>指導員コマ数</b></h5>
+    @* 検索していない場合は非活性 *@
+    @{
+        if (Model.SearchDate == null)
+        {
+            @Html.ActionLink("指導員管理 ≫", "../Instractor/List", new { Date = Model.SearchDate }, new { @style = "pointer-events:none;color:grey;" })
+        }
+        else
+        {
+            @Html.ActionLink("指導員管理 ≫", "../Instractor/List", new { Date = Model.SearchDate })
+        }
+    }
+
+    @* 指導員一覧 *@
+    <table class="table" style="width: 320px;margin-top: 5px;">
+        <tr>
+            <th>
+                @* No *@
+                @Html.LabelFor(model => model.TrainerList.FirstOrDefault().No)
+            </th>
+            <th>
+                @* 指導員名 *@
+                @Html.LabelFor(model => model.TrainerList.FirstOrDefault().TrainerName)
+            </th>
+            <th>
+                @* コマ数 *@
+                @Html.LabelFor(model => model.TrainerList.FirstOrDefault().Classes)
+            </th>
+        </tr>
+        @foreach (T_DailyClassesByTrainer item in Model.TrainerList)
+        {
+            <tr>
+                <td>
+                    @* 指導員名 *@
+                    @Html.DisplayFor(modelItem => item.No)
+                </td>
+                <td>
+                    @* 指導員名 *@
+                    @Html.DisplayFor(modelItem => item.TrainerName)
+                </td>
+                <td>
+                    @* コマ数 *@
+                    @Html.DisplayFor(modelItem => item.Classes)
+                </td>
+            </tr>
+        }
+    </table>
+</div>
